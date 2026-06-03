@@ -11,6 +11,7 @@ import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/pace_wordmark.dart';
+import '../sos/breathing_screen.dart';
 import 'pit_stop_action.dart';
 import 'tachometer.dart';
 
@@ -94,6 +95,8 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                   ],
                 ),
                 const Spacer(),
+                _SosButton(onTap: () => BreathingScreen.open(context)),
+                const SizedBox(height: 12),
                 _PitButton(onTap: _pitStop),
                 const SizedBox(height: 20),
               ],
@@ -305,5 +308,40 @@ class _PitButton extends StatelessWidget {
     )
         .animate(onPlay: (c) => c.repeat())
         .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.18));
+  }
+}
+
+class _SosButton extends StatelessWidget {
+  const _SosButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 52,
+        decoration: BoxDecoration(
+          color: PaceColors.neonCyan.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.7)),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
+            SizedBox(width: 10),
+            Text('VERLANGEN? DURCHATMEN',
+                style: TextStyle(
+                    color: PaceColors.neonCyan,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1)),
+          ],
+        ),
+      ),
+    );
   }
 }
