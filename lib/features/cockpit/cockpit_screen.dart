@@ -61,11 +61,7 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const PaceWordmark(size: 30),
-                    Text(
-                      'P1',
-                      style: PaceTheme.dash(
-                          size: 20, color: PaceColors.neonCyan, italic: true),
-                    ),
+                    _StreakChip(days: ref.watch(streakProvider).current),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -341,6 +337,35 @@ class _SosButton extends StatelessWidget {
                     letterSpacing: 1)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StreakChip extends StatelessWidget {
+  const _StreakChip({required this.days});
+
+  final int days;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = days > 0;
+    final color = active ? PaceColors.neonOrange : PaceColors.textFaint;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: active ? 0.16 : 0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.local_fire_department, color: color, size: 16),
+          const SizedBox(width: 4),
+          Text(active ? '$days ${days == 1 ? 'Tag' : 'Tage'}' : 'Streak',
+              style: PaceTheme.dash(size: 16, color: color)),
+        ],
       ),
     );
   }

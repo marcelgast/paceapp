@@ -16,6 +16,7 @@ private let magenta = Color(red: 1.0, green: 0.18, blue: 0.58)
 private let purple = Color(red: 0.6, green: 0.35, blue: 1.0)
 private let cyan = Color(red: 0.10, green: 0.88, blue: 1.0)
 private let lime = Color(red: 0.22, green: 1.0, blue: 0.42)
+private let orange = Color(red: 1.0, green: 0.48, blue: 0.12)
 
 struct PaceEntry: TimelineEntry {
     let date: Date
@@ -24,13 +25,14 @@ struct PaceEntry: TimelineEntry {
     let best: String
     let savedMoney: String
     let car: String
+    let streak: Int
 }
 
 struct PaceProvider: TimelineProvider {
     func placeholder(in context: Context) -> PaceEntry {
         PaceEntry(date: Date(), isBaseline: false,
                   timerRef: Date().addingTimeInterval(1800),
-                  best: "4 h 12 min", savedMoney: "12,40 €", car: "Rostlaube")
+                  best: "4 h 12 min", savedMoney: "12,40 €", car: "Rostlaube", streak: 3)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (PaceEntry) -> Void) {
@@ -43,7 +45,8 @@ struct PaceProvider: TimelineProvider {
         if !entry.isBaseline && entry.timerRef > Date() {
             entries.append(PaceEntry(date: entry.timerRef, isBaseline: false,
                                      timerRef: entry.timerRef, best: entry.best,
-                                     savedMoney: entry.savedMoney, car: entry.car))
+                                     savedMoney: entry.savedMoney, car: entry.car,
+                                     streak: entry.streak))
         }
         let refresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
         completion(Timeline(entries: entries, policy: .after(refresh)))
@@ -57,7 +60,8 @@ struct PaceProvider: TimelineProvider {
         return PaceEntry(date: Date(), isBaseline: isBaseline, timerRef: ref,
                          best: d?.string(forKey: "best_label") ?? "—",
                          savedMoney: d?.string(forKey: "saved_money") ?? "—",
-                         car: d?.string(forKey: "car_name") ?? "Rostlaube")
+                         car: d?.string(forKey: "car_name") ?? "Rostlaube",
+                         streak: d?.integer(forKey: "streak") ?? 0)
     }
 }
 
@@ -131,7 +135,8 @@ struct PaceWidgetEntryView: View {
     }
 
     private var statsColumn: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
+            miniStat("STREAK", entry.streak > 0 ? "\(entry.streak) Tage" : "—", orange)
             miniStat("WAGEN", entry.car, .white)
             miniStat("BESTZEIT", entry.best, cyan)
             miniStat("GESPART", entry.savedMoney, lime)

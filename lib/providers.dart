@@ -7,6 +7,7 @@ import 'domain/behavior_analysis.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
+import 'domain/streak_calculator.dart';
 import 'domain/weekly_proposal.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -172,6 +173,33 @@ final behaviorAnalysisProvider = Provider<BehaviorAnalysis>((ref) {
           ))
       .toList();
   return BehaviorAnalysis.from(samples, labels: labels, now: DateTime.now());
+});
+
+final streakProvider = Provider<StreakResult>((ref) {
+  final settings = ref.watch(settingsProvider).value;
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final now = ref.watch(clockProvider).value;
+  if (settings == null || now == null) {
+    return const StreakResult(current: 0, longest: 0);
+  }
+
+  final all = pitStops ?? const <PitStop>[];
+  final measuringEnd = settings.startedAt.add(StintCalculator.baselineDuration);
+  final double threshold;
+  if (now.isBefore(measuringEnd)) {
+    threshold = settings.baselineCigsPerDay.toDouble();
+  } else {
+    final week1 = all.where((p) => p.occurredAt.isBefore(measuringEnd)).length;
+    final measured = week1 / StintCalculator.baselineDuration.inDays;
+    threshold = measured > 0 ? measured : settings.baselineCigsPerDay.toDouble();
+  }
+
+  return StreakCalculator.compute(
+    pitTimes: all.map((p) => p.occurredAt).toList(),
+    dailyThreshold: threshold,
+    startedAt: settings.startedAt,
+    now: now,
+  );
 });
 
 final currentCarProvider = Provider<CarTier>((ref) {

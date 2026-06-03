@@ -22,6 +22,7 @@ abstract final class WidgetService {
     required String bestLabel,
     required String savedMoney,
     required String carName,
+    required int streak,
   }) async {
     await HomeWidget.saveWidgetData<String>('is_baseline', isBaseline ? '1' : '0');
     await HomeWidget.saveWidgetData<int>(
@@ -29,6 +30,7 @@ abstract final class WidgetService {
     await HomeWidget.saveWidgetData<String>('best_label', bestLabel);
     await HomeWidget.saveWidgetData<String>('saved_money', savedMoney);
     await HomeWidget.saveWidgetData<String>('car_name', carName);
+    await HomeWidget.saveWidgetData<int>('streak', streak);
     await HomeWidget.updateWidget(iOSName: iosWidgetName);
   }
 }
@@ -44,6 +46,7 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
   final stats = ref.read(statsProvider);
   final target = ref.read(targetIntervalProvider);
   final car = ref.read(currentCarProvider);
+  final streak = ref.read(streakProvider).current;
   final pitStops = ref.read(pitStopsProvider).value ?? const [];
 
   // Chronological order to measure clean stretches.
@@ -76,6 +79,7 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
           : formatMoneyCents(stats.savedMoneyCents,
               currencyCode: settings.currencyCode),
       carName: car.name,
+      streak: streak,
     );
   } catch (_) {
     // home_widget can fail on the iOS simulator (objective_c framework) —
