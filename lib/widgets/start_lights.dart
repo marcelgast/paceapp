@@ -66,27 +66,33 @@ class StartLights extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        AnimatedOpacity(
-          duration: const Duration(milliseconds: 160),
-          opacity: _go ? 1 : 0,
-          child: Text(
-            'GO!',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w900,
-              fontStyle: FontStyle.italic,
-              letterSpacing: 3,
-              color: PaceColors.neonLimeBright,
-              shadows: [
-                const Shadow(color: PaceColors.neonLime, blurRadius: 24),
-                Shadow(
-                  color: PaceColors.neonLime.withValues(alpha: 0.6),
-                  blurRadius: 48,
-                ),
-              ],
-            ),
-          ),
+        // Only reserve space for GO! once it actually fires — otherwise the
+        // invisible label adds dead padding under the tree.
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: _go
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'GO!',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      fontStyle: FontStyle.italic,
+                      letterSpacing: 3,
+                      color: PaceColors.neonLimeBright,
+                      shadows: [
+                        const Shadow(color: PaceColors.neonLime, blurRadius: 24),
+                        Shadow(
+                          color: PaceColors.neonLime.withValues(alpha: 0.6),
+                          blurRadius: 48,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
