@@ -1,7 +1,10 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../domain/milestones.dart';
 import '../domain/stint_calculator.dart';
+import '../features/trophies/car_art.dart';
 import '../providers.dart';
 import '../util/format.dart';
 
@@ -70,6 +73,12 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
 
   try {
     await WidgetService.init();
+    // Render the current car to a PNG the SwiftUI widget can show.
+    await HomeWidget.renderFlutterWidget(
+      CarArt(tierIndex: kCarTiers.indexOf(car), width: 220),
+      key: 'car_image',
+      logicalSize: const Size(220, 123),
+    );
     await WidgetService.write(
       isBaseline: isBaseline,
       timerRef: timerRef,

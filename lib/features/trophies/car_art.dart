@@ -4,8 +4,9 @@ import '../../theme/pace_colors.dart';
 
 const Color _steel = Color(0xFF5A5E6B);
 
-/// Stylised side-profile race car drawn with a CustomPainter — no licensing,
-/// consistent look. Gets sleeker + gains a spoiler for higher tiers.
+/// Stylised side-profile race car drawn with a CustomPainter — no licensing.
+/// Proper proportions: big wheels with wheel arches, a distinct hood / cabin /
+/// tail, low stance. Gets sleeker + gains a spoiler for higher tiers.
 class CarArt extends StatelessWidget {
   const CarArt({
     super.key,
@@ -18,7 +19,6 @@ class CarArt extends StatelessWidget {
   final double width;
   final bool unlocked;
 
-  /// Accent colour per garage tier.
   static const List<Color> tierColors = [
     Color(0xFF8A7A6A), // Rostlaube
     PaceColors.neonCyan, // Tuned Hatchback
@@ -35,7 +35,7 @@ class CarArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(width, width * 0.52),
+      size: Size(width, width * 0.56),
       painter: _CarPainter(
         color: unlocked ? colorFor(tierIndex) : _steel,
         aggression: (tierIndex / 6).clamp(0.0, 1.0),
@@ -53,40 +53,62 @@ class _CarPainter extends CustomPainter {
   });
 
   final Color color;
-  final double aggression;
+  final double aggression; // 0..1, higher = sleeker/sportier
   final bool unlocked;
 
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final roofLift = 0.10 * (1 - aggression); // higher tiers sit lower
-    final wheelR = h * 0.17;
-    final groundY = h * 0.80;
+
+    final wheelR = h * 0.19;
+    final groundY = h * 0.90;
+    final wheelY = groundY - wheelR * 0.92; // wheels rest on the ground
+    final frontX = w * 0.245;
+    final rearX = w * 0.775;
+
+    // Low body: the rocker sits well below the wheel centres, wheels tuck into
+    // arches. Sportier tiers ride a touch lower with a lower roof.
+    final sill = h * (0.80 - 0.02 * aggression);
+    final roofY = h * (0.34 - 0.03 * aggression);
+    final archR = wheelR * 1.12;
+    final archTop = wheelY - wheelR - h * 0.015; // just clears the tyre top
 
     // Underglow.
     if (unlocked) {
       canvas.drawOval(
         Rect.fromCenter(
-            center: Offset(w * 0.5, groundY + wheelR * 0.6),
-            width: w * 0.9,
-            height: h * 0.18),
+            center: Offset(w * 0.5, groundY + h * 0.02),
+            width: w * 0.92,
+            height: h * 0.14),
         Paint()
-          ..color = color.withValues(alpha: 0.35)
+          ..color = color.withValues(alpha: 0.4)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
       );
     }
 
-    // Body.
+    // Body outline (clockwise from the hood's front edge).
     final body = Path()
-      ..moveTo(w * 0.06, h * 0.70)
-      ..lineTo(w * 0.20, h * 0.70)
-      ..quadraticBezierTo(w * 0.26, h * 0.52, w * 0.40, (0.36 + roofLift) * h)
-      ..lineTo(w * 0.58, (0.36 + roofLift) * h)
-      ..quadraticBezierTo(w * 0.70, h * 0.46, w * 0.82, h * 0.56)
-      ..lineTo(w * 0.95, h * 0.58)
-      ..quadraticBezierTo(w * 0.97, h * 0.60, w * 0.95, h * 0.70)
-      ..lineTo(w * 0.06, h * 0.70)
+      ..moveTo(w * 0.05, h * 0.52)
+      // hood
+      ..lineTo(w * 0.28, h * 0.475)
+      // windshield up to roof
+      ..quadraticBezierTo(w * 0.33, h * 0.40, w * 0.42, roofY)
+      // roof
+      ..lineTo(w * 0.60, roofY)
+      // rear window down to deck
+      ..quadraticBezierTo(w * 0.70, roofY + h * 0.12, w * 0.74, h * 0.49)
+      // rear deck + tail
+      ..lineTo(w * 0.95, h * 0.53)
+      ..lineTo(w * 0.96, sill)
+      // bottom edge, right -> left, arching over each wheel
+      ..lineTo(rearX + archR, sill)
+      ..quadraticBezierTo(rearX + archR, archTop, rearX, archTop)
+      ..quadraticBezierTo(rearX - archR, archTop, rearX - archR, sill)
+      ..lineTo(frontX + archR, sill)
+      ..quadraticBezierTo(frontX + archR, archTop, frontX, archTop)
+      ..quadraticBezierTo(frontX - archR, archTop, frontX - archR, sill)
+      ..lineTo(w * 0.05, sill)
       ..close();
 
     canvas.drawPath(
@@ -96,51 +118,68 @@ class _CarPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.lerp(color, Colors.white, 0.25)!,
+            Color.lerp(color, Colors.white, 0.28)!,
             color,
-            Color.lerp(color, Colors.black, 0.45)!,
+            Color.lerp(color, Colors.black, 0.5)!,
           ],
+          stops: const [0.0, 0.5, 1.0],
         ).createShader(Offset.zero & size),
     );
 
-    // Window glass.
+    // Greenhouse glass.
     final glass = Path()
-      ..moveTo(w * 0.30, h * 0.58)
-      ..quadraticBezierTo(w * 0.33, h * 0.46, w * 0.42, (0.40 + roofLift) * h)
-      ..lineTo(w * 0.56, (0.40 + roofLift) * h)
-      ..quadraticBezierTo(w * 0.62, h * 0.46, w * 0.64, h * 0.56)
+      ..moveTo(w * 0.345, h * 0.465)
+      ..quadraticBezierTo(w * 0.37, h * 0.40, w * 0.45, roofY + h * 0.02)
+      ..lineTo(w * 0.585, roofY + h * 0.02)
+      ..quadraticBezierTo(w * 0.66, roofY + h * 0.10, w * 0.70, h * 0.455)
       ..close();
-    canvas.drawPath(glass, Paint()..color = const Color(0xFF0C1820).withValues(alpha: 0.9));
+    canvas.drawPath(
+        glass, Paint()..color = const Color(0xFF0B1A24).withValues(alpha: 0.92));
+    // B-pillar hint.
+    canvas.drawRect(Rect.fromLTWH(w * 0.515, roofY + h * 0.02, w * 0.012, h * 0.13),
+        Paint()..color = Color.lerp(color, Colors.black, 0.55)!);
 
     // Spoiler for sportier tiers.
-    if (aggression > 0.55) {
-      canvas.drawRect(
-        Rect.fromLTWH(w * 0.86, h * 0.46, w * 0.10, h * 0.05),
+    if (aggression > 0.5) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(w * 0.83, h * 0.40, w * 0.15, h * 0.045),
+            Radius.circular(h * 0.02)),
         Paint()..color = color,
       );
-      canvas.drawRect(
-        Rect.fromLTWH(w * 0.88, h * 0.46, w * 0.03, h * 0.14),
-        Paint()..color = Color.lerp(color, Colors.black, 0.4)!,
-      );
+      canvas.drawRect(Rect.fromLTWH(w * 0.855, h * 0.40, w * 0.03, h * 0.10),
+          Paint()..color = Color.lerp(color, Colors.black, 0.45)!);
     }
 
-    // Headlight (tucked onto the nose).
+    // Headlight + tail light.
     if (unlocked) {
-      canvas.drawCircle(Offset(w * 0.205, h * 0.665),
-          h * 0.035, Paint()..color = Colors.white.withValues(alpha: 0.95));
+      canvas.drawCircle(Offset(w * 0.075, h * 0.55), h * 0.028,
+          Paint()..color = Colors.white.withValues(alpha: 0.95));
+      canvas.drawCircle(Offset(w * 0.945, h * 0.525), h * 0.022,
+          Paint()..color = const Color(0xFFFF3B30));
     }
 
-    // Wheels.
+    // Wheels — tyre, rim, hub, spokes.
     void wheel(double cx) {
-      canvas.drawCircle(Offset(cx, groundY), wheelR, Paint()..color = const Color(0xFF111317));
-      canvas.drawCircle(Offset(cx, groundY), wheelR * 0.55,
-          Paint()..color = _steel);
-      canvas.drawCircle(Offset(cx, groundY), wheelR * 0.22,
-          Paint()..color = color);
+      final c = Offset(cx, wheelY);
+      canvas.drawCircle(c, wheelR, Paint()..color = const Color(0xFF0E1014));
+      canvas.drawCircle(c, wheelR * 0.92, Paint()..color = const Color(0xFF1A1D22));
+      canvas.drawCircle(c, wheelR * 0.52, Paint()..color = _steel);
+      for (var i = 0; i < 5; i++) {
+        final a = i * 1.2566; // 72°
+        canvas.drawLine(
+          c,
+          c + Offset.fromDirection(a, wheelR * 0.5),
+          Paint()
+            ..color = const Color(0xFF101317)
+            ..strokeWidth = wheelR * 0.10,
+        );
+      }
+      canvas.drawCircle(c, wheelR * 0.18, Paint()..color = color);
     }
 
-    wheel(w * 0.26);
-    wheel(w * 0.74);
+    wheel(frontX);
+    wheel(rearX);
   }
 
   @override

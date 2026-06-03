@@ -26,13 +26,15 @@ struct PaceEntry: TimelineEntry {
     let savedMoney: String
     let car: String
     let streak: Int
+    let carImagePath: String?
 }
 
 struct PaceProvider: TimelineProvider {
     func placeholder(in context: Context) -> PaceEntry {
         PaceEntry(date: Date(), isBaseline: false,
                   timerRef: Date().addingTimeInterval(1800),
-                  best: "4 h 12 min", savedMoney: "12,40 €", car: "Rostlaube", streak: 3)
+                  best: "4 h 12 min", savedMoney: "12,40 €", car: "Rostlaube",
+                  streak: 3, carImagePath: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (PaceEntry) -> Void) {
@@ -46,7 +48,8 @@ struct PaceProvider: TimelineProvider {
             entries.append(PaceEntry(date: entry.timerRef, isBaseline: false,
                                      timerRef: entry.timerRef, best: entry.best,
                                      savedMoney: entry.savedMoney, car: entry.car,
-                                     streak: entry.streak))
+                                     streak: entry.streak,
+                                     carImagePath: entry.carImagePath))
         }
         let refresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
         completion(Timeline(entries: entries, policy: .after(refresh)))
@@ -61,7 +64,8 @@ struct PaceProvider: TimelineProvider {
                          best: d?.string(forKey: "best_label") ?? "—",
                          savedMoney: d?.string(forKey: "saved_money") ?? "—",
                          car: d?.string(forKey: "car_name") ?? "Rostlaube",
-                         streak: d?.integer(forKey: "streak") ?? 0)
+                         streak: d?.integer(forKey: "streak") ?? 0,
+                         carImagePath: d?.string(forKey: "car_image"))
     }
 }
 
@@ -136,9 +140,16 @@ struct PaceWidgetEntryView: View {
 
     private var statsColumn: some View {
         VStack(alignment: .leading, spacing: 8) {
+            if let path = entry.carImagePath, let img = UIImage(contentsOfFile: path) {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 44)
+            }
+            Text(entry.car)
+                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                .foregroundColor(.white).lineLimit(1).minimumScaleFactor(0.7)
             miniStat("STREAK", entry.streak > 0 ? "\(entry.streak) Tage" : "—", orange)
-            miniStat("WAGEN", entry.car, .white)
-            miniStat("BESTZEIT", entry.best, cyan)
             miniStat("GESPART", entry.savedMoney, lime)
         }
         .padding(.top, 2)
