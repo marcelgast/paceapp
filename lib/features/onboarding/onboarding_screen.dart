@@ -71,17 +71,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       return;
     }
     HapticFeedback.lightImpact();
-    _lights.animateTo(_stepProgress[_step]);
 
     if (_step < 3) {
       setState(() => _step++);
-      // The explainer page has no field — drop the keyboard when we reach it.
-      if (_step == 3) FocusScope.of(context).unfocus();
+      if (_step == 3) {
+        // The staging tree sits behind the keyboard during the questions. Now
+        // that it's finally on screen, drop the keyboard and replay the amber
+        // cascade slowly so the animation isn't wasted.
+        FocusScope.of(context).unfocus();
+        _playStagingTree();
+      } else {
+        _lights.animateTo(_stepProgress[_step]);
+      }
       _pager.nextPage(
           duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic);
     } else {
       FocusScope.of(context).unfocus();
       await _launch();
+    }
+  }
+
+  /// Slow drag-strip cascade, played when the staging tree first becomes
+  /// visible. Each amber lights in turn with a beat between, instead of
+  /// snapping through unseen behind the keyboard.
+  void _playStagingTree() {
+    _lights.value = 0.06;
+    const stops = [0.31, 0.46, 0.61];
+    for (var i = 0; i < stops.length; i++) {
+      Future<void>.delayed(Duration(milliseconds: 320 + i * 540), () {
+        if (!mounted || _step != 3 || _launching) return;
+        _lights.animateTo(stops[i],
+            duration: const Duration(milliseconds: 380), curve: Curves.easeOut);
+      });
     }
   }
 
