@@ -7,6 +7,7 @@ import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
+import '../../services/widget_service.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
 import 'situations_sheet.dart';
@@ -248,14 +249,44 @@ class _DayHeader extends StatelessWidget {
   }
 }
 
-class _PitStopCard extends StatelessWidget {
+class _PitStopCard extends ConsumerWidget {
   const _PitStopCard({required this.pitStop, required this.situation});
 
   final PitStop pitStop;
   final String? situation;
 
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: PaceColors.panel,
+        title: const Text('Boxenstopp löschen?'),
+        content: const Text(
+          'Versehentlich doppelt erfasst? Löschen verändert deine angezeigten '
+          'Werte (Gespart, Vermieden, Streak).',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: PaceColors.neonOrange,
+                foregroundColor: Colors.black),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Löschen'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await ref.read(databaseProvider).deletePitStop(pitStop.id);
+    await pushPaceWidget(ref);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -300,6 +331,15 @@ class _PitStopCard extends StatelessWidget {
                           letterSpacing: 1,
                           fontWeight: FontWeight.w800)),
                 ),
+              GestureDetector(
+                onTap: () => _delete(context, ref),
+                behavior: HitTestBehavior.opaque,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Icon(Icons.delete_outline,
+                      color: PaceColors.textFaint, size: 18),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),

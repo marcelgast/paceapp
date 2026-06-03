@@ -253,6 +253,10 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> deletePitStop(String id) {
+    return (delete(pitStops)..where((t) => t.id.equals(id))).go();
+  }
+
   /// Wipes everything and re-seeds defaults — the app drops back to onboarding
   /// because the settings row is gone.
   Future<void> resetEverything() async {
