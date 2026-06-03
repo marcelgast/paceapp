@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
+import '../../services/widget_service.dart';
 import '../../theme/pace_colors.dart';
 import '../analysis/analysis_screen.dart';
 import '../cockpit/cockpit_screen.dart';
+import '../cockpit/pit_stop_action.dart';
 import '../journal/journal_screen.dart';
 import '../trophies/trophies_screen.dart';
 
-class HomeShell extends StatefulWidget {
+class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
   @override
-  State<HomeShell> createState() => _HomeShellState();
+  ConsumerState<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class _HomeShellState extends ConsumerState<HomeShell>
+    with WidgetsBindingObserver {
   int _index = 0;
 
   static const _tabs = [
@@ -22,6 +27,53 @@ class _HomeShellState extends State<HomeShell> {
     TrophiesScreen(),
     JournalScreen(),
   ];
+
+  bool _openingPitStop = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      pushPaceWidget(ref);
+      _checkPendingAction();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPendingAction();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      pushPaceWidget(ref);
+    }
+  }
+
+  /// The widget's Boxenstopp button writes a flag into the App Group (via the
+  /// SceneDelegate). When we see it, open the pit-stop form and clear the flag.
+  Future<void> _checkPendingAction() async {
+    if (_openingPitStop) return;
+    final action = await HomeWidget.getWidgetData<String>('pending_action');
+    if (action != 'boxenstopp') return;
+    await HomeWidget.saveWidgetData<String>('pending_action', '');
+    if (!mounted) return;
+    _openingPitStop = true;
+    setState(() => _index = 0);
+    try {
+      await recordPitStop(context, ref);
+    } finally {
+      _openingPitStop = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

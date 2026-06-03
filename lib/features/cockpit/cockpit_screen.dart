@@ -6,13 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/stint_calculator.dart';
 import '../../providers.dart';
-import '../../services/notification_service.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/pace_wordmark.dart';
-import 'pit_stop_sheet.dart';
+import 'pit_stop_action.dart';
 import 'tachometer.dart';
 
 class CockpitScreen extends ConsumerStatefulWidget {
@@ -32,36 +31,7 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     super.dispose();
   }
 
-  Future<void> _pitStop() async {
-    final stint = ref.read(liveStintProvider);
-    final forwardTarget = ref.read(targetIntervalProvider);
-    final settings = ref.read(settingsProvider).value;
-    HapticFeedback.selectionClick();
-    final draft = await showPitStopSheet(context);
-    if (draft == null) return;
-
-    final now = DateTime.now();
-    final wasEarly = stint?.phase == StintPhase.countdown;
-    final target = stint?.target;
-    await ref.read(databaseProvider).addPitStop(
-          occurredAt: now,
-          cravingLevel: draft.cravingLevel,
-          stressLevel: draft.stressLevel,
-          situationId: draft.situationId,
-          wasEarlyPit: wasEarly,
-          targetIntervalSeconds:
-              (target != null && target > Duration.zero) ? target.inSeconds : null,
-          note: draft.note,
-        );
-    HapticFeedback.mediumImpact();
-
-    // Schedule the "stint complete" nudge for the new stint (skip baseline).
-    final inBaseline = settings != null &&
-        now.difference(settings.startedAt) < StintCalculator.baselineDuration;
-    if (!inBaseline && forwardTarget != null && forwardTarget > Duration.zero) {
-      await NotificationService.scheduleStintComplete(now.add(forwardTarget));
-    }
-  }
+  Future<void> _pitStop() => recordPitStop(context, ref);
 
   @override
   Widget build(BuildContext context) {
