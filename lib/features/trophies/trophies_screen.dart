@@ -300,6 +300,17 @@ class _GarageCard extends StatelessWidget {
   }
 }
 
+/// The target a milestone unlocks at, formatted per kind: "8 Std", "5 €",
+/// "50 Kippen" — so a locked tile tells you what to work toward.
+String _milestoneGoal(Milestone m) {
+  return switch (m.kind) {
+    MilestoneKind.time =>
+      formatHumanDuration(Duration(seconds: m.threshold.toInt())),
+    MilestoneKind.money => formatMoneyCents(m.threshold.toInt()),
+    MilestoneKind.avoided => '${m.threshold.toInt()} Kippen',
+  };
+}
+
 class _MilestoneTile extends StatelessWidget {
   const _MilestoneTile({
     required this.milestone,
@@ -341,12 +352,19 @@ class _MilestoneTile extends StatelessWidget {
               children: [
                 Icon(unlocked ? style.icon : Icons.lock_outline,
                     color: color, size: 26),
-                Text(style.label,
-                    style: TextStyle(
-                        color: color.withValues(alpha: 0.8),
-                        fontSize: 9,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w700)),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(_milestoneGoal(milestone),
+                      style: TextStyle(
+                          color: color,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800)),
+                ),
               ],
             ),
             Row(
