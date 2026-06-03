@@ -179,6 +179,18 @@ class _Gauge extends StatelessWidget {
     final phase = stint?.phase ?? StintPhase.baseline;
     final progress = stint?.progress ?? 0;
 
+    // Hybrid second lap: in overtime a green bar runs again toward the target.
+    var overtimeProgress = 0.0;
+    var bonusLap = 0;
+    if (phase == StintPhase.overtime &&
+        target != null &&
+        target!.inSeconds > 0) {
+      final ot = (stint?.overtime ?? Duration.zero).inSeconds;
+      final tgt = target!.inSeconds;
+      bonusLap = ot ~/ tgt;
+      overtimeProgress = (ot % tgt) / tgt;
+    }
+
     final (String label, String time, String sub, Color color) =
         switch (phase) {
       StintPhase.baseline => (
@@ -196,15 +208,18 @@ class _Gauge extends StatelessWidget {
       StintPhase.overtime => (
           'OVERTIME',
           formatStintDuration(stint?.overtime ?? Duration.zero),
-          'geschenkte Zeit — du fährst vorne!',
+          bonusLap >= 1
+              ? 'Bonus-Runde ${bonusLap + 1} — du fährst vorne! 🔥'
+              : 'geschenkte Zeit — du fährst vorne!',
           PaceColors.neonLime,
         ),
     };
 
     Widget gauge = Tachometer(
       progress: progress,
+      overtimeProgress: overtimeProgress,
       phase: phase,
-      size: 280,
+      size: 290,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
