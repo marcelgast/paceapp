@@ -9,6 +9,7 @@ import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
 import 'domain/streak_calculator.dart';
 import 'domain/weekly_proposal.dart';
+import 'domain/weekly_report.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
@@ -173,6 +174,25 @@ final behaviorAnalysisProvider = Provider<BehaviorAnalysis>((ref) {
           ))
       .toList();
   return BehaviorAnalysis.from(samples, labels: labels, now: DateTime.now());
+});
+
+final weeklyReportsProvider = Provider<List<WeeklyReport>>((ref) {
+  final settings = ref.watch(settingsProvider).value;
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final now = ref.watch(clockProvider).value;
+  if (settings == null || now == null) return const [];
+
+  final samples = (pitStops ?? const <PitStop>[])
+      .map((p) => PitSample(
+            occurredAt: p.occurredAt,
+            craving: p.cravingLevel,
+            stress: p.stressLevel,
+            situationId: p.situationId,
+            wasEarly: p.wasEarlyPit,
+          ))
+      .toList();
+  return WeeklyReportBuilder.build(samples,
+      startedAt: settings.startedAt, now: now);
 });
 
 final streakProvider = Provider<StreakResult>((ref) {

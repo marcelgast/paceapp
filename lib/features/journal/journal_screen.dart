@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
+import '../../domain/weekly_report.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -16,6 +17,7 @@ class JournalScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pitStops = ref.watch(pitStopsProvider).value ?? const [];
+    final reports = ref.watch(weeklyReportsProvider);
     final labels = ref.watch(situationLabelsProvider);
     final now = DateTime.now();
 
@@ -57,9 +59,13 @@ class JournalScreen extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: pitStops.isEmpty
+                child: pitStops.isEmpty && reports.isEmpty
                     ? const _EmptyState()
-                    : _JournalList(pitStops: pitStops, labels: labels, now: now),
+                    : _JournalList(
+                        pitStops: pitStops,
+                        reports: reports,
+                        labels: labels,
+                        now: now),
               ),
             ],
           ),
@@ -72,20 +78,33 @@ class JournalScreen extends ConsumerWidget {
 class _JournalList extends StatelessWidget {
   const _JournalList({
     required this.pitStops,
+    required this.reports,
     required this.labels,
     required this.now,
   });
 
   final List<PitStop> pitStops;
+  final List<WeeklyReport> reports;
   final Map<String, String> labels;
   final DateTime now;
 
   @override
   Widget build(BuildContext context) {
-    // Flatten into day-headers + entries (pitStops already newest-first).
+    // Merge pit stops and weekly reports into one newest-first feed.
+    final feed = <({DateTime ts, PitStop? pit, WeeklyReport? report})>[
+      for (final p in pitStops) (ts: p.occurredAt, pit: p, report: null),
+      for (final r in reports) (ts: r.weekEnd, pit: null, report: r),
+    ]..sort((a, b) => b.ts.compareTo(a.ts));
+
     final rows = <Widget>[];
     DateTime? lastDay;
-    for (final p in pitStops) {
+    for (final item in feed) {
+      if (item.report != null) {
+        rows.add(_ReportCard(report: item.report!));
+        lastDay = null; // next pit stop gets a fresh day header
+        continue;
+      }
+      final p = item.pit!;
       final day = DateTime(p.occurredAt.year, p.occurredAt.month, p.occurredAt.day);
       if (lastDay == null || day != lastDay) {
         rows.add(_DayHeader(label: formatDayHeader(day, now)));
@@ -99,6 +118,110 @@ class _JournalList extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
       children: rows,
+    );
+  }
+}
+
+class _ReportCard extends StatelessWidget {
+  const _ReportCard({required this.report});
+
+  final WeeklyReport report;
+
+  @override
+  Widget build(BuildContext context) {
+    final delta = report.cigaretteDelta;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            PaceColors.neonMagenta.withValues(alpha: 0.16),
+            PaceColors.neonPurple.withValues(alpha: 0.12),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.6)),
+        boxShadow: [
+          BoxShadow(
+              color: PaceColors.neonMagenta.withValues(alpha: 0.15), blurRadius: 18),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.flag_circle, color: PaceColors.neonMagenta, size: 20),
+              const SizedBox(width: 8),
+              Text('RENNBERICHT · WOCHE ${report.weekNumber}',
+                  style: const TextStyle(
+                      color: PaceColors.neonMagenta,
+                      fontSize: 12,
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w800)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                report.medianPace == null
+                    ? '—'
+                    : 'alle ${formatHumanDuration(report.medianPace!)}',
+                style: PaceTheme.dash(size: 26, weight: FontWeight.w900, color: Colors.white),
+              ),
+              const SizedBox(width: 8),
+              Text('Median-Pace',
+                  style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _ReportStat(
+                  label: 'Kippen', value: '${report.cigarettes}', color: PaceColors.neonCyan),
+              const SizedBox(width: 20),
+              _ReportStat(
+                  label: 'Dreher', value: '${report.dreher}', color: PaceColors.neonOrange),
+              const Spacer(),
+              if (delta != null && delta != 0)
+                Text(
+                  delta < 0 ? '${-delta} weniger 🏁' : '+$delta',
+                  style: TextStyle(
+                      color: delta < 0 ? PaceColors.neonLime : PaceColors.neonOrange,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReportStat extends StatelessWidget {
+  const _ReportStat({required this.label, required this.value, required this.color});
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Text(value, style: PaceTheme.dash(size: 20, color: color)),
+        const SizedBox(width: 4),
+        Text(label, style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+      ],
     );
   }
 }
