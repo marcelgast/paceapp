@@ -22,24 +22,15 @@ RaceCardData buildRaceCardData(WidgetRef ref) {
   final settings = ref.read(settingsProvider).value;
   final pitStops = ref.read(pitStopsProvider).value ?? const [];
 
-  // Best stint = longest clean stretch (start → first pit, between pits,
-  // last pit → now).
-  var best = Duration.zero;
-  if (settings != null) {
-    final asc = [...pitStops]
-      ..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
-    var prev = settings.startedAt;
-    for (final p in asc) {
-      final d = p.occurredAt.difference(prev);
-      if (d > best) best = d;
-      prev = p.occurredAt;
-    }
-    final ongoing = DateTime.now().difference(prev);
-    if (ongoing > best) best = ongoing;
-  }
+  // Current lap = time since the last pit stop (or since the start if none yet).
+  final lastPit =
+      pitStops.isNotEmpty ? pitStops.first.occurredAt : settings?.startedAt;
+  final currentLap =
+      lastPit == null ? Duration.zero : DateTime.now().difference(lastPit);
 
   return RaceCardData(
-    bestLabel: formatStintDuration(best),
+    heroLabel: 'AKTUELLE RUNDE',
+    heroValue: formatStintDuration(currentLap),
     savedMoney: formatMoneyCents(
       stats?.savedMoneyCents ?? 0,
       currencyCode: settings?.currencyCode ?? 'EUR',
@@ -97,7 +88,7 @@ class _ShareCardSheetState extends State<_ShareCardSheet> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'image/png')],
-          text: 'Meine Bestzeit: ${widget.data.bestLabel} ohne Zigarette. 🏁',
+          text: 'Aktuelle Runde: ${widget.data.heroValue} ohne Zigarette. 🏁',
           sharePositionOrigin:
               box == null ? null : box.localToGlobal(Offset.zero) & box.size,
         ),

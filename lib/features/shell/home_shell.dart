@@ -65,19 +65,19 @@ class _HomeShellState extends ConsumerState<HomeShell>
   /// SceneDelegate). When we see it, open the pit-stop form and clear the flag.
   Future<void> _checkPendingAction() async {
     if (_openingPitStop) return;
-    String? action;
+    // Claim the guard synchronously: a cold start from the widget fires this
+    // from both initState and the resume callback, and without claiming before
+    // the first await both calls would pass and open the sheet twice.
+    _openingPitStop = true;
     try {
-      action = await HomeWidget.getWidgetData<String>('pending_action');
+      final action = await HomeWidget.getWidgetData<String>('pending_action');
       if (action != 'boxenstopp') return;
       await HomeWidget.saveWidgetData<String>('pending_action', '');
-    } catch (_) {
-      return; // home_widget unavailable (e.g. simulator) — nothing to do.
-    }
-    if (!mounted) return;
-    _openingPitStop = true;
-    setState(() => _index = 0);
-    try {
+      if (!mounted) return;
+      setState(() => _index = 0);
       await recordPitStop(context, ref);
+    } catch (_) {
+      // home_widget unavailable (e.g. simulator) — nothing to do.
     } finally {
       _openingPitStop = false;
     }

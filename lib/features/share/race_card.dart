@@ -7,7 +7,8 @@ import '../../theme/pace_theme.dart';
 /// card stays a deterministic, testable presentation widget.
 class RaceCardData {
   const RaceCardData({
-    required this.bestLabel,
+    required this.heroLabel,
+    required this.heroValue,
     required this.savedMoney,
     required this.avoidedCigarettes,
     required this.streak,
@@ -16,8 +17,12 @@ class RaceCardData {
     required this.carIndex,
   });
 
-  /// Longest clean stretch, preformatted as a lap-time clock ("52:18:09").
-  final String bestLabel;
+  /// Caption above the hero number, e.g. "AKTUELLE RUNDE" or "BESTZEIT" — lets
+  /// us reuse this card for current-lap, overall-best and achievement variants.
+  final String heroLabel;
+
+  /// The hero number itself, preformatted as a lap-time clock ("52:18:09").
+  final String heroValue;
   final String savedMoney;
   final int avoidedCigarettes;
   final int streak;
@@ -123,7 +128,7 @@ class RaceCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'BESTZEIT',
+          data.heroLabel,
           style: PaceTheme.dash(
             size: 24,
             weight: FontWeight.w800,
@@ -140,7 +145,7 @@ class RaceCard extends StatelessWidget {
               colors: [PaceColors.neonCyan, PaceColors.neonMagenta],
             ).createShader(rect),
             child: Text(
-              data.bestLabel,
+              data.heroValue,
               style: PaceTheme.dash(
                 size: 108,
                 weight: FontWeight.w900,
