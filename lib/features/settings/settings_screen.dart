@@ -29,6 +29,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _price = TextEditingController();
   final _perPack = TextEditingController();
+  final _perDay = TextEditingController();
   bool _prefilled = false;
   bool _saving = false;
 
@@ -36,6 +37,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void dispose() {
     _price.dispose();
     _perPack.dispose();
+    _perDay.dispose();
     super.dispose();
   }
 
@@ -47,26 +49,76 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _save() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     final cents = _priceCents();
     final perPack = int.tryParse(_perPack.text.trim()) ?? 0;
-    if (cents == null || perPack <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    final perDay = int.tryParse(_perDay.text.trim()) ?? 0;
+    if (cents == null || perPack <= 0 || perDay <= 0) {
+      messenger.showSnackBar(
         const SnackBar(content: Text('Trag bitte gültige Werte ein.')),
       );
       return;
     }
+    final settings = ref.read(settingsProvider).value;
+    if (settings == null) return;
+
+    final priceChanged = cents != settings.packPriceCents ||
+        perPack != settings.cigarettesPerPack;
+    final baselineChanged = perDay != settings.baselineCigsPerDay;
+    if (!priceChanged && !baselineChanged) {
+      navigator.pop();
+      return;
+    }
+
+    // Changing the daily baseline shifts the whole reference — confirm it.
+    if (baselineChanged) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: PaceColors.panel,
+          title: const Text('Tageskonsum ändern?'),
+          content: const Text(
+            'Dein Tageskonsum ist die Vergleichsbasis. Ihn zu ändern '
+            'verfälscht deine angezeigten Werte (Gespart, Vermieden) deutlich. '
+            'Trotzdem speichern?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Abbrechen'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: PaceColors.neonMagenta,
+                  foregroundColor: Colors.white),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Speichern'),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+
     setState(() => _saving = true);
     HapticFeedback.mediumImpact();
-    await ref.read(databaseProvider).changeCostFrom(
-          packPriceCents: cents,
-          cigarettesPerPack: perPack,
-          at: DateTime.now(),
-        );
+    final db = ref.read(databaseProvider);
+    if (priceChanged) {
+      await db.changeCostFrom(
+        packPriceCents: cents,
+        cigarettesPerPack: perPack,
+        at: DateTime.now(),
+      );
+    }
+    if (baselineChanged) {
+      await db.updateBaseline(perDay);
+    }
     await pushPaceWidget(ref);
     if (!mounted) return;
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Gespeichert — gilt ab jetzt.')),
+    navigator.pop();
+    messenger.showSnackBar(
+      const SnackBar(content: Text('Gespeichert.')),
     );
   }
 
@@ -115,6 +167,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           .toStringAsFixed(2)
           .replaceAll('.', ',');
       _perPack.text = settings.cigarettesPerPack.toString();
+      _perDay.text = settings.baselineCigsPerDay.toString();
       _prefilled = true;
     }
 
@@ -142,9 +195,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   children: [
                     Text(
-                      'Preis oder Packungsgröße geändert? Trag die neuen Werte '
-                      'ein — sie gelten ab jetzt. Was du bisher gespart hast, '
-                      'bleibt zum alten Preis erhalten.',
+                      'Preis oder Packungsgröße geändert? Neue Werte gelten ab '
+                      'jetzt — bisher Gespartes bleibt zum alten Preis erhalten.',
                       style: TextStyle(
                           color: PaceColors.textMuted,
                           fontSize: 14,
@@ -167,6 +219,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       label: 'Kippen pro Schachtel',
                       controller: _perPack,
                       keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16),
+                    _Field(
+                      label: 'Kippen pro Tag (vorher)',
+                      controller: _perDay,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Deine Vergleichsbasis. Ändern verfälscht Gespart & '
+                      'Vermieden — nur korrigieren, wenn du dich vertippt hast.',
+                      style: TextStyle(
+                          color: PaceColors.textFaint,
+                          fontSize: 12,
+                          height: 1.35),
                     ),
                     const SizedBox(height: 24),
                     _SaveButton(saving: _saving, onTap: _saving ? null : _save),

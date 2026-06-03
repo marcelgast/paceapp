@@ -91,6 +91,15 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  /// Corrects the baseline daily-consumption estimate. Unlike price, this is a
+  /// simple overwrite — it shifts the whole expected-consumption reference.
+  Future<void> updateBaseline(int baselineCigsPerDay) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(
+        baselineCigsPerDay: Value(baselineCigsPerDay)),
+    );
+  }
+
   // ---- Settings -----------------------------------------------------------
 
   Stream<AppSettingsRow?> watchSettings() =>
@@ -242,29 +251,6 @@ class AppDatabase extends _$AppDatabase {
         mode: InsertMode.insertOrIgnore,
       );
     });
-  }
-
-  Future<void> updatePitStop({
-    required String id,
-    required DateTime occurredAt,
-    required int cravingLevel,
-    required int stressLevel,
-    String? situationId,
-    String? note,
-  }) {
-    return (update(pitStops)..where((t) => t.id.equals(id))).write(
-      PitStopsCompanion(
-        occurredAt: Value(occurredAt),
-        cravingLevel: Value(cravingLevel),
-        stressLevel: Value(stressLevel),
-        situationId: Value(situationId),
-        note: Value(note),
-      ),
-    );
-  }
-
-  Future<void> deletePitStop(String id) {
-    return (delete(pitStops)..where((t) => t.id.equals(id))).go();
   }
 
   /// Wipes everything and re-seeds defaults — the app drops back to onboarding
