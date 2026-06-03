@@ -1,0 +1,194 @@
+import 'dart:io';
+
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+import 'ids.dart';
+import 'tables.dart';
+
+part 'database.g.dart';
+
+const List<String> kDefaultSituations = [
+  'Arbeit',
+  'Zuhause',
+  'Auto',
+  'Restaurant',
+  'Kaffee',
+  'Alkohol',
+  'Sonstiges',
+];
+
+@DriftDatabase(tables: [AppSettingsRows, Situations, PitStops, Unlocks])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_open());
+  AppDatabase.forTesting(super.executor);
+
+  @override
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+          await seedDefaultSituations();
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) await m.createTable(unlocks);
+        },
+      );
+
+  // ---- Settings -----------------------------------------------------------
+
+  Stream<AppSettingsRow?> watchSettings() =>
+      (select(appSettingsRows)..where((t) => t.id.equals(1)))
+          .watchSingleOrNull();
+
+  Future<AppSettingsRow?> getSettings() =>
+      (select(appSettingsRows)..where((t) => t.id.equals(1)))
+          .getSingleOrNull();
+
+  Future<void> saveOnboarding({
+    required int packPriceCents,
+    required int cigarettesPerPack,
+    required int baselineCigsPerDay,
+    required DateTime startedAt,
+    String currencyCode = 'EUR',
+  }) async {
+    await into(appSettingsRows).insertOnConflictUpdate(
+      AppSettingsRowsCompanion.insert(
+        id: const Value(1),
+        packPriceCents: packPriceCents,
+        cigarettesPerPack: cigarettesPerPack,
+        baselineCigsPerDay: baselineCigsPerDay,
+        startedAt: startedAt,
+        currencyCode: Value(currencyCode),
+        onboardingDone: const Value(true),
+      ),
+    );
+  }
+
+  // ---- Situations ---------------------------------------------------------
+
+  Future<void> seedDefaultSituations() async {
+    for (var i = 0; i < kDefaultSituations.length; i++) {
+      await into(situations).insert(
+        SituationsCompanion.insert(
+          id: newId(),
+          label: kDefaultSituations[i],
+          isBuiltIn: const Value(true),
+          sortOrder: Value(i),
+          createdAt: DateTime.now(),
+        ),
+      );
+    }
+  }
+
+  Stream<List<Situation>> watchAllSituations() {
+    return (select(situations)
+          ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]))
+        .watch();
+  }
+
+  Stream<List<Situation>> watchActiveSituations() {
+    return (select(situations)
+          ..where((t) => t.archivedAt.isNull())
+          ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]))
+        .watch();
+  }
+
+  Future<Situation> addSituation(String label) async {
+    final maxOrder = await (selectOnly(situations)
+          ..addColumns([situations.sortOrder.max()]))
+        .map((row) => row.read(situations.sortOrder.max()))
+        .getSingleOrNull();
+    final row = SituationsCompanion.insert(
+      id: newId(),
+      label: label.trim(),
+      sortOrder: Value((maxOrder ?? 0) + 1),
+      createdAt: DateTime.now(),
+    );
+    await into(situations).insert(row);
+    return (select(situations)..where((t) => t.id.equals(row.id.value)))
+        .getSingle();
+  }
+
+  Future<void> archiveSituation(String id) {
+    return (update(situations)..where((t) => t.id.equals(id)))
+        .write(SituationsCompanion(archivedAt: Value(DateTime.now())));
+  }
+
+  // ---- Pit stops ----------------------------------------------------------
+
+  Future<PitStop?> lastPitStop() {
+    return (select(pitStops)
+          ..orderBy([
+            (t) => OrderingTerm(
+                expression: t.occurredAt, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Stream<List<PitStop>> watchPitStops() {
+    return (select(pitStops)
+          ..orderBy([
+            (t) => OrderingTerm(
+                expression: t.occurredAt, mode: OrderingMode.desc),
+          ]))
+        .watch();
+  }
+
+  // ---- Milestones ---------------------------------------------------------
+
+  Future<Set<String>> celebratedKeys() async {
+    final rows = await select(unlocks).get();
+    return rows.map((r) => r.milestoneKey).toSet();
+  }
+
+  Stream<Set<String>> watchCelebratedKeys() => select(unlocks)
+      .watch()
+      .map((rows) => rows.map((r) => r.milestoneKey).toSet());
+
+  Future<void> markCelebrated(Iterable<String> keys, DateTime at) async {
+    await batch((b) {
+      b.insertAll(
+        unlocks,
+        [for (final k in keys) UnlocksCompanion.insert(milestoneKey: k, achievedAt: at)],
+        mode: InsertMode.insertOrIgnore,
+      );
+    });
+  }
+
+  Future<int> addPitStop({
+    required DateTime occurredAt,
+    required int cravingLevel,
+    required int stressLevel,
+    String? situationId,
+    bool wasEarlyPit = false,
+    int? targetIntervalSeconds,
+    String? note,
+  }) {
+    return into(pitStops).insert(
+      PitStopsCompanion.insert(
+        id: newId(),
+        occurredAt: occurredAt,
+        cravingLevel: cravingLevel,
+        stressLevel: stressLevel,
+        situationId: Value(situationId),
+        wasEarlyPit: Value(wasEarlyPit),
+        targetIntervalSeconds: Value(targetIntervalSeconds),
+        note: Value(note),
+      ),
+    );
+  }
+}
+
+LazyDatabase _open() {
+  return LazyDatabase(() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dir.path, 'pace.sqlite'));
+    return NativeDatabase.createInBackground(file);
+  });
+}
