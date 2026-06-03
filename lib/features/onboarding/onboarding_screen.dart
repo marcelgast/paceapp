@@ -35,7 +35,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   int _step = 0;
   bool _launching = false;
 
-  static const _stepProgress = [0.31, 0.46, 0.61, 0.74];
+  // Indexed by step: 0 welcome, 1-3 questions, 4 measuring-week explainer.
+  static const _stepProgress = [0.06, 0.31, 0.46, 0.61, 0.74];
 
   @override
   void dispose() {
@@ -56,10 +57,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
 
   bool _validateStep(int step) {
     return switch (step) {
-      0 => _priceCents() != null,
-      1 => (int.tryParse(_perPack.text.trim()) ?? 0) > 0,
-      2 => (int.tryParse(_perDay.text.trim()) ?? 0) > 0,
-      _ => true, // the measuring-week explainer has nothing to validate
+      1 => _priceCents() != null,
+      2 => (int.tryParse(_perPack.text.trim()) ?? 0) > 0,
+      3 => (int.tryParse(_perDay.text.trim()) ?? 0) > 0,
+      _ => true, // welcome (0) and explainer (4) have nothing to validate
     };
   }
 
@@ -72,9 +73,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     }
     HapticFeedback.lightImpact();
 
-    if (_step < 3) {
+    if (_step < 4) {
       setState(() => _step++);
-      if (_step == 3) {
+      if (_step == 4) {
         // The staging tree sits behind the keyboard during the questions. Now
         // that it's finally on screen, drop the keyboard and replay the amber
         // cascade slowly so the animation isn't wasted.
@@ -108,6 +109,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
 
   void _back() {
     if (_step == 0) return;
+    FocusScope.of(context).unfocus();
     setState(() => _step--);
     _pager.previousPage(
         duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -178,12 +180,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                               Text('Kein Stopp-Datum. Nur dein Tempo.',
                                   style: TextStyle(
                                       color: PaceColors.textMuted, fontSize: 14)),
-                              const SizedBox(height: 16),
-                              AnimatedBuilder(
-                                animation: _lights,
-                                builder: (_, _) =>
-                                    StartLights(progress: _lights.value),
-                              ),
+                              // The staging tree is the launch ritual — show it
+                              // only on the measuring-week page.
+                              if (_step == 4) ...[
+                                const SizedBox(height: 16),
+                                AnimatedBuilder(
+                                  animation: _lights,
+                                  builder: (_, _) =>
+                                      StartLights(progress: _lights.value),
+                                ),
+                              ],
                             ],
                           ),
                   ),
@@ -193,6 +199,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                       controller: _pager,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
+                        _WelcomePage(onNext: _next),
                         _QuestionPage(
                           eyebrow: 'BOXEN-CHECK · 1/3',
                           headline: 'Was kostet dich eine Schachtel?',
@@ -205,7 +212,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                               onSubmit: _next),
                           buttonLabel: 'WEITER',
                           onNext: _next,
-                          onBack: null,
+                          onBack: _back,
                           launching: false,
                         ),
                         _QuestionPage(
@@ -316,6 +323,152 @@ class _QuestionPage extends StatelessWidget {
             curve: Curves.easeOutCubic,
             duration: 320.ms,
           ),
+    );
+  }
+}
+
+class _WelcomePage extends StatelessWidget {
+  const _WelcomePage({required this.onNext});
+
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 2, 28, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('WILLKOMMEN BEI PACE',
+                      style: TextStyle(
+                          color: PaceColors.neonOrange,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 10),
+                  Text('Dein Rennen, dein Tempo',
+                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
+                          .copyWith(height: 1.05)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Pace bringt dich rauchfrei — Schritt für Schritt, ohne '
+                    'kalten Entzug. Lass dich drauf ein, und das Programm trägt '
+                    'dich in deinem Tempo.',
+                    style: TextStyle(
+                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  ),
+                  const SizedBox(height: 22),
+                  const _FeatureRow(
+                    icon: Icons.insights,
+                    color: PaceColors.neonCyan,
+                    title: 'Erst beobachten',
+                    detail:
+                        'Eine Woche fährst du wie immer — wir lernen still dein Tempo.',
+                  ),
+                  const _FeatureRow(
+                    icon: Icons.trending_up,
+                    color: PaceColors.neonMagenta,
+                    title: 'Dann dehnen',
+                    detail:
+                        'Woche für Woche etwas mehr Zeit zwischen zwei Zigaretten — immer nur, wenn du bereit bist.',
+                  ),
+                  const _FeatureRow(
+                    icon: Icons.emoji_events,
+                    color: PaceColors.neonLime,
+                    title: 'Unterwegs feiern',
+                    detail:
+                        'Schalte Erfolge frei und fahr dir vom gesparten Geld bessere Autos frei.',
+                  ),
+                  const _FeatureRow(
+                    icon: Icons.air,
+                    color: PaceColors.neonOrange,
+                    title: 'Für den Notfall',
+                    detail:
+                        'Akutes Verlangen? Die bewährte Atemübung holt dich da durch.',
+                    last: true,
+                  ),
+                  const SizedBox(height: 18),
+                  Text('Jeder schafft das. In seinem Tempo.',
+                      style: const TextStyle(
+                          color: PaceColors.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.italic)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _PrimaryButton(label: "LOS GEHT'S", onTap: onNext),
+        ],
+      ).animate(key: const ValueKey('welcome')).fadeIn(duration: 320.ms).slideX(
+            begin: 0.15,
+            curve: Curves.easeOutCubic,
+            duration: 320.ms,
+          ),
+    );
+  }
+}
+
+class _FeatureRow extends StatelessWidget {
+  const _FeatureRow({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.detail,
+    this.last = false,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String detail;
+  final bool last;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: last ? 0 : 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(11),
+              border: Border.all(color: color.withValues(alpha: 0.6)),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(detail,
+                    style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 13,
+                        height: 1.35)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
