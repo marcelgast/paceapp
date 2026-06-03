@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'data/database.dart';
 import 'domain/behavior_analysis.dart';
+import 'domain/clean_run.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
@@ -143,12 +144,29 @@ final celebratedKeysProvider = StreamProvider<Set<String>>((ref) {
   return ref.watch(databaseProvider).watchCelebratedKeys();
 });
 
-/// Every milestone currently met by the user's progress.
+/// Current and best clean run derived from the pit-stop history. Smoking resets
+/// [CleanRun.current]; [CleanRun.best] is the record that time milestones use.
+final cleanRunProvider = Provider<CleanRun>((ref) {
+  final settings = ref.watch(settingsProvider).value;
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final now = ref.watch(clockProvider).value;
+  if (settings == null || now == null) {
+    return const CleanRun(current: Duration.zero, best: Duration.zero);
+  }
+  return CleanRun.from(
+    pitTimes: (pitStops ?? const <PitStop>[]).map((p) => p.occurredAt).toList(),
+    startedAt: settings.startedAt,
+    now: now,
+  );
+});
+
+/// Every milestone currently met by the user's progress. Time milestones unlock
+/// on the *best* clean stretch — a record you keep even after a slip-up.
 final achievedMilestonesProvider = Provider<List<Milestone>>((ref) {
   final stats = ref.watch(statsProvider);
   if (stats == null) return const [];
   return MilestoneEvaluator.achieved(
-    sinceStart: stats.sinceStart,
+    bestClean: ref.watch(cleanRunProvider).best,
     savedCents: stats.savedMoneyCents,
     avoided: stats.savedCigarettes.floor(),
   );

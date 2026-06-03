@@ -203,15 +203,17 @@ const List<CarTier> kCarTiers = [
 ];
 
 abstract final class MilestoneEvaluator {
-  /// All milestones currently met by the given progress.
+  /// All milestones currently met by the given progress. Time milestones are
+  /// measured against the longest clean stretch ([bestClean]), not total time —
+  /// you earn "8 h" by actually going 8 h without a cigarette.
   static List<Milestone> achieved({
-    required Duration sinceStart,
+    required Duration bestClean,
     required int savedCents,
     required int avoided,
   }) {
     return kMilestones.where((m) {
       return switch (m.kind) {
-        MilestoneKind.time => sinceStart.inSeconds >= m.threshold,
+        MilestoneKind.time => bestClean.inSeconds >= m.threshold,
         MilestoneKind.money => savedCents >= m.threshold,
         MilestoneKind.avoided => avoided >= m.threshold,
       };

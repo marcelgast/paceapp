@@ -42,13 +42,7 @@ import 'race_card.dart';
 
 /// Card for the current lap — time since the last pit stop.
 RaceCardData currentLapCard(WidgetRef ref) {
-  final settings = ref.read(settingsProvider).value;
-  final pitStops = ref.read(pitStopsProvider).value ?? const [];
-  final lastPit =
-      pitStops.isNotEmpty ? pitStops.first.occurredAt : settings?.startedAt;
-  final currentLap =
-      lastPit == null ? Duration.zero : DateTime.now().difference(lastPit);
-  final clock = formatStintDuration(currentLap);
+  final clock = formatStintDuration(ref.read(cleanRunProvider).current);
   final b = _commonBits(ref);
   return RaceCardData(
     heroLabel: 'AKTUELLE RUNDE',

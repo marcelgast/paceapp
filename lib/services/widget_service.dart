@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../domain/clean_run.dart';
 import '../domain/milestones.dart';
 import '../domain/stint_calculator.dart';
 import '../providers.dart';
@@ -50,21 +51,16 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
   final car = ref.read(currentCarProvider);
   final streak = ref.read(streakProvider).current;
   final pitStops = ref.read(pitStopsProvider).value ?? const [];
+  final pitTimes = pitStops.map((p) => p.occurredAt).toList();
 
-  // Chronological order to measure clean stretches.
-  final asc = [...pitStops]..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
-  final lastPit = asc.isNotEmpty ? asc.last.occurredAt : settings.startedAt;
-
-  // Best stint = longest clean stretch (start→first, between pits, last→now).
-  var best = Duration.zero;
-  var prev = settings.startedAt;
-  for (final p in asc) {
-    final d = p.occurredAt.difference(prev);
-    if (d > best) best = d;
-    prev = p.occurredAt;
-  }
-  final ongoing = now.difference(prev);
-  if (ongoing > best) best = ongoing;
+  final lastPit = pitTimes.isEmpty
+      ? settings.startedAt
+      : pitTimes.reduce((a, b) => a.isAfter(b) ? a : b);
+  final best = CleanRun.from(
+    pitTimes: pitTimes,
+    startedAt: settings.startedAt,
+    now: now,
+  ).best;
 
   final isBaseline = (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
   final timerRef =

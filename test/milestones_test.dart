@@ -3,9 +3,9 @@ import 'package:pace/domain/milestones.dart';
 
 void main() {
   group('MilestoneEvaluator.achieved', () {
-    test('time milestones unlock by elapsed seconds', () {
+    test('time milestones unlock by the best clean stretch', () {
       final keys = MilestoneEvaluator.achieved(
-        sinceStart: const Duration(minutes: 25),
+        bestClean: const Duration(minutes: 25),
         savedCents: 0,
         avoided: 0,
       ).map((m) => m.key);
@@ -15,7 +15,7 @@ void main() {
 
     test('money and avoided unlock independently', () {
       final achieved = MilestoneEvaluator.achieved(
-        sinceStart: Duration.zero,
+        bestClean: Duration.zero,
         savedCents: 600,
         avoided: 12,
       ).map((m) => m.key);
