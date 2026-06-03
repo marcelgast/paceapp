@@ -7,7 +7,7 @@ import '../../theme/pace_theme.dart';
 /// card stays a deterministic, testable presentation widget.
 class RaceCardData {
   const RaceCardData({
-    required this.daysClean,
+    required this.bestLabel,
     required this.savedMoney,
     required this.avoidedCigarettes,
     required this.streak,
@@ -16,7 +16,8 @@ class RaceCardData {
     required this.carIndex,
   });
 
-  final int daysClean;
+  /// Longest clean stretch, preformatted as a lap-time clock ("52:18:09").
+  final String bestLabel;
   final String savedMoney;
   final int avoidedCigarettes;
   final int streak;
@@ -121,29 +122,32 @@ class RaceCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ShaderMask(
-          shaderCallback: (rect) => const LinearGradient(
-            colors: [PaceColors.neonCyan, PaceColors.neonMagenta],
-          ).createShader(rect),
-          child: Text(
-            '${data.daysClean}',
-            style: PaceTheme.dash(
-              size: 132,
-              weight: FontWeight.w900,
-              color: Colors.white,
-              letterSpacing: -2,
-            ).copyWith(shadows: PaceTheme.neonGlow(PaceColors.neonMagenta, blur: 24)),
+        Text(
+          'BESTZEIT',
+          style: PaceTheme.dash(
+            size: 24,
+            weight: FontWeight.w800,
+            color: PaceColors.neonMagenta,
+            letterSpacing: 7,
           ),
         ),
-        Transform.translate(
-          offset: const Offset(2, -8),
-          child: Text(
-            data.daysClean == 1 ? 'TAG CLEAN' : 'TAGE CLEAN',
-            style: PaceTheme.dash(
-              size: 30,
-              weight: FontWeight.w800,
-              color: Colors.white,
-              letterSpacing: 6,
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: ShaderMask(
+            shaderCallback: (rect) => const LinearGradient(
+              colors: [PaceColors.neonCyan, PaceColors.neonMagenta],
+            ).createShader(rect),
+            child: Text(
+              data.bestLabel,
+              style: PaceTheme.dash(
+                size: 108,
+                weight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: -1,
+              ).copyWith(
+                  shadows: PaceTheme.neonGlow(PaceColors.neonMagenta, blur: 24)),
             ),
           ),
         ),

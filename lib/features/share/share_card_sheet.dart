@@ -20,8 +20,26 @@ RaceCardData buildRaceCardData(WidgetRef ref) {
   final streak = ref.read(streakProvider);
   final car = ref.read(currentCarProvider);
   final settings = ref.read(settingsProvider).value;
+  final pitStops = ref.read(pitStopsProvider).value ?? const [];
+
+  // Best stint = longest clean stretch (start → first pit, between pits,
+  // last pit → now).
+  var best = Duration.zero;
+  if (settings != null) {
+    final asc = [...pitStops]
+      ..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
+    var prev = settings.startedAt;
+    for (final p in asc) {
+      final d = p.occurredAt.difference(prev);
+      if (d > best) best = d;
+      prev = p.occurredAt;
+    }
+    final ongoing = DateTime.now().difference(prev);
+    if (ongoing > best) best = ongoing;
+  }
+
   return RaceCardData(
-    daysClean: stats?.sinceStart.inDays ?? 0,
+    bestLabel: formatStintDuration(best),
     savedMoney: formatMoneyCents(
       stats?.savedMoneyCents ?? 0,
       currencyCode: settings?.currencyCode ?? 'EUR',
@@ -79,7 +97,7 @@ class _ShareCardSheetState extends State<_ShareCardSheet> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'image/png')],
-          text: 'Tag ${widget.data.daysClean} rauchfrei. 🏁',
+          text: 'Meine Bestzeit: ${widget.data.bestLabel} ohne Zigarette. 🏁',
           sharePositionOrigin:
               box == null ? null : box.localToGlobal(Offset.zero) & box.size,
         ),
