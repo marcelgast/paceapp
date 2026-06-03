@@ -38,6 +38,7 @@ class BehaviorAnalysis {
     required this.earlyRate,
     required this.bySituation,
     required this.last7Days,
+    required this.medianPace,
   });
 
   final int total;
@@ -47,6 +48,10 @@ class BehaviorAnalysis {
   final double earlyRate;
   final List<SituationCount> bySituation;
   final List<DayCount> last7Days;
+
+  /// Median time between cigarettes over the last 7 days — the "pace".
+  /// Grows as the user stretches their intervals. Null with too little data.
+  final Duration? medianPace;
 
   static const String noSituationLabel = 'Ohne Angabe';
 
@@ -66,6 +71,7 @@ class BehaviorAnalysis {
         earlyRate: 0,
         bySituation: const [],
         last7Days: empty7,
+        medianPace: null,
       );
     }
 
@@ -106,7 +112,29 @@ class BehaviorAnalysis {
       earlyRate: early / total,
       bySituation: bySituation,
       last7Days: last7,
+      medianPace: _medianPace(samples, now),
     );
+  }
+
+  /// Median gap between consecutive cigarettes in the last 7 days.
+  static Duration? _medianPace(List<PitSample> samples, DateTime now) {
+    final from = now.subtract(const Duration(days: 7));
+    final times = samples
+        .map((s) => s.occurredAt)
+        .where((t) => t.isAfter(from))
+        .toList()
+      ..sort();
+    if (times.length < 2) return null;
+
+    final gaps = <int>[
+      for (var i = 1; i < times.length; i++)
+        times[i].difference(times[i - 1]).inSeconds,
+    ]..sort();
+    final mid = gaps.length ~/ 2;
+    final median = gaps.length.isOdd
+        ? gaps[mid]
+        : ((gaps[mid - 1] + gaps[mid]) / 2).round();
+    return Duration(seconds: median);
   }
 
   static List<DayCount> _last7DaysScaffold(DateTime now) {

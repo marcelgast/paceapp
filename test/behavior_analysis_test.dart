@@ -45,6 +45,28 @@ void main() {
     expect(a.bySituation.map((s) => s.label), contains(BehaviorAnalysis.noSituationLabel));
   });
 
+  group('medianPace', () {
+    test('is null with fewer than two pit stops', () {
+      final a = BehaviorAnalysis.from([sample(now)], labels: {}, now: now);
+      expect(a.medianPace, isNull);
+    });
+
+    test('is the median gap between cigarettes', () {
+      // Gaps of 60, 60, 120 min -> median 60 min.
+      final a = BehaviorAnalysis.from(
+        [
+          sample(now.subtract(const Duration(minutes: 240))),
+          sample(now.subtract(const Duration(minutes: 180))),
+          sample(now.subtract(const Duration(minutes: 120))),
+          sample(now),
+        ],
+        labels: {},
+        now: now,
+      );
+      expect(a.medianPace, const Duration(minutes: 60));
+    });
+  });
+
   test('buckets pit stops into the right day', () {
     final a = BehaviorAnalysis.from(
       [
