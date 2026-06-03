@@ -39,6 +39,7 @@ class BehaviorAnalysis {
     required this.bySituation,
     required this.last7Days,
     required this.medianPace,
+    required this.previousMedianPace,
   });
 
   final int total;
@@ -52,6 +53,9 @@ class BehaviorAnalysis {
   /// Median time between cigarettes over the last 7 days — the "pace".
   /// Grows as the user stretches their intervals. Null with too little data.
   final Duration? medianPace;
+
+  /// Median pace over the week before that (days 7–14 ago), for a trend.
+  final Duration? previousMedianPace;
 
   static const String noSituationLabel = 'Ohne Angabe';
 
@@ -72,6 +76,7 @@ class BehaviorAnalysis {
         bySituation: const [],
         last7Days: empty7,
         medianPace: null,
+        previousMedianPace: null,
       );
     }
 
@@ -112,16 +117,20 @@ class BehaviorAnalysis {
       earlyRate: early / total,
       bySituation: bySituation,
       last7Days: last7,
-      medianPace: _medianPace(samples, now),
+      medianPace: _medianPaceBetween(
+          samples, now.subtract(const Duration(days: 7)), now),
+      previousMedianPace: _medianPaceBetween(samples,
+          now.subtract(const Duration(days: 14)),
+          now.subtract(const Duration(days: 7))),
     );
   }
 
-  /// Median gap between consecutive cigarettes in the last 7 days.
-  static Duration? _medianPace(List<PitSample> samples, DateTime now) {
-    final from = now.subtract(const Duration(days: 7));
+  /// Median gap between consecutive cigarettes in the window [from, to).
+  static Duration? _medianPaceBetween(
+      List<PitSample> samples, DateTime from, DateTime to) {
     final times = samples
         .map((s) => s.occurredAt)
-        .where((t) => t.isAfter(from))
+        .where((t) => !t.isBefore(from) && t.isBefore(to))
         .toList()
       ..sort();
     if (times.length < 2) return null;

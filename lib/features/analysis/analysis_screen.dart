@@ -26,7 +26,8 @@ class AnalysisScreen extends ConsumerWidget {
                   children: [
                     const GraffitiHeadline('Race Analysis', size: 26),
                     const SizedBox(height: 16),
-                    _MedianPaceCard(pace: a.medianPace),
+                    _MedianPaceCard(
+                        pace: a.medianPace, prev: a.previousMedianPace),
                     const SizedBox(height: 16),
                     _SummaryRow(a: a),
                     const SizedBox(height: 28),
@@ -46,9 +47,10 @@ class AnalysisScreen extends ConsumerWidget {
 }
 
 class _MedianPaceCard extends StatelessWidget {
-  const _MedianPaceCard({required this.pace});
+  const _MedianPaceCard({required this.pace, required this.prev});
 
   final Duration? pace;
+  final Duration? prev;
 
   @override
   Widget build(BuildContext context) {
@@ -57,19 +59,12 @@ class _MedianPaceCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            PaceColors.neonCyan.withValues(alpha: 0.18),
-            PaceColors.neonLime.withValues(alpha: 0.12),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: PaceColors.panel,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.5)),
+        border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.7)),
         boxShadow: [
           BoxShadow(
-              color: PaceColors.neonCyan.withValues(alpha: 0.12), blurRadius: 22),
+              color: PaceColors.neonCyan.withValues(alpha: 0.18), blurRadius: 22),
         ],
       ),
       child: Column(
@@ -88,14 +83,26 @@ class _MedianPaceCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            has ? 'alle ${formatHumanDuration(pace!)}' : 'sammelt noch …',
-            style: PaceTheme.dash(
-                size: has ? 40 : 28,
-                weight: FontWeight.w900,
-                color: has ? Colors.white : PaceColors.textMuted),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Flexible(
+                child: Text(
+                  has ? 'alle ${formatHumanDuration(pace!)}' : 'sammelt noch …',
+                  style: PaceTheme.dash(
+                      size: has ? 38 : 26,
+                      weight: FontWeight.w900,
+                      color: has ? Colors.white : PaceColors.textMuted),
+                ),
+              ),
+              if (has && prev != null) ...[
+                const SizedBox(width: 10),
+                _TrendChip(delta: pace! - prev!),
+              ],
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             has
                 ? 'Typischer Abstand zwischen zwei Kippen — je größer, desto besser 🏁'
@@ -104,6 +111,35 @@ class _MedianPaceCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TrendChip extends StatelessWidget {
+  const _TrendChip({required this.delta});
+
+  final Duration delta;
+
+  @override
+  Widget build(BuildContext context) {
+    final flat = delta.inMinutes.abs() < 1;
+    final up = delta.inSeconds > 0;
+    final color = flat
+        ? PaceColors.textMuted
+        : (up ? PaceColors.neonLime : PaceColors.neonOrange);
+    final label = flat
+        ? '= Vorwoche'
+        : '${up ? '▲' : '▼'} ${formatHumanDuration(delta.abs())}';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(label,
+          style: TextStyle(
+              color: color, fontSize: 12, fontWeight: FontWeight.w800)),
     );
   }
 }
