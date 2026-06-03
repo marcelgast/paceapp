@@ -10,6 +10,7 @@ import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
 import '../gamification/milestone_style.dart';
+import '../share/share_card_sheet.dart';
 import 'car_art.dart';
 
 class TrophiesScreen extends ConsumerWidget {
@@ -33,7 +34,13 @@ class TrophiesScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-                  child: const GraffitiHeadline('Pokalvitrine', size: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const GraffitiHeadline('Pokalvitrine', size: 30),
+                      _ShareChip(onTap: () => showRaceCardSheet(context, ref)),
+                    ],
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -90,6 +97,38 @@ class TrophiesScreen extends ConsumerWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShareChip extends StatelessWidget {
+  const _ShareChip({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: PaceColors.neonMagenta),
+          color: PaceColors.neonMagenta.withValues(alpha: 0.12),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
+            SizedBox(width: 6),
+            Text('Teilen',
+                style: TextStyle(
+                    color: PaceColors.neonMagenta,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700)),
+          ],
         ),
       ),
     );
