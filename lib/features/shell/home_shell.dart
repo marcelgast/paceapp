@@ -8,6 +8,7 @@ import '../analysis/analysis_screen.dart';
 import '../cockpit/cockpit_screen.dart';
 import '../cockpit/pit_stop_action.dart';
 import '../journal/journal_screen.dart';
+import '../recovery/recovery_screen.dart';
 import '../trophies/trophies_screen.dart';
 
 class HomeShell extends ConsumerStatefulWidget {
@@ -24,6 +25,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
   static const _tabs = [
     CockpitScreen(),
     AnalysisScreen(),
+    RecoveryScreen(),
     TrophiesScreen(),
     JournalScreen(),
   ];
@@ -113,6 +115,12 @@ class _HomeShellState extends ConsumerState<HomeShell>
                 icon: Icon(Icons.insights_outlined),
                 selectedIcon: Icon(Icons.insights, color: PaceColors.neonMagenta),
                 label: 'Analyse',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.monitor_heart_outlined),
+                selectedIcon:
+                    Icon(Icons.monitor_heart, color: PaceColors.neonMagenta),
+                label: 'Körper',
               ),
               NavigationDestination(
                 icon: Icon(Icons.emoji_events_outlined),
