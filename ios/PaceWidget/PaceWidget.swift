@@ -108,11 +108,14 @@ struct PaceWidgetEntryView: View {
     }
 
     private var header: some View {
-        HStack {
+        HStack(spacing: 4) {
             Text("PACE").font(.system(size: 15, weight: .heavy, design: .rounded)).italic()
                 .foregroundColor(.white)
             Spacer()
-            Image(systemName: "flame.fill").foregroundColor(magenta).font(.system(size: 11))
+            Image(systemName: "flame.fill").foregroundColor(orange).font(.system(size: 12))
+            Text("\(entry.streak)")
+                .font(.system(size: 14, weight: .heavy, design: .rounded))
+                .foregroundColor(orange)
         }
     }
 
@@ -149,7 +152,7 @@ struct PaceWidgetEntryView: View {
             Text(entry.car)
                 .font(.system(size: 12, weight: .heavy, design: .rounded))
                 .foregroundColor(.white).lineLimit(1).minimumScaleFactor(0.7)
-            miniStat("STREAK", entry.streak > 0 ? "\(entry.streak) Tage" : "—", orange)
+            miniStat("BESTZEIT", entry.best, cyan)
             miniStat("GESPART", entry.savedMoney, lime)
         }
         .padding(.top, 2)

@@ -4,7 +4,6 @@ import 'package:home_widget/home_widget.dart';
 
 import '../domain/milestones.dart';
 import '../domain/stint_calculator.dart';
-import '../features/trophies/car_art.dart';
 import '../providers.dart';
 import '../util/format.dart';
 
@@ -73,11 +72,10 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
 
   try {
     await WidgetService.init();
-    // Render the current car to a PNG the SwiftUI widget can show.
-    await HomeWidget.renderFlutterWidget(
-      CarArt(tierIndex: kCarTiers.indexOf(car), width: 220),
-      key: 'car_image',
-      logicalSize: const Size(220, 123),
+    // Save the current car asset into the App Group for the SwiftUI widget.
+    await HomeWidget.saveImage(
+      'car_image',
+      AssetImage('assets/cars/car_${kCarTiers.indexOf(car).clamp(0, 6)}.png'),
     );
     await WidgetService.write(
       isBaseline: isBaseline,
