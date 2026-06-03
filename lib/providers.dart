@@ -190,11 +190,28 @@ final statsProvider = Provider<PaceStats?>((ref) {
   final now = ref.watch(clockProvider).value;
   if (settings == null || now == null) return null;
 
+  final all = pitStops ?? const <PitStop>[];
+  final sinceStart = now.difference(settings.startedAt);
+  final measuringEnd = settings.startedAt.add(StintCalculator.baselineDuration);
+
+  // Counterfactual rate from real data: running rate while still measuring,
+  // then the measured baseline (week-1 cigarettes ÷ 7). Falls back to the
+  // onboarding estimate only if no baseline was ever logged.
+  final double dailyRate;
+  if (now.isBefore(measuringEnd)) {
+    final days = sinceStart.inSeconds / Duration.secondsPerDay;
+    dailyRate = days > 0 ? all.length / days : 0;
+  } else {
+    final week1 = all.where((p) => p.occurredAt.isBefore(measuringEnd)).length;
+    final measured = week1 / StintCalculator.baselineDuration.inDays;
+    dailyRate = measured > 0 ? measured : settings.baselineCigsPerDay.toDouble();
+  }
+
   return PaceStats.compute(
-    sinceStart: now.difference(settings.startedAt),
+    sinceStart: sinceStart,
     packPriceCents: settings.packPriceCents,
     cigarettesPerPack: settings.cigarettesPerPack,
-    baselineCigsPerDay: settings.baselineCigsPerDay,
-    actualCigarettes: pitStops?.length ?? 0,
+    dailyRate: dailyRate,
+    actualCigarettes: all.length,
   );
 });

@@ -97,7 +97,7 @@ void main() {
         sinceStart: const Duration(days: 1),
         packPriceCents: 800,
         cigarettesPerPack: 20,
-        baselineCigsPerDay: 20,
+        dailyRate: 20,
         actualCigarettes: 12,
       );
       expect(stats.costPerCigaretteCents, 40);
@@ -110,7 +110,7 @@ void main() {
         sinceStart: const Duration(days: 1),
         packPriceCents: 800,
         cigarettesPerPack: 20,
-        baselineCigsPerDay: 20,
+        dailyRate: 20,
         actualCigarettes: 40,
       );
       expect(stats.savedCigarettes, 0);

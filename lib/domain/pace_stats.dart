@@ -33,7 +33,7 @@ class PaceStats {
     required Duration sinceStart,
     required int packPriceCents,
     required int cigarettesPerPack,
-    required int baselineCigsPerDay,
+    required double dailyRate,
     required int actualCigarettes,
   }) {
     final perCig = centsPerCigarette(
@@ -41,7 +41,7 @@ class PaceStats {
       cigarettesPerPack: cigarettesPerPack,
     );
     final days = sinceStart.inSeconds / Duration.secondsPerDay;
-    final expected = baselineCigsPerDay * days;
+    final expected = dailyRate * days;
     final saved = (expected - actualCigarettes).clamp(0.0, double.infinity);
     return PaceStats(
       costPerCigaretteCents: perCig,
