@@ -142,20 +142,22 @@ struct PaceWidgetEntryView: View {
     }
 
     private var statsColumn: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             if let path = entry.carImagePath, let img = UIImage(contentsOfFile: path) {
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 44)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 72)
             }
             Text(entry.car)
                 .font(.system(size: 12, weight: .heavy, design: .rounded))
                 .foregroundColor(.white).lineLimit(1).minimumScaleFactor(0.7)
-            miniStat("BESTZEIT", entry.best, cyan)
-            miniStat("GESPART", entry.savedMoney, lime)
+            HStack(alignment: .top, spacing: 12) {
+                miniStat("BESTZEIT", entry.best, cyan)
+                miniStat("GESPART", entry.savedMoney, lime)
+            }
         }
-        .padding(.top, 2)
     }
 
     private func miniStat(_ title: String, _ value: String, _ color: Color) -> some View {
