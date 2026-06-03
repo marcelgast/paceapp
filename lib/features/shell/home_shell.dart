@@ -31,7 +31,13 @@ class _HomeShellState extends ConsumerState<HomeShell>
     JournalScreen(),
   ];
 
-  bool _openingPitStop = false;
+  // Static so the guard survives any State rebuild/remount, and a cooldown on
+  // top: a widget cold-launch fires _checkPendingAction from both the initState
+  // post-frame and the resume callback. The in-flight flag stops the
+  // simultaneous case; the timestamp stops a second consumption if the two
+  // triggers are far enough apart that the first already finished.
+  static bool _consumingPitStop = false;
+  static DateTime? _pitStopConsumedAt;
 
   @override
   void initState() {
@@ -64,22 +70,25 @@ class _HomeShellState extends ConsumerState<HomeShell>
   /// The widget's Boxenstopp button writes a flag into the App Group (via the
   /// SceneDelegate). When we see it, open the pit-stop form and clear the flag.
   Future<void> _checkPendingAction() async {
-    if (_openingPitStop) return;
-    // Claim the guard synchronously: a cold start from the widget fires this
-    // from both initState and the resume callback, and without claiming before
-    // the first await both calls would pass and open the sheet twice.
-    _openingPitStop = true;
+    if (_consumingPitStop) return;
+    final consumedAt = _pitStopConsumedAt;
+    if (consumedAt != null &&
+        DateTime.now().difference(consumedAt) < const Duration(seconds: 3)) {
+      return;
+    }
+    _consumingPitStop = true;
     try {
       final action = await HomeWidget.getWidgetData<String>('pending_action');
       if (action != 'boxenstopp') return;
       await HomeWidget.saveWidgetData<String>('pending_action', '');
+      _pitStopConsumedAt = DateTime.now();
       if (!mounted) return;
       setState(() => _index = 0);
       await recordPitStop(context, ref);
     } catch (_) {
       // home_widget unavailable (e.g. simulator) — nothing to do.
     } finally {
-      _openingPitStop = false;
+      _consumingPitStop = false;
     }
   }
 

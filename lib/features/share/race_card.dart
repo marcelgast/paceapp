@@ -15,14 +15,22 @@ class RaceCardData {
     required this.carName,
     required this.carTagline,
     required this.carIndex,
+    required this.shareText,
+    this.subline,
   });
 
-  /// Caption above the hero number, e.g. "AKTUELLE RUNDE" or "BESTZEIT" — lets
-  /// us reuse this card for current-lap, overall-best and achievement variants.
+  /// Caption above the hero, e.g. "AKTUELLE RUNDE", "BESTZEIT" or "MEILENSTEIN"
+  /// — lets us reuse this card for current-lap, overall-best and achievements.
   final String heroLabel;
 
-  /// The hero number itself, preformatted as a lap-time clock ("52:18:09").
+  /// The hero itself: a lap-time clock ("52:18:09") or a milestone title.
   final String heroValue;
+
+  /// Optional line under the hero — e.g. a milestone's recovery fact.
+  final String? subline;
+
+  /// Caption shared alongside the image in the iOS share sheet.
+  final String shareText;
   final String savedMoney;
   final int avoidedCigarettes;
   final int streak;
@@ -156,6 +164,19 @@ class RaceCard extends StatelessWidget {
             ),
           ),
         ),
+        if (data.subline != null) ...[
+          const SizedBox(height: 10),
+          Text(
+            data.subline!,
+            maxLines: 3,
+            style: const TextStyle(
+              color: PaceColors.textPrimary,
+              fontSize: 15,
+              height: 1.35,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -14,28 +14,25 @@ import '../../theme/pace_theme.dart';
 import '../../util/format.dart';
 import 'race_card.dart';
 
-/// Snapshots the current app state into the values a [RaceCard] shows.
-RaceCardData buildRaceCardData(WidgetRef ref) {
+/// The snapshot bits every card variant shows: car, money, avoided, streak.
+({
+  String savedMoney,
+  int avoided,
+  int streak,
+  String carName,
+  String carTagline,
+  int carIndex,
+}) _commonBits(WidgetRef ref) {
   final stats = ref.read(statsProvider);
   final streak = ref.read(streakProvider);
   final car = ref.read(currentCarProvider);
   final settings = ref.read(settingsProvider).value;
-  final pitStops = ref.read(pitStopsProvider).value ?? const [];
-
-  // Current lap = time since the last pit stop (or since the start if none yet).
-  final lastPit =
-      pitStops.isNotEmpty ? pitStops.first.occurredAt : settings?.startedAt;
-  final currentLap =
-      lastPit == null ? Duration.zero : DateTime.now().difference(lastPit);
-
-  return RaceCardData(
-    heroLabel: 'AKTUELLE RUNDE',
-    heroValue: formatStintDuration(currentLap),
+  return (
     savedMoney: formatMoneyCents(
       stats?.savedMoneyCents ?? 0,
       currencyCode: settings?.currencyCode ?? 'EUR',
     ),
-    avoidedCigarettes: stats?.savedCigarettes.floor() ?? 0,
+    avoided: stats?.savedCigarettes.floor() ?? 0,
     streak: streak.current,
     carName: car.name,
     carTagline: car.tagline,
@@ -43,9 +40,48 @@ RaceCardData buildRaceCardData(WidgetRef ref) {
   );
 }
 
-/// Opens the share preview with the current snapshot.
-Future<void> showRaceCardSheet(BuildContext context, WidgetRef ref) {
-  final data = buildRaceCardData(ref);
+/// Card for the current lap — time since the last pit stop.
+RaceCardData currentLapCard(WidgetRef ref) {
+  final settings = ref.read(settingsProvider).value;
+  final pitStops = ref.read(pitStopsProvider).value ?? const [];
+  final lastPit =
+      pitStops.isNotEmpty ? pitStops.first.occurredAt : settings?.startedAt;
+  final currentLap =
+      lastPit == null ? Duration.zero : DateTime.now().difference(lastPit);
+  final clock = formatStintDuration(currentLap);
+  final b = _commonBits(ref);
+  return RaceCardData(
+    heroLabel: 'AKTUELLE RUNDE',
+    heroValue: clock,
+    shareText: 'Aktuelle Runde: $clock ohne Zigarette. 🏁',
+    savedMoney: b.savedMoney,
+    avoidedCigarettes: b.avoided,
+    streak: b.streak,
+    carName: b.carName,
+    carTagline: b.carTagline,
+    carIndex: b.carIndex,
+  );
+}
+
+/// Card for an unlocked milestone.
+RaceCardData milestoneCard(WidgetRef ref, Milestone milestone) {
+  final b = _commonBits(ref);
+  return RaceCardData(
+    heroLabel: 'MEILENSTEIN',
+    heroValue: milestone.title,
+    subline: milestone.detail,
+    shareText: 'Meilenstein geknackt: ${milestone.title} 🏁',
+    savedMoney: b.savedMoney,
+    avoidedCigarettes: b.avoided,
+    streak: b.streak,
+    carName: b.carName,
+    carTagline: b.carTagline,
+    carIndex: b.carIndex,
+  );
+}
+
+/// Opens the share preview for a prepared card.
+Future<void> showRaceCardSheet(BuildContext context, RaceCardData data) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -88,7 +124,7 @@ class _ShareCardSheetState extends State<_ShareCardSheet> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'image/png')],
-          text: 'Aktuelle Runde: ${widget.data.heroValue} ohne Zigarette. 🏁',
+          text: widget.data.shareText,
           sharePositionOrigin:
               box == null ? null : box.localToGlobal(Offset.zero) & box.size,
         ),

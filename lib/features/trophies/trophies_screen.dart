@@ -38,7 +38,9 @@ class TrophiesScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const GraffitiHeadline('Pokalvitrine', size: 30),
-                      _ShareChip(onTap: () => showRaceCardSheet(context, ref)),
+                      _ShareChip(
+                          onTap: () => showRaceCardSheet(
+                              context, currentLapCard(ref))),
                     ],
                   ),
                 ),
@@ -86,9 +88,14 @@ class TrophiesScreen extends ConsumerWidget {
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
                       final m = kMilestones[i];
+                      final unlocked = achieved.contains(m.key);
                       return _MilestoneTile(
                         milestone: m,
-                        unlocked: achieved.contains(m.key),
+                        unlocked: unlocked,
+                        onShare: unlocked
+                            ? () => showRaceCardSheet(
+                                context, milestoneCard(ref, m))
+                            : null,
                       );
                     },
                     childCount: kMilestones.length,
@@ -294,57 +301,78 @@ class _GarageCard extends StatelessWidget {
 }
 
 class _MilestoneTile extends StatelessWidget {
-  const _MilestoneTile({required this.milestone, required this.unlocked});
+  const _MilestoneTile({
+    required this.milestone,
+    required this.unlocked,
+    this.onShare,
+  });
 
   final Milestone milestone;
   final bool unlocked;
+  final VoidCallback? onShare;
 
   @override
   Widget build(BuildContext context) {
     final style = MilestoneStyle.of(milestone.kind);
     final color = unlocked ? style.color : PaceColors.textFaint;
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: PaceColors.panel.withValues(alpha: unlocked ? 0.9 : 0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: unlocked
-              ? style.color.withValues(alpha: 0.6)
-              : PaceColors.chrome.withValues(alpha: 0.4),
+    return GestureDetector(
+      onTap: onShare,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: PaceColors.panel.withValues(alpha: unlocked ? 0.9 : 0.5),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: unlocked
+                ? style.color.withValues(alpha: 0.6)
+                : PaceColors.chrome.withValues(alpha: 0.4),
+          ),
+          boxShadow: unlocked
+              ? [BoxShadow(color: style.color.withValues(alpha: 0.2), blurRadius: 16)]
+              : null,
         ),
-        boxShadow: unlocked
-            ? [BoxShadow(color: style.color.withValues(alpha: 0.2), blurRadius: 16)]
-            : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(unlocked ? style.icon : Icons.lock_outline, color: color, size: 26),
-              Text(style.label,
-                  style: TextStyle(
-                      color: color.withValues(alpha: 0.8),
-                      fontSize: 9,
-                      letterSpacing: 1.5,
-                      fontWeight: FontWeight.w700)),
-            ],
-          ),
-          Text(
-            milestone.title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: unlocked ? PaceColors.textPrimary : PaceColors.textMuted,
-              fontWeight: FontWeight.w700,
-              fontSize: 15,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(unlocked ? style.icon : Icons.lock_outline,
+                    color: color, size: 26),
+                Text(style.label,
+                    style: TextStyle(
+                        color: color.withValues(alpha: 0.8),
+                        fontSize: 9,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w700)),
+              ],
             ),
-          ),
-        ],
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Text(
+                    milestone.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: unlocked
+                          ? PaceColors.textPrimary
+                          : PaceColors.textMuted,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                if (unlocked)
+                  Icon(Icons.ios_share,
+                      color: style.color.withValues(alpha: 0.85), size: 16),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

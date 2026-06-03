@@ -10,6 +10,7 @@ import '../../domain/milestones.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../widgets/graffiti_headline.dart';
+import '../share/share_card_sheet.dart';
 import 'milestone_style.dart';
 
 /// Wraps the app and pops a celebration whenever a milestone is newly reached —
@@ -87,6 +88,8 @@ class _CelebrationHostState extends ConsumerState<CelebrationHost> {
             milestone: _current!,
             confetti: _confetti,
             onDismiss: _dismiss,
+            onShare: () =>
+                showRaceCardSheet(context, milestoneCard(ref, _current!)),
           ),
       ],
     );
@@ -98,11 +101,13 @@ class _CelebrationOverlay extends StatelessWidget {
     required this.milestone,
     required this.confetti,
     required this.onDismiss,
+    required this.onShare,
   });
 
   final Milestone milestone;
   final ConfettiController confetti;
   final VoidCallback onDismiss;
+  final VoidCallback onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +196,16 @@ class _CelebrationOverlay extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 6),
+                    TextButton.icon(
+                      onPressed: onShare,
+                      icon: Icon(Icons.ios_share, color: style.color, size: 18),
+                      label: Text('Als Karte teilen',
+                          style: TextStyle(
+                              color: style.color,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14)),
                     ),
                   ],
                 ),
