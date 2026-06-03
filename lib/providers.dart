@@ -273,11 +273,17 @@ final statsProvider = Provider<PaceStats?>((ref) {
     dailyRate = measured > 0 ? measured : settings.baselineCigsPerDay.toDouble();
   }
 
+  final pitElapsed = all
+      .map((p) => p.occurredAt.difference(settings.startedAt))
+      .where((d) => !d.isNegative)
+      .toList()
+    ..sort();
+
   return PaceStats.compute(
     sinceStart: sinceStart,
     packPriceCents: settings.packPriceCents,
     cigarettesPerPack: settings.cigarettesPerPack,
     dailyRate: dailyRate,
-    actualCigarettes: all.length,
+    pitElapsed: pitElapsed,
   );
 });

@@ -91,30 +91,39 @@ void main() {
   });
 
   group('PaceStats', () {
+    PaceStats statsFor(List<Duration> pits) => PaceStats.compute(
+          sinceStart: const Duration(days: 1),
+          packPriceCents: 800,
+          cigarettesPerPack: 20,
+          dailyRate: 20,
+          pitElapsed: pits,
+        );
+
     test('savings accrue against the baseline rate', () {
-      // 20/day baseline, 1 day elapsed, smoked 12 → saved 8 cigarettes.
-      final stats = PaceStats.compute(
-        sinceStart: const Duration(days: 1),
-        packPriceCents: 800,
-        cigarettesPerPack: 20,
-        dailyRate: 20,
-        actualCigarettes: 12,
-      );
+      // 20/day baseline, 1 day elapsed, smoked 12 early → saved 8 cigarettes.
+      final stats = statsFor(List.filled(12, Duration.zero));
       expect(stats.costPerCigaretteCents, 40);
       expect(stats.savedCigarettes, closeTo(8, 0.0001));
       expect(stats.savedMoneyCents, 320);
     });
 
     test('never goes negative when over baseline', () {
-      final stats = PaceStats.compute(
-        sinceStart: const Duration(days: 1),
-        packPriceCents: 800,
-        cigarettesPerPack: 20,
-        dailyRate: 20,
-        actualCigarettes: 40,
-      );
+      final stats = statsFor(List.filled(40, Duration.zero));
       expect(stats.savedCigarettes, 0);
       expect(stats.savedMoneyCents, 0);
+    });
+
+    test('saved never drops when another cigarette is logged', () {
+      // Built up a lead, then smoke one more right now.
+      final before = statsFor(List.filled(5, Duration.zero));
+      final after = statsFor([
+        ...List.filled(5, Duration.zero),
+        const Duration(days: 1),
+      ]);
+      expect(after.savedCigarettes,
+          greaterThanOrEqualTo(before.savedCigarettes));
+      expect(after.savedMoneyCents,
+          greaterThanOrEqualTo(before.savedMoneyCents));
     });
   });
 }
