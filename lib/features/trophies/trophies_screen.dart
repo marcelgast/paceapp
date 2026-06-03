@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/milestones.dart';
@@ -9,6 +10,7 @@ import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
 import '../gamification/milestone_style.dart';
+import 'car_art.dart';
 
 class TrophiesScreen extends ConsumerWidget {
   const TrophiesScreen({super.key});
@@ -36,8 +38,23 @@ class TrophiesScreen extends ConsumerWidget {
               ),
               SliverToBoxAdapter(
                 child: _GarageCard(
-                    car: car, nextCar: nextCar, savedCents: savedCents),
+                    car: car,
+                    carIndex: kCarTiers.indexOf(car),
+                    nextCar: nextCar,
+                    savedCents: savedCents),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
+                  child: Text('GARAGE',
+                      style: TextStyle(
+                          color: PaceColors.textMuted,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w700)),
+                ),
+              ),
+              SliverToBoxAdapter(child: _GarageRow(savedCents: savedCents)),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
@@ -79,14 +96,72 @@ class TrophiesScreen extends ConsumerWidget {
   }
 }
 
+class _GarageRow extends StatelessWidget {
+  const _GarageRow({required this.savedCents});
+
+  final int savedCents;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 132,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: kCarTiers.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, i) {
+          final tier = kCarTiers[i];
+          final unlocked = savedCents >= tier.unlockCents;
+          final accent = CarArt.colorFor(i);
+          return Container(
+            width: 158,
+            padding: const EdgeInsets.fromLTRB(10, 12, 10, 10),
+            decoration: BoxDecoration(
+              color: PaceColors.panel.withValues(alpha: unlocked ? 0.9 : 0.5),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: unlocked
+                    ? accent.withValues(alpha: 0.5)
+                    : PaceColors.chrome.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Column(
+              children: [
+                CarArt(tierIndex: i, width: 134, unlocked: unlocked),
+                const Spacer(),
+                Text(tier.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: unlocked
+                            ? PaceColors.textPrimary
+                            : PaceColors.textMuted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700)),
+                Text(unlocked ? 'freigeschaltet' : formatMoneyCents(tier.unlockCents),
+                    style: TextStyle(
+                        color: unlocked ? accent : PaceColors.textFaint,
+                        fontSize: 11)),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class _GarageCard extends StatelessWidget {
   const _GarageCard({
     required this.car,
+    required this.carIndex,
     required this.nextCar,
     required this.savedCents,
   });
 
   final CarTier car;
+  final int carIndex;
   final CarTier? nextCar;
   final int savedCents;
 
@@ -128,6 +203,12 @@ class _GarageCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: CarArt(tierIndex: carIndex, width: 230)
+                .animate(onPlay: (c) => c.repeat())
+                .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.18)),
+          ),
+          const SizedBox(height: 14),
           Row(
             children: [
               const Icon(Icons.directions_car_filled,
