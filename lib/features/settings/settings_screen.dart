@@ -70,6 +70,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Future<void> _reset() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: PaceColors.panel,
+        title: const Text('Alles zurücksetzen?'),
+        content: const Text(
+          'Alle Daten werden gelöscht: Einstellungen, Boxenstopps, Erfolge und '
+          'Autos. Du startest wieder beim Welcome-Screen. Das lässt sich nicht '
+          'rückgängig machen.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: PaceColors.neonOrange,
+                foregroundColor: Colors.black),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Zurücksetzen'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    HapticFeedback.heavyImpact();
+    await ref.read(databaseProvider).resetEverything();
+    // Settings stream goes null → the gate shows onboarding; drop this screen.
+    if (mounted) Navigator.of(context).popUntil((r) => r.isFirst);
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider).value;
@@ -149,6 +182,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       for (final p in periods.reversed)
                         _HistoryRow(period: p, currency: currency),
                     ],
+                    const SizedBox(height: 40),
+                    GestureDetector(
+                      onTap: _reset,
+                      child: Container(
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color:
+                                  PaceColors.neonOrange.withValues(alpha: 0.7)),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.restart_alt,
+                                color: PaceColors.neonOrange, size: 20),
+                            SizedBox(width: 8),
+                            Text('ALLES ZURÜCKSETZEN',
+                                style: TextStyle(
+                                    color: PaceColors.neonOrange,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

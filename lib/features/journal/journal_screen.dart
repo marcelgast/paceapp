@@ -9,6 +9,7 @@ import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
+import '../cockpit/edit_pit_stop_sheet.dart';
 import 'situations_sheet.dart';
 
 class JournalScreen extends ConsumerWidget {
@@ -248,15 +249,17 @@ class _DayHeader extends StatelessWidget {
   }
 }
 
-class _PitStopCard extends StatelessWidget {
+class _PitStopCard extends ConsumerWidget {
   const _PitStopCard({required this.pitStop, required this.situation});
 
   final PitStop pitStop;
   final String? situation;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => showEditPitStopSheet(context, ref, pitStop),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -326,6 +329,7 @@ class _PitStopCard extends StatelessWidget {
           ],
         ],
       ),
+    ),
     );
   }
 }

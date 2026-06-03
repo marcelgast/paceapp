@@ -51,7 +51,7 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
   Future<void> _addSituation() async {
     final label = await showDialog<String>(
       context: context,
-      builder: (_) => const _NewSituationDialog(),
+      builder: (_) => const NewSituationDialog(),
     );
     if (label == null || label.trim().isEmpty) return;
     final created = await ref.read(databaseProvider).addSituation(label.trim());
@@ -97,14 +97,14 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
               ),
               const SizedBox(height: 22),
-              _LevelSelector(
+              PitLevelSelector(
                 label: 'Verlangen',
                 value: _craving,
                 color: PaceColors.neonMagenta,
                 onChanged: (v) => setState(() => _craving = v),
               ),
               const SizedBox(height: 18),
-              _LevelSelector(
+              PitLevelSelector(
                 label: 'Stress',
                 value: _stress,
                 color: PaceColors.neonOrange,
@@ -118,13 +118,13 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 runSpacing: 8,
                 children: [
                   for (final s in situations)
-                    _Chip(
+                    PitChip(
                       label: s.label,
                       selected: _situationId == s.id,
                       onTap: () => setState(() =>
                           _situationId = _situationId == s.id ? null : s.id),
                     ),
-                  _Chip(
+                  PitChip(
                     label: '+ Neu',
                     selected: false,
                     accent: true,
@@ -182,8 +182,9 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
   }
 }
 
-class _LevelSelector extends StatelessWidget {
-  const _LevelSelector({
+class PitLevelSelector extends StatelessWidget {
+  const PitLevelSelector({
+    super.key,
     required this.label,
     required this.value,
     required this.color,
@@ -242,8 +243,9 @@ class _LevelSelector extends StatelessWidget {
   }
 }
 
-class _Chip extends StatelessWidget {
-  const _Chip({
+class PitChip extends StatelessWidget {
+  const PitChip({
+    super.key,
     required this.label,
     required this.selected,
     required this.onTap,
@@ -290,14 +292,14 @@ class _Chip extends StatelessWidget {
   }
 }
 
-class _NewSituationDialog extends StatefulWidget {
-  const _NewSituationDialog();
+class NewSituationDialog extends StatefulWidget {
+  const NewSituationDialog({super.key});
 
   @override
-  State<_NewSituationDialog> createState() => _NewSituationDialogState();
+  State<NewSituationDialog> createState() => NewSituationDialogState();
 }
 
-class _NewSituationDialogState extends State<_NewSituationDialog> {
+class NewSituationDialogState extends State<NewSituationDialog> {
   final _controller = TextEditingController();
 
   @override

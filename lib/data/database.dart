@@ -244,6 +244,42 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> updatePitStop({
+    required String id,
+    required DateTime occurredAt,
+    required int cravingLevel,
+    required int stressLevel,
+    String? situationId,
+    String? note,
+  }) {
+    return (update(pitStops)..where((t) => t.id.equals(id))).write(
+      PitStopsCompanion(
+        occurredAt: Value(occurredAt),
+        cravingLevel: Value(cravingLevel),
+        stressLevel: Value(stressLevel),
+        situationId: Value(situationId),
+        note: Value(note),
+      ),
+    );
+  }
+
+  Future<void> deletePitStop(String id) {
+    return (delete(pitStops)..where((t) => t.id.equals(id))).go();
+  }
+
+  /// Wipes everything and re-seeds defaults — the app drops back to onboarding
+  /// because the settings row is gone.
+  Future<void> resetEverything() async {
+    await transaction(() async {
+      await delete(pitStops).go();
+      await delete(unlocks).go();
+      await delete(costPeriods).go();
+      await delete(situations).go();
+      await delete(appSettingsRows).go();
+      await seedDefaultSituations();
+    });
+  }
+
   Future<int> addPitStop({
     required DateTime occurredAt,
     required int cravingLevel,
