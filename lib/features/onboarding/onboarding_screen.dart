@@ -35,7 +35,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   int _step = 0;
   bool _launching = false;
 
-  static const _stepProgress = [0.31, 0.46, 0.61];
+  static const _stepProgress = [0.31, 0.46, 0.61, 0.74];
 
   @override
   void dispose() {
@@ -58,7 +58,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     return switch (step) {
       0 => _priceCents() != null,
       1 => (int.tryParse(_perPack.text.trim()) ?? 0) > 0,
-      _ => (int.tryParse(_perDay.text.trim()) ?? 0) > 0,
+      2 => (int.tryParse(_perDay.text.trim()) ?? 0) > 0,
+      _ => true, // the measuring-week explainer has nothing to validate
     };
   }
 
@@ -72,8 +73,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     HapticFeedback.lightImpact();
     _lights.animateTo(_stepProgress[_step]);
 
-    if (_step < 2) {
+    if (_step < 3) {
       setState(() => _step++);
+      // The explainer page has no field — drop the keyboard when we reach it.
+      if (_step == 3) FocusScope.of(context).unfocus();
       _pager.nextPage(
           duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic);
     } else {
@@ -205,7 +208,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                               controller: _perDay,
                               keyboardType: TextInputType.number,
                               onSubmit: _next),
-                          buttonLabel: 'RENNEN STARTEN',
+                          buttonLabel: 'WEITER',
+                          onNext: _next,
+                          onBack: _back,
+                          launching: false,
+                        ),
+                        _MeasureWeekPage(
                           onNext: _next,
                           onBack: _back,
                           launching: _launching,
@@ -287,6 +295,154 @@ class _QuestionPage extends StatelessWidget {
             curve: Curves.easeOutCubic,
             duration: 320.ms,
           ),
+    );
+  }
+}
+
+class _MeasureWeekPage extends StatelessWidget {
+  const _MeasureWeekPage({
+    required this.onNext,
+    required this.onBack,
+    required this.launching,
+  });
+
+  final VoidCallback onNext;
+  final VoidCallback onBack;
+  final bool launching;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('SO LÄUFT DEIN START',
+                      style: TextStyle(
+                          color: PaceColors.neonOrange,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 10),
+                  Text('Erst messen, dann dehnen',
+                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
+                          .copyWith(height: 1.05)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Kein kalter Entzug. In der ersten Woche fährst du ganz '
+                    'normal weiter — wir schauen nur zu und lernen dein Tempo.',
+                    style: TextStyle(
+                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  ),
+                  const SizedBox(height: 22),
+                  const _StepRow(
+                    number: '1',
+                    color: PaceColors.neonCyan,
+                    title: 'Messrunde · 1 Woche',
+                    detail:
+                        'Logg jede Zigarette als Boxenstopp. Kein Ziel, kein Druck.',
+                  ),
+                  const _StepRow(
+                    number: '2',
+                    color: PaceColors.neonMagenta,
+                    title: 'Dein erstes Ziel',
+                    detail:
+                        'Wir werten dein Muster aus und schlagen dir dein Stint-Intervall vor.',
+                  ),
+                  const _StepRow(
+                    number: '3',
+                    color: PaceColors.neonLime,
+                    title: 'Das Rennen läuft',
+                    detail: 'Stints dehnen, Streak bauen, Wagen freifahren.',
+                    last: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _BackButton(onTap: onBack),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _PrimaryButton(
+                    label: launching ? '3 · 2 · 1 …' : 'MESSRUNDE STARTEN',
+                    onTap: launching ? null : onNext),
+              ),
+            ],
+          ),
+        ],
+      ).animate(key: const ValueKey('measure-week')).fadeIn(duration: 320.ms).slideX(
+            begin: 0.15,
+            curve: Curves.easeOutCubic,
+            duration: 320.ms,
+          ),
+    );
+  }
+}
+
+class _StepRow extends StatelessWidget {
+  const _StepRow({
+    required this.number,
+    required this.color,
+    required this.title,
+    required this.detail,
+    this.last = false,
+  });
+
+  final String number;
+  final Color color;
+  final String title;
+  final String detail;
+  final bool last;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: last ? 0 : 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withValues(alpha: 0.7)),
+            ),
+            child: Text(number,
+                style: PaceTheme.dash(
+                    size: 18, weight: FontWeight.w800, color: color)),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(detail,
+                    style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 13,
+                        height: 1.35)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
