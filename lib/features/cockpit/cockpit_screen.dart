@@ -49,6 +49,21 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     final stint = ref.watch(liveStintProvider);
     final stats = ref.watch(statsProvider);
     final currency = settings?.currencyCode ?? 'EUR';
+    final now = ref.watch(clockProvider).value ?? DateTime.now();
+
+    // Days left in the measuring round (shown under the baseline gauge).
+    var baselineSub = 'Wir messen dein Tempo';
+    if (settings != null) {
+      final end = settings.startedAt.add(StintCalculator.baselineDuration);
+      final daysLeft = DateTime(end.year, end.month, end.day)
+          .difference(DateTime(now.year, now.month, now.day))
+          .inDays;
+      baselineSub = daysLeft <= 0
+          ? 'endet heute'
+          : daysLeft == 1
+              ? 'endet morgen'
+              : 'noch $daysLeft Tage';
+    }
 
     return Scaffold(
       body: RacetrackBackground(
@@ -80,7 +95,8 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                   children: [
                     _Gauge(
                         stint: stint,
-                        target: ref.watch(targetIntervalProvider)),
+                        target: ref.watch(targetIntervalProvider),
+                        baselineSub: baselineSub),
                     ConfettiWidget(
                       confettiController: _win,
                       blastDirectionality: BlastDirectionality.explosive,
@@ -176,10 +192,12 @@ class _Kpi extends StatelessWidget {
 }
 
 class _Gauge extends StatelessWidget {
-  const _Gauge({required this.stint, required this.target});
+  const _Gauge(
+      {required this.stint, required this.target, required this.baselineSub});
 
   final StintState? stint;
   final Duration? target;
+  final String baselineSub;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +221,7 @@ class _Gauge extends StatelessWidget {
       StintPhase.baseline => (
           'MESSRUNDE',
           formatStintDuration(stint?.elapsed ?? Duration.zero),
-          'Wir messen dein Tempo — bald kommt dein Ziel',
+          baselineSub,
           PaceColors.textMuted,
         ),
       StintPhase.countdown => (
