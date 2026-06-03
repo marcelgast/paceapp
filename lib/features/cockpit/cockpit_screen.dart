@@ -11,6 +11,7 @@ import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/pace_wordmark.dart';
+import '../settings/settings_screen.dart';
 import '../sos/breathing_screen.dart';
 import 'pit_stop_action.dart';
 import 'tachometer.dart';
@@ -61,7 +62,14 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const PaceWordmark(size: 30),
-                    _StreakChip(days: ref.watch(streakProvider).current),
+                    Row(
+                      children: [
+                        _SettingsButton(
+                            onTap: () => SettingsScreen.open(context)),
+                        const SizedBox(width: 8),
+                        _StreakChip(days: ref.watch(streakProvider).current),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -337,6 +345,30 @@ class _SosButton extends StatelessWidget {
                     letterSpacing: 1)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SettingsButton extends StatelessWidget {
+  const _SettingsButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: PaceColors.panel.withValues(alpha: 0.7),
+          shape: BoxShape.circle,
+          border: Border.all(color: PaceColors.chrome.withValues(alpha: 0.6)),
+        ),
+        child: const Icon(Icons.settings_outlined,
+            color: PaceColors.textMuted, size: 19),
       ),
     );
   }

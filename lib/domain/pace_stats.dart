@@ -35,38 +35,76 @@ class PaceStats {
   }
 
   /// [pitElapsed] are the pit-stop times as durations since the start, sorted
-  /// ascending — needed to find the pre-smoke peaks of the savings curve.
+  /// ascending. [costPeriods] are the cost epochs as (start-since-start, cents
+  /// per cigarette), sorted ascending, the first starting at zero — so a price
+  /// change is honoured from its moment forward and never re-prices the past.
   factory PaceStats.compute({
     required Duration sinceStart,
-    required int packPriceCents,
-    required int cigarettesPerPack,
     required double dailyRate,
     required List<Duration> pitElapsed,
+    required List<({Duration start, int perCig})> costPeriods,
   }) {
-    final perCig = centsPerCigarette(
-      packPriceCents: packPriceCents,
-      cigarettesPerPack: cigarettesPerPack,
-    );
-    double expectedAt(Duration d) =>
-        dailyRate * (d.inSeconds / Duration.secondsPerDay);
+    final currentPerCig =
+        costPeriods.isEmpty ? 0 : costPeriods.last.perCig;
+
+    double expectedCigsAt(Duration t) =>
+        dailyRate * (t.inSeconds / Duration.secondsPerDay);
+
+    int perCigAt(Duration e) {
+      var pc = costPeriods.isEmpty ? 0 : costPeriods.first.perCig;
+      for (final p in costPeriods) {
+        if (p.start <= e) {
+          pc = p.perCig;
+        } else {
+          break;
+        }
+      }
+      return pc;
+    }
+
+    // Expected money spent at baseline up to [t], each period priced its own way.
+    double expectedMoneyAt(Duration t) {
+      var sum = 0.0;
+      for (var i = 0; i < costPeriods.length; i++) {
+        final start = costPeriods[i].start;
+        final end =
+            i + 1 < costPeriods.length ? costPeriods[i + 1].start : t;
+        final hi = end < t ? end : t;
+        if (hi > start) {
+          final days = (hi - start).inSeconds / Duration.secondsPerDay;
+          sum += dailyRate * costPeriods[i].perCig * days;
+        }
+      }
+      return sum;
+    }
 
     final n = pitElapsed.length;
-    // High-water mark of (expected − actual): the live value now, plus the peak
-    // just before each pit (where actual is still the prior count). Logging a
-    // cigarette captures the pre-smoke peak, so the figure never decreases.
-    var savedPeak = expectedAt(sinceStart) - n;
+
+    // High-water mark of (expected − actual): the live value now plus the peak
+    // just before each pit (actual still the prior count). Logging a cigarette
+    // captures the pre-smoke peak, so neither figure ever decreases.
+    var cigPeak = expectedCigsAt(sinceStart) - n;
+    var moneyActual = 0.0;
+    var moneyPeak = double.negativeInfinity;
     for (var k = 0; k < n; k++) {
-      final peak = expectedAt(pitElapsed[k]) - k;
-      if (peak > savedPeak) savedPeak = peak;
+      final c = expectedCigsAt(pitElapsed[k]) - k;
+      if (c > cigPeak) cigPeak = c;
+      final m = expectedMoneyAt(pitElapsed[k]) - moneyActual;
+      if (m > moneyPeak) moneyPeak = m;
+      moneyActual += perCigAt(pitElapsed[k]);
     }
-    final saved = savedPeak.clamp(0.0, double.infinity);
+    final moneyNow = expectedMoneyAt(sinceStart) - moneyActual;
+    if (moneyNow > moneyPeak) moneyPeak = moneyNow;
+
+    final savedCigs = cigPeak.clamp(0.0, double.infinity);
+    final savedMoney = moneyPeak.clamp(0.0, double.infinity);
 
     return PaceStats(
-      costPerCigaretteCents: perCig,
-      expectedCigarettes: expectedAt(sinceStart),
+      costPerCigaretteCents: currentPerCig,
+      expectedCigarettes: expectedCigsAt(sinceStart),
       actualCigarettes: n,
-      savedCigarettes: saved,
-      savedMoneyCents: (saved * perCig).round(),
+      savedCigarettes: savedCigs,
+      savedMoneyCents: savedMoney.round(),
       sinceStart: sinceStart,
     );
   }

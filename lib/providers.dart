@@ -30,6 +30,11 @@ final pitStopsProvider = StreamProvider<List<PitStop>>((ref) {
   return ref.watch(databaseProvider).watchPitStops();
 });
 
+/// Price/pack-size epochs. A change applies from its effective date forward.
+final costPeriodsProvider = StreamProvider<List<CostPeriod>>((ref) {
+  return ref.watch(databaseProvider).watchCostPeriods();
+});
+
 /// All situations including archived — used to label historic pit stops.
 final allSituationsProvider = StreamProvider<List<Situation>>((ref) {
   return ref.watch(databaseProvider).watchAllSituations();
@@ -279,11 +284,37 @@ final statsProvider = Provider<PaceStats?>((ref) {
       .toList()
     ..sort();
 
+  // Cost epochs as (offset-from-start, cents-per-cigarette), anchored at zero.
+  final periods = ref.watch(costPeriodsProvider).value ?? const <CostPeriod>[];
+  final costPeriods = <({Duration start, int perCig})>[];
+  if (periods.isEmpty) {
+    costPeriods.add((
+      start: Duration.zero,
+      perCig: PaceStats.centsPerCigarette(
+        packPriceCents: settings.packPriceCents,
+        cigarettesPerPack: settings.cigarettesPerPack,
+      ),
+    ));
+  } else {
+    final sorted = [...periods]
+      ..sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
+    for (final p in sorted) {
+      final offset = p.effectiveFrom.difference(settings.startedAt);
+      costPeriods.add((
+        start: offset.isNegative ? Duration.zero : offset,
+        perCig: PaceStats.centsPerCigarette(
+          packPriceCents: p.packPriceCents,
+          cigarettesPerPack: p.cigarettesPerPack,
+        ),
+      ));
+    }
+    costPeriods[0] = (start: Duration.zero, perCig: costPeriods[0].perCig);
+  }
+
   return PaceStats.compute(
     sinceStart: sinceStart,
-    packPriceCents: settings.packPriceCents,
-    cigarettesPerPack: settings.cigarettesPerPack,
     dailyRate: dailyRate,
     pitElapsed: pitElapsed,
+    costPeriods: costPeriods,
   );
 });

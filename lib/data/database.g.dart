@@ -1835,6 +1835,338 @@ class UnlocksCompanion extends UpdateCompanion<Unlock> {
   }
 }
 
+class $CostPeriodsTable extends CostPeriods
+    with TableInfo<$CostPeriodsTable, CostPeriod> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CostPeriodsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _effectiveFromMeta = const VerificationMeta(
+    'effectiveFrom',
+  );
+  @override
+  late final GeneratedColumn<DateTime> effectiveFrom =
+      GeneratedColumn<DateTime>(
+        'effective_from',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _packPriceCentsMeta = const VerificationMeta(
+    'packPriceCents',
+  );
+  @override
+  late final GeneratedColumn<int> packPriceCents = GeneratedColumn<int>(
+    'pack_price_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cigarettesPerPackMeta = const VerificationMeta(
+    'cigarettesPerPack',
+  );
+  @override
+  late final GeneratedColumn<int> cigarettesPerPack = GeneratedColumn<int>(
+    'cigarettes_per_pack',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    effectiveFrom,
+    packPriceCents,
+    cigarettesPerPack,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cost_periods';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CostPeriod> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('effective_from')) {
+      context.handle(
+        _effectiveFromMeta,
+        effectiveFrom.isAcceptableOrUnknown(
+          data['effective_from']!,
+          _effectiveFromMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_effectiveFromMeta);
+    }
+    if (data.containsKey('pack_price_cents')) {
+      context.handle(
+        _packPriceCentsMeta,
+        packPriceCents.isAcceptableOrUnknown(
+          data['pack_price_cents']!,
+          _packPriceCentsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_packPriceCentsMeta);
+    }
+    if (data.containsKey('cigarettes_per_pack')) {
+      context.handle(
+        _cigarettesPerPackMeta,
+        cigarettesPerPack.isAcceptableOrUnknown(
+          data['cigarettes_per_pack']!,
+          _cigarettesPerPackMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_cigarettesPerPackMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CostPeriod map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CostPeriod(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      effectiveFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}effective_from'],
+      )!,
+      packPriceCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pack_price_cents'],
+      )!,
+      cigarettesPerPack: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cigarettes_per_pack'],
+      )!,
+    );
+  }
+
+  @override
+  $CostPeriodsTable createAlias(String alias) {
+    return $CostPeriodsTable(attachedDatabase, alias);
+  }
+}
+
+class CostPeriod extends DataClass implements Insertable<CostPeriod> {
+  final String id;
+  final DateTime effectiveFrom;
+  final int packPriceCents;
+  final int cigarettesPerPack;
+  const CostPeriod({
+    required this.id,
+    required this.effectiveFrom,
+    required this.packPriceCents,
+    required this.cigarettesPerPack,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['effective_from'] = Variable<DateTime>(effectiveFrom);
+    map['pack_price_cents'] = Variable<int>(packPriceCents);
+    map['cigarettes_per_pack'] = Variable<int>(cigarettesPerPack);
+    return map;
+  }
+
+  CostPeriodsCompanion toCompanion(bool nullToAbsent) {
+    return CostPeriodsCompanion(
+      id: Value(id),
+      effectiveFrom: Value(effectiveFrom),
+      packPriceCents: Value(packPriceCents),
+      cigarettesPerPack: Value(cigarettesPerPack),
+    );
+  }
+
+  factory CostPeriod.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CostPeriod(
+      id: serializer.fromJson<String>(json['id']),
+      effectiveFrom: serializer.fromJson<DateTime>(json['effectiveFrom']),
+      packPriceCents: serializer.fromJson<int>(json['packPriceCents']),
+      cigarettesPerPack: serializer.fromJson<int>(json['cigarettesPerPack']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'effectiveFrom': serializer.toJson<DateTime>(effectiveFrom),
+      'packPriceCents': serializer.toJson<int>(packPriceCents),
+      'cigarettesPerPack': serializer.toJson<int>(cigarettesPerPack),
+    };
+  }
+
+  CostPeriod copyWith({
+    String? id,
+    DateTime? effectiveFrom,
+    int? packPriceCents,
+    int? cigarettesPerPack,
+  }) => CostPeriod(
+    id: id ?? this.id,
+    effectiveFrom: effectiveFrom ?? this.effectiveFrom,
+    packPriceCents: packPriceCents ?? this.packPriceCents,
+    cigarettesPerPack: cigarettesPerPack ?? this.cigarettesPerPack,
+  );
+  CostPeriod copyWithCompanion(CostPeriodsCompanion data) {
+    return CostPeriod(
+      id: data.id.present ? data.id.value : this.id,
+      effectiveFrom: data.effectiveFrom.present
+          ? data.effectiveFrom.value
+          : this.effectiveFrom,
+      packPriceCents: data.packPriceCents.present
+          ? data.packPriceCents.value
+          : this.packPriceCents,
+      cigarettesPerPack: data.cigarettesPerPack.present
+          ? data.cigarettesPerPack.value
+          : this.cigarettesPerPack,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CostPeriod(')
+          ..write('id: $id, ')
+          ..write('effectiveFrom: $effectiveFrom, ')
+          ..write('packPriceCents: $packPriceCents, ')
+          ..write('cigarettesPerPack: $cigarettesPerPack')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, effectiveFrom, packPriceCents, cigarettesPerPack);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CostPeriod &&
+          other.id == this.id &&
+          other.effectiveFrom == this.effectiveFrom &&
+          other.packPriceCents == this.packPriceCents &&
+          other.cigarettesPerPack == this.cigarettesPerPack);
+}
+
+class CostPeriodsCompanion extends UpdateCompanion<CostPeriod> {
+  final Value<String> id;
+  final Value<DateTime> effectiveFrom;
+  final Value<int> packPriceCents;
+  final Value<int> cigarettesPerPack;
+  final Value<int> rowid;
+  const CostPeriodsCompanion({
+    this.id = const Value.absent(),
+    this.effectiveFrom = const Value.absent(),
+    this.packPriceCents = const Value.absent(),
+    this.cigarettesPerPack = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CostPeriodsCompanion.insert({
+    required String id,
+    required DateTime effectiveFrom,
+    required int packPriceCents,
+    required int cigarettesPerPack,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       effectiveFrom = Value(effectiveFrom),
+       packPriceCents = Value(packPriceCents),
+       cigarettesPerPack = Value(cigarettesPerPack);
+  static Insertable<CostPeriod> custom({
+    Expression<String>? id,
+    Expression<DateTime>? effectiveFrom,
+    Expression<int>? packPriceCents,
+    Expression<int>? cigarettesPerPack,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (effectiveFrom != null) 'effective_from': effectiveFrom,
+      if (packPriceCents != null) 'pack_price_cents': packPriceCents,
+      if (cigarettesPerPack != null) 'cigarettes_per_pack': cigarettesPerPack,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CostPeriodsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? effectiveFrom,
+    Value<int>? packPriceCents,
+    Value<int>? cigarettesPerPack,
+    Value<int>? rowid,
+  }) {
+    return CostPeriodsCompanion(
+      id: id ?? this.id,
+      effectiveFrom: effectiveFrom ?? this.effectiveFrom,
+      packPriceCents: packPriceCents ?? this.packPriceCents,
+      cigarettesPerPack: cigarettesPerPack ?? this.cigarettesPerPack,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (effectiveFrom.present) {
+      map['effective_from'] = Variable<DateTime>(effectiveFrom.value);
+    }
+    if (packPriceCents.present) {
+      map['pack_price_cents'] = Variable<int>(packPriceCents.value);
+    }
+    if (cigarettesPerPack.present) {
+      map['cigarettes_per_pack'] = Variable<int>(cigarettesPerPack.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CostPeriodsCompanion(')
+          ..write('id: $id, ')
+          ..write('effectiveFrom: $effectiveFrom, ')
+          ..write('packPriceCents: $packPriceCents, ')
+          ..write('cigarettesPerPack: $cigarettesPerPack, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1844,6 +2176,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SituationsTable situations = $SituationsTable(this);
   late final $PitStopsTable pitStops = $PitStopsTable(this);
   late final $UnlocksTable unlocks = $UnlocksTable(this);
+  late final $CostPeriodsTable costPeriods = $CostPeriodsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1853,6 +2186,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     situations,
     pitStops,
     unlocks,
+    costPeriods,
   ];
 }
 
@@ -3019,6 +3353,193 @@ typedef $$UnlocksTableProcessedTableManager =
       Unlock,
       PrefetchHooks Function()
     >;
+typedef $$CostPeriodsTableCreateCompanionBuilder =
+    CostPeriodsCompanion Function({
+      required String id,
+      required DateTime effectiveFrom,
+      required int packPriceCents,
+      required int cigarettesPerPack,
+      Value<int> rowid,
+    });
+typedef $$CostPeriodsTableUpdateCompanionBuilder =
+    CostPeriodsCompanion Function({
+      Value<String> id,
+      Value<DateTime> effectiveFrom,
+      Value<int> packPriceCents,
+      Value<int> cigarettesPerPack,
+      Value<int> rowid,
+    });
+
+class $$CostPeriodsTableFilterComposer
+    extends Composer<_$AppDatabase, $CostPeriodsTable> {
+  $$CostPeriodsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get effectiveFrom => $composableBuilder(
+    column: $table.effectiveFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get packPriceCents => $composableBuilder(
+    column: $table.packPriceCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cigarettesPerPack => $composableBuilder(
+    column: $table.cigarettesPerPack,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CostPeriodsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CostPeriodsTable> {
+  $$CostPeriodsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get effectiveFrom => $composableBuilder(
+    column: $table.effectiveFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get packPriceCents => $composableBuilder(
+    column: $table.packPriceCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cigarettesPerPack => $composableBuilder(
+    column: $table.cigarettesPerPack,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CostPeriodsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CostPeriodsTable> {
+  $$CostPeriodsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get effectiveFrom => $composableBuilder(
+    column: $table.effectiveFrom,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get packPriceCents => $composableBuilder(
+    column: $table.packPriceCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cigarettesPerPack => $composableBuilder(
+    column: $table.cigarettesPerPack,
+    builder: (column) => column,
+  );
+}
+
+class $$CostPeriodsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CostPeriodsTable,
+          CostPeriod,
+          $$CostPeriodsTableFilterComposer,
+          $$CostPeriodsTableOrderingComposer,
+          $$CostPeriodsTableAnnotationComposer,
+          $$CostPeriodsTableCreateCompanionBuilder,
+          $$CostPeriodsTableUpdateCompanionBuilder,
+          (
+            CostPeriod,
+            BaseReferences<_$AppDatabase, $CostPeriodsTable, CostPeriod>,
+          ),
+          CostPeriod,
+          PrefetchHooks Function()
+        > {
+  $$CostPeriodsTableTableManager(_$AppDatabase db, $CostPeriodsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CostPeriodsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CostPeriodsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CostPeriodsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> effectiveFrom = const Value.absent(),
+                Value<int> packPriceCents = const Value.absent(),
+                Value<int> cigarettesPerPack = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CostPeriodsCompanion(
+                id: id,
+                effectiveFrom: effectiveFrom,
+                packPriceCents: packPriceCents,
+                cigarettesPerPack: cigarettesPerPack,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required DateTime effectiveFrom,
+                required int packPriceCents,
+                required int cigarettesPerPack,
+                Value<int> rowid = const Value.absent(),
+              }) => CostPeriodsCompanion.insert(
+                id: id,
+                effectiveFrom: effectiveFrom,
+                packPriceCents: packPriceCents,
+                cigarettesPerPack: cigarettesPerPack,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CostPeriodsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CostPeriodsTable,
+      CostPeriod,
+      $$CostPeriodsTableFilterComposer,
+      $$CostPeriodsTableOrderingComposer,
+      $$CostPeriodsTableAnnotationComposer,
+      $$CostPeriodsTableCreateCompanionBuilder,
+      $$CostPeriodsTableUpdateCompanionBuilder,
+      (
+        CostPeriod,
+        BaseReferences<_$AppDatabase, $CostPeriodsTable, CostPeriod>,
+      ),
+      CostPeriod,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3031,4 +3552,6 @@ class $AppDatabaseManager {
       $$PitStopsTableTableManager(_db, _db.pitStops);
   $$UnlocksTableTableManager get unlocks =>
       $$UnlocksTableTableManager(_db, _db.unlocks);
+  $$CostPeriodsTableTableManager get costPeriods =>
+      $$CostPeriodsTableTableManager(_db, _db.costPeriods);
 }

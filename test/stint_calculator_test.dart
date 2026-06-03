@@ -93,10 +93,9 @@ void main() {
   group('PaceStats', () {
     PaceStats statsFor(List<Duration> pits) => PaceStats.compute(
           sinceStart: const Duration(days: 1),
-          packPriceCents: 800,
-          cigarettesPerPack: 20,
           dailyRate: 20,
           pitElapsed: pits,
+          costPeriods: const [(start: Duration.zero, perCig: 40)],
         );
 
     test('savings accrue against the baseline rate', () {
@@ -124,6 +123,22 @@ void main() {
           greaterThanOrEqualTo(before.savedCigarettes));
       expect(after.savedMoneyCents,
           greaterThanOrEqualTo(before.savedMoneyCents));
+    });
+
+    test('a price change applies from its date forward, not retroactively', () {
+      // 20/day, 2 days clean. Day 1 at 40 ct/cig, day 2 at 60 ct/cig.
+      final stats = PaceStats.compute(
+        sinceStart: const Duration(days: 2),
+        dailyRate: 20,
+        pitElapsed: const [],
+        costPeriods: const [
+          (start: Duration.zero, perCig: 40),
+          (start: Duration(days: 1), perCig: 60),
+        ],
+      );
+      // Avoided 40 cigarettes. Money: day1 20×40 + day2 20×60 = 800 + 1200.
+      expect(stats.savedCigarettes, closeTo(40, 0.0001));
+      expect(stats.savedMoneyCents, 2000);
     });
   });
 }

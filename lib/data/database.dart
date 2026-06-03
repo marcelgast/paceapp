@@ -20,13 +20,14 @@ const List<String> kDefaultSituations = [
   'Sonstiges',
 ];
 
-@DriftDatabase(tables: [AppSettingsRows, Situations, PitStops, Unlocks])
+@DriftDatabase(
+    tables: [AppSettingsRows, Situations, PitStops, Unlocks, CostPeriods])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -42,8 +43,53 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(appSettingsRows, appSettingsRows.lastProposalAt);
             await m.addColumn(appSettingsRows, appSettingsRows.growthPermille);
           }
+          if (from < 4) {
+            await m.createTable(costPeriods);
+            // Seed the first cost period from the existing settings so past
+            // savings keep their original pricing.
+            final s = await getSettings();
+            if (s != null) {
+              await into(costPeriods).insert(
+                CostPeriodsCompanion.insert(
+                  id: newId(),
+                  effectiveFrom: s.startedAt,
+                  packPriceCents: s.packPriceCents,
+                  cigarettesPerPack: s.cigarettesPerPack,
+                ),
+              );
+            }
+          }
         },
       );
+
+  // ---- Cost periods -------------------------------------------------------
+
+  Stream<List<CostPeriod>> watchCostPeriods() => (select(costPeriods)
+        ..orderBy([(t) => OrderingTerm(expression: t.effectiveFrom)]))
+      .watch();
+
+  /// Records a price/pack-size change effective [at]. The new values also become
+  /// the settings row's current values (for form pre-fill and display).
+  Future<void> changeCostFrom({
+    required int packPriceCents,
+    required int cigarettesPerPack,
+    required DateTime at,
+  }) async {
+    await into(costPeriods).insert(
+      CostPeriodsCompanion.insert(
+        id: newId(),
+        effectiveFrom: at,
+        packPriceCents: packPriceCents,
+        cigarettesPerPack: cigarettesPerPack,
+      ),
+    );
+    await (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(
+        packPriceCents: Value(packPriceCents),
+        cigarettesPerPack: Value(cigarettesPerPack),
+      ),
+    );
+  }
 
   // ---- Settings -----------------------------------------------------------
 
@@ -71,6 +117,15 @@ class AppDatabase extends _$AppDatabase {
         startedAt: startedAt,
         currencyCode: Value(currencyCode),
         onboardingDone: const Value(true),
+      ),
+    );
+    // First cost period — pricing is sourced from here onward.
+    await into(costPeriods).insert(
+      CostPeriodsCompanion.insert(
+        id: newId(),
+        effectiveFrom: startedAt,
+        packPriceCents: packPriceCents,
+        cigarettesPerPack: cigarettesPerPack,
       ),
     );
   }

@@ -51,6 +51,19 @@ class Unlocks extends Table {
   Set<Column> get primaryKey => {milestoneKey};
 }
 
+/// Cost parameters over time. Each cigarette and each stretch of expected
+/// consumption is priced by the period it falls in, so a price or pack-size
+/// change applies from its [effectiveFrom] forward and never re-prices the past.
+class CostPeriods extends Table {
+  TextColumn get id => text()();
+  DateTimeColumn get effectiveFrom => dateTime()();
+  IntColumn get packPriceCents => integer()();
+  IntColumn get cigarettesPerPack => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// One cigarette = one pit stop.
 class PitStops extends Table {
   TextColumn get id => text()();
