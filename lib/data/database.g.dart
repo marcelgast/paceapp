@@ -89,6 +89,40 @@ class $AppSettingsRowsTable extends AppSettingsRows
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _currentTargetSecondsMeta =
+      const VerificationMeta('currentTargetSeconds');
+  @override
+  late final GeneratedColumn<int> currentTargetSeconds = GeneratedColumn<int>(
+    'current_target_seconds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastProposalAtMeta = const VerificationMeta(
+    'lastProposalAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastProposalAt =
+      GeneratedColumn<DateTime>(
+        'last_proposal_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _growthPermilleMeta = const VerificationMeta(
+    'growthPermille',
+  );
+  @override
+  late final GeneratedColumn<int> growthPermille = GeneratedColumn<int>(
+    'growth_permille',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(100),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -98,6 +132,9 @@ class $AppSettingsRowsTable extends AppSettingsRows
     currencyCode,
     startedAt,
     onboardingDone,
+    currentTargetSeconds,
+    lastProposalAt,
+    growthPermille,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -173,6 +210,33 @@ class $AppSettingsRowsTable extends AppSettingsRows
         ),
       );
     }
+    if (data.containsKey('current_target_seconds')) {
+      context.handle(
+        _currentTargetSecondsMeta,
+        currentTargetSeconds.isAcceptableOrUnknown(
+          data['current_target_seconds']!,
+          _currentTargetSecondsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_proposal_at')) {
+      context.handle(
+        _lastProposalAtMeta,
+        lastProposalAt.isAcceptableOrUnknown(
+          data['last_proposal_at']!,
+          _lastProposalAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('growth_permille')) {
+      context.handle(
+        _growthPermilleMeta,
+        growthPermille.isAcceptableOrUnknown(
+          data['growth_permille']!,
+          _growthPermilleMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -210,6 +274,18 @@ class $AppSettingsRowsTable extends AppSettingsRows
         DriftSqlType.bool,
         data['${effectivePrefix}onboarding_done'],
       )!,
+      currentTargetSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_target_seconds'],
+      ),
+      lastProposalAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_proposal_at'],
+      ),
+      growthPermille: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}growth_permille'],
+      )!,
     );
   }
 
@@ -227,6 +303,15 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
   final String currencyCode;
   final DateTime startedAt;
   final bool onboardingDone;
+
+  /// Active target stint in seconds. Null = still measuring (no countdown yet).
+  final int? currentTargetSeconds;
+
+  /// When the last weekly proposal was shown/resolved (accepted or declined).
+  final DateTime? lastProposalAt;
+
+  /// Last chosen weekly stretch in per-mille (100 = 10 %). Pre-fills the slider.
+  final int growthPermille;
   const AppSettingsRow({
     required this.id,
     required this.packPriceCents,
@@ -235,6 +320,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     required this.currencyCode,
     required this.startedAt,
     required this.onboardingDone,
+    this.currentTargetSeconds,
+    this.lastProposalAt,
+    required this.growthPermille,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -246,6 +334,13 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     map['currency_code'] = Variable<String>(currencyCode);
     map['started_at'] = Variable<DateTime>(startedAt);
     map['onboarding_done'] = Variable<bool>(onboardingDone);
+    if (!nullToAbsent || currentTargetSeconds != null) {
+      map['current_target_seconds'] = Variable<int>(currentTargetSeconds);
+    }
+    if (!nullToAbsent || lastProposalAt != null) {
+      map['last_proposal_at'] = Variable<DateTime>(lastProposalAt);
+    }
+    map['growth_permille'] = Variable<int>(growthPermille);
     return map;
   }
 
@@ -258,6 +353,13 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       currencyCode: Value(currencyCode),
       startedAt: Value(startedAt),
       onboardingDone: Value(onboardingDone),
+      currentTargetSeconds: currentTargetSeconds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentTargetSeconds),
+      lastProposalAt: lastProposalAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastProposalAt),
+      growthPermille: Value(growthPermille),
     );
   }
 
@@ -274,6 +376,11 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       currencyCode: serializer.fromJson<String>(json['currencyCode']),
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
       onboardingDone: serializer.fromJson<bool>(json['onboardingDone']),
+      currentTargetSeconds: serializer.fromJson<int?>(
+        json['currentTargetSeconds'],
+      ),
+      lastProposalAt: serializer.fromJson<DateTime?>(json['lastProposalAt']),
+      growthPermille: serializer.fromJson<int>(json['growthPermille']),
     );
   }
   @override
@@ -287,6 +394,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       'currencyCode': serializer.toJson<String>(currencyCode),
       'startedAt': serializer.toJson<DateTime>(startedAt),
       'onboardingDone': serializer.toJson<bool>(onboardingDone),
+      'currentTargetSeconds': serializer.toJson<int?>(currentTargetSeconds),
+      'lastProposalAt': serializer.toJson<DateTime?>(lastProposalAt),
+      'growthPermille': serializer.toJson<int>(growthPermille),
     };
   }
 
@@ -298,6 +408,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     String? currencyCode,
     DateTime? startedAt,
     bool? onboardingDone,
+    Value<int?> currentTargetSeconds = const Value.absent(),
+    Value<DateTime?> lastProposalAt = const Value.absent(),
+    int? growthPermille,
   }) => AppSettingsRow(
     id: id ?? this.id,
     packPriceCents: packPriceCents ?? this.packPriceCents,
@@ -306,6 +419,13 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     currencyCode: currencyCode ?? this.currencyCode,
     startedAt: startedAt ?? this.startedAt,
     onboardingDone: onboardingDone ?? this.onboardingDone,
+    currentTargetSeconds: currentTargetSeconds.present
+        ? currentTargetSeconds.value
+        : this.currentTargetSeconds,
+    lastProposalAt: lastProposalAt.present
+        ? lastProposalAt.value
+        : this.lastProposalAt,
+    growthPermille: growthPermille ?? this.growthPermille,
   );
   AppSettingsRow copyWithCompanion(AppSettingsRowsCompanion data) {
     return AppSettingsRow(
@@ -326,6 +446,15 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       onboardingDone: data.onboardingDone.present
           ? data.onboardingDone.value
           : this.onboardingDone,
+      currentTargetSeconds: data.currentTargetSeconds.present
+          ? data.currentTargetSeconds.value
+          : this.currentTargetSeconds,
+      lastProposalAt: data.lastProposalAt.present
+          ? data.lastProposalAt.value
+          : this.lastProposalAt,
+      growthPermille: data.growthPermille.present
+          ? data.growthPermille.value
+          : this.growthPermille,
     );
   }
 
@@ -338,7 +467,10 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ..write('baselineCigsPerDay: $baselineCigsPerDay, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('startedAt: $startedAt, ')
-          ..write('onboardingDone: $onboardingDone')
+          ..write('onboardingDone: $onboardingDone, ')
+          ..write('currentTargetSeconds: $currentTargetSeconds, ')
+          ..write('lastProposalAt: $lastProposalAt, ')
+          ..write('growthPermille: $growthPermille')
           ..write(')'))
         .toString();
   }
@@ -352,6 +484,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     currencyCode,
     startedAt,
     onboardingDone,
+    currentTargetSeconds,
+    lastProposalAt,
+    growthPermille,
   );
   @override
   bool operator ==(Object other) =>
@@ -363,7 +498,10 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           other.baselineCigsPerDay == this.baselineCigsPerDay &&
           other.currencyCode == this.currencyCode &&
           other.startedAt == this.startedAt &&
-          other.onboardingDone == this.onboardingDone);
+          other.onboardingDone == this.onboardingDone &&
+          other.currentTargetSeconds == this.currentTargetSeconds &&
+          other.lastProposalAt == this.lastProposalAt &&
+          other.growthPermille == this.growthPermille);
 }
 
 class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
@@ -374,6 +512,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
   final Value<String> currencyCode;
   final Value<DateTime> startedAt;
   final Value<bool> onboardingDone;
+  final Value<int?> currentTargetSeconds;
+  final Value<DateTime?> lastProposalAt;
+  final Value<int> growthPermille;
   const AppSettingsRowsCompanion({
     this.id = const Value.absent(),
     this.packPriceCents = const Value.absent(),
@@ -382,6 +523,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.currencyCode = const Value.absent(),
     this.startedAt = const Value.absent(),
     this.onboardingDone = const Value.absent(),
+    this.currentTargetSeconds = const Value.absent(),
+    this.lastProposalAt = const Value.absent(),
+    this.growthPermille = const Value.absent(),
   });
   AppSettingsRowsCompanion.insert({
     this.id = const Value.absent(),
@@ -391,6 +535,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.currencyCode = const Value.absent(),
     required DateTime startedAt,
     this.onboardingDone = const Value.absent(),
+    this.currentTargetSeconds = const Value.absent(),
+    this.lastProposalAt = const Value.absent(),
+    this.growthPermille = const Value.absent(),
   }) : packPriceCents = Value(packPriceCents),
        cigarettesPerPack = Value(cigarettesPerPack),
        baselineCigsPerDay = Value(baselineCigsPerDay),
@@ -403,6 +550,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Expression<String>? currencyCode,
     Expression<DateTime>? startedAt,
     Expression<bool>? onboardingDone,
+    Expression<int>? currentTargetSeconds,
+    Expression<DateTime>? lastProposalAt,
+    Expression<int>? growthPermille,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -413,6 +563,10 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       if (currencyCode != null) 'currency_code': currencyCode,
       if (startedAt != null) 'started_at': startedAt,
       if (onboardingDone != null) 'onboarding_done': onboardingDone,
+      if (currentTargetSeconds != null)
+        'current_target_seconds': currentTargetSeconds,
+      if (lastProposalAt != null) 'last_proposal_at': lastProposalAt,
+      if (growthPermille != null) 'growth_permille': growthPermille,
     });
   }
 
@@ -424,6 +578,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Value<String>? currencyCode,
     Value<DateTime>? startedAt,
     Value<bool>? onboardingDone,
+    Value<int?>? currentTargetSeconds,
+    Value<DateTime?>? lastProposalAt,
+    Value<int>? growthPermille,
   }) {
     return AppSettingsRowsCompanion(
       id: id ?? this.id,
@@ -433,6 +590,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       currencyCode: currencyCode ?? this.currencyCode,
       startedAt: startedAt ?? this.startedAt,
       onboardingDone: onboardingDone ?? this.onboardingDone,
+      currentTargetSeconds: currentTargetSeconds ?? this.currentTargetSeconds,
+      lastProposalAt: lastProposalAt ?? this.lastProposalAt,
+      growthPermille: growthPermille ?? this.growthPermille,
     );
   }
 
@@ -460,6 +620,15 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     if (onboardingDone.present) {
       map['onboarding_done'] = Variable<bool>(onboardingDone.value);
     }
+    if (currentTargetSeconds.present) {
+      map['current_target_seconds'] = Variable<int>(currentTargetSeconds.value);
+    }
+    if (lastProposalAt.present) {
+      map['last_proposal_at'] = Variable<DateTime>(lastProposalAt.value);
+    }
+    if (growthPermille.present) {
+      map['growth_permille'] = Variable<int>(growthPermille.value);
+    }
     return map;
   }
 
@@ -472,7 +641,10 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
           ..write('baselineCigsPerDay: $baselineCigsPerDay, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('startedAt: $startedAt, ')
-          ..write('onboardingDone: $onboardingDone')
+          ..write('onboardingDone: $onboardingDone, ')
+          ..write('currentTargetSeconds: $currentTargetSeconds, ')
+          ..write('lastProposalAt: $lastProposalAt, ')
+          ..write('growthPermille: $growthPermille')
           ..write(')'))
         .toString();
   }
@@ -1693,6 +1865,9 @@ typedef $$AppSettingsRowsTableCreateCompanionBuilder =
       Value<String> currencyCode,
       required DateTime startedAt,
       Value<bool> onboardingDone,
+      Value<int?> currentTargetSeconds,
+      Value<DateTime?> lastProposalAt,
+      Value<int> growthPermille,
     });
 typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
     AppSettingsRowsCompanion Function({
@@ -1703,6 +1878,9 @@ typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
       Value<String> currencyCode,
       Value<DateTime> startedAt,
       Value<bool> onboardingDone,
+      Value<int?> currentTargetSeconds,
+      Value<DateTime?> lastProposalAt,
+      Value<int> growthPermille,
     });
 
 class $$AppSettingsRowsTableFilterComposer
@@ -1746,6 +1924,21 @@ class $$AppSettingsRowsTableFilterComposer
 
   ColumnFilters<bool> get onboardingDone => $composableBuilder(
     column: $table.onboardingDone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentTargetSeconds => $composableBuilder(
+    column: $table.currentTargetSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastProposalAt => $composableBuilder(
+    column: $table.lastProposalAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get growthPermille => $composableBuilder(
+    column: $table.growthPermille,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1793,6 +1986,21 @@ class $$AppSettingsRowsTableOrderingComposer
     column: $table.onboardingDone,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get currentTargetSeconds => $composableBuilder(
+    column: $table.currentTargetSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastProposalAt => $composableBuilder(
+    column: $table.lastProposalAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get growthPermille => $composableBuilder(
+    column: $table.growthPermille,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AppSettingsRowsTableAnnotationComposer
@@ -1832,6 +2040,21 @@ class $$AppSettingsRowsTableAnnotationComposer
 
   GeneratedColumn<bool> get onboardingDone => $composableBuilder(
     column: $table.onboardingDone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get currentTargetSeconds => $composableBuilder(
+    column: $table.currentTargetSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastProposalAt => $composableBuilder(
+    column: $table.lastProposalAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get growthPermille => $composableBuilder(
+    column: $table.growthPermille,
     builder: (column) => column,
   );
 }
@@ -1880,6 +2103,9 @@ class $$AppSettingsRowsTableTableManager
                 Value<String> currencyCode = const Value.absent(),
                 Value<DateTime> startedAt = const Value.absent(),
                 Value<bool> onboardingDone = const Value.absent(),
+                Value<int?> currentTargetSeconds = const Value.absent(),
+                Value<DateTime?> lastProposalAt = const Value.absent(),
+                Value<int> growthPermille = const Value.absent(),
               }) => AppSettingsRowsCompanion(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -1888,6 +2114,9 @@ class $$AppSettingsRowsTableTableManager
                 currencyCode: currencyCode,
                 startedAt: startedAt,
                 onboardingDone: onboardingDone,
+                currentTargetSeconds: currentTargetSeconds,
+                lastProposalAt: lastProposalAt,
+                growthPermille: growthPermille,
               ),
           createCompanionCallback:
               ({
@@ -1898,6 +2127,9 @@ class $$AppSettingsRowsTableTableManager
                 Value<String> currencyCode = const Value.absent(),
                 required DateTime startedAt,
                 Value<bool> onboardingDone = const Value.absent(),
+                Value<int?> currentTargetSeconds = const Value.absent(),
+                Value<DateTime?> lastProposalAt = const Value.absent(),
+                Value<int> growthPermille = const Value.absent(),
               }) => AppSettingsRowsCompanion.insert(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -1906,6 +2138,9 @@ class $$AppSettingsRowsTableTableManager
                 currencyCode: currencyCode,
                 startedAt: startedAt,
                 onboardingDone: onboardingDone,
+                currentTargetSeconds: currentTargetSeconds,
+                lastProposalAt: lastProposalAt,
+                growthPermille: growthPermille,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

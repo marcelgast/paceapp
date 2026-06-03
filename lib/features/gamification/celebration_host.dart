@@ -76,10 +76,13 @@ class _CelebrationHostState extends ConsumerState<CelebrationHost> {
       (_, next) => _ingest(next),
     );
 
+    // The weekly proposal takes precedence; milestones wait their turn.
+    final proposalDue = ref.watch(proposalProvider)?.isDue ?? false;
+
     return Stack(
       children: [
         widget.child,
-        if (_current != null)
+        if (_current != null && !proposalDue)
           _CelebrationOverlay(
             milestone: _current!,
             confetti: _confetti,

@@ -7,6 +7,7 @@ import 'domain/behavior_analysis.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
+import 'domain/weekly_proposal.dart';
 
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
@@ -57,47 +58,82 @@ final clockProvider = StreamProvider<DateTime>((ref) {
   return controller.stream;
 });
 
-/// Number of full growth-weeks elapsed since the baseline phase ended.
-int _growthWeeks(Duration sinceStart) {
-  final daysAfterBaseline =
-      sinceStart.inDays - StintCalculator.baselineDuration.inDays;
-  if (daysAfterBaseline < 0) return 0;
-  return daysAfterBaseline ~/ 7;
-}
-
-/// The currently active target stint (null until onboarding finishes).
+/// The active target stint, or null while still measuring (no countdown yet).
+/// Set only by accepting a weekly proposal.
 final targetIntervalProvider = Provider<Duration?>((ref) {
-  final settings = ref.watch(settingsProvider).value;
-  final now = ref.watch(clockProvider).value;
-  if (settings == null || now == null) return null;
-  final sinceStart = now.difference(settings.startedAt);
-  final base = StintCalculator.intervalFromDailyRate(
-    settings.baselineCigsPerDay.toDouble(),
-  );
-  return StintCalculator.targetInterval(
-    baseInterval: base,
-    weeksSinceStart: _growthWeeks(sinceStart),
-  );
+  final secs = ref.watch(settingsProvider).value?.currentTargetSeconds;
+  return secs == null ? null : Duration(seconds: secs);
 });
 
-/// Live stint state for the cockpit gauge.
+/// Live stint state for the cockpit gauge. Baseline (count-up "Messrunde")
+/// until a target has been accepted, then countdown → overtime.
 final liveStintProvider = Provider<StintState?>((ref) {
   final settings = ref.watch(settingsProvider).value;
   final pitStops = ref.watch(pitStopsProvider).value;
   final now = ref.watch(clockProvider).value;
   final target = ref.watch(targetIntervalProvider);
-  if (settings == null || now == null || target == null) return null;
+  if (settings == null || now == null) return null;
 
-  final sinceStart = now.difference(settings.startedAt);
-  final inBaseline = sinceStart < StintCalculator.baselineDuration;
   final lastPit = (pitStops != null && pitStops.isNotEmpty)
       ? pitStops.first.occurredAt
       : settings.startedAt;
 
   return StintCalculator.evaluate(
-    target: target,
+    target: target ?? Duration.zero,
     sinceLastPit: now.difference(lastPit),
-    inBaseline: inBaseline,
+    inBaseline: target == null,
+  );
+});
+
+/// State for the weekly "stretch your target" proposal.
+class ProposalState {
+  const ProposalState({
+    required this.isDue,
+    required this.base,
+    required this.measured,
+    required this.currentTarget,
+    required this.growthPermille,
+  });
+
+  final bool isDue;
+  final Duration base;
+  final Duration? measured;
+  final Duration? currentTarget;
+  final int growthPermille;
+}
+
+final proposalProvider = Provider<ProposalState?>((ref) {
+  final settings = ref.watch(settingsProvider).value;
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final now = ref.watch(clockProvider).value;
+  if (settings == null || now == null) return null;
+
+  final afterFirstWeek =
+      now.difference(settings.startedAt) >= ProposalCalculator.window;
+  final last = settings.lastProposalAt;
+  final dueAgain =
+      last == null || now.difference(last) >= ProposalCalculator.window;
+
+  final measured = ProposalCalculator.measuredMedian(
+    pitTimes: (pitStops ?? const []).map((p) => p.occurredAt).toList(),
+    now: now,
+  );
+  final currentTarget = settings.currentTargetSeconds == null
+      ? null
+      : Duration(seconds: settings.currentTargetSeconds!);
+  final base = ProposalCalculator.baseFor(
+    measured: measured,
+    currentTarget: currentTarget,
+    fallback: StintCalculator.intervalFromDailyRate(
+        settings.baselineCigsPerDay.toDouble()),
+  );
+
+  return ProposalState(
+    isDue: afterFirstWeek && dueAgain,
+    base: base,
+    measured: measured,
+    currentTarget: currentTarget,
+    growthPermille: settings.growthPermille,
   );
 });
 

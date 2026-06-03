@@ -14,6 +14,16 @@ class AppSettingsRows extends Table {
   BoolColumn get onboardingDone =>
       boolean().withDefault(const Constant(false))();
 
+  /// Active target stint in seconds. Null = still measuring (no countdown yet).
+  IntColumn get currentTargetSeconds => integer().nullable()();
+
+  /// When the last weekly proposal was shown/resolved (accepted or declined).
+  DateTimeColumn get lastProposalAt => dateTime().nullable()();
+
+  /// Last chosen weekly stretch in per-mille (100 = 10 %). Pre-fills the slider.
+  IntColumn get growthPermille =>
+      integer().withDefault(const Constant(100))();
+
   @override
   Set<Column> get primaryKey => {id};
 }

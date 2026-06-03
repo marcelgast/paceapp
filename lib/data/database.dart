@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -36,6 +36,12 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) await m.createTable(unlocks);
+          if (from < 3) {
+            await m.addColumn(
+                appSettingsRows, appSettingsRows.currentTargetSeconds);
+            await m.addColumn(appSettingsRows, appSettingsRows.lastProposalAt);
+            await m.addColumn(appSettingsRows, appSettingsRows.growthPermille);
+          }
         },
       );
 
@@ -67,6 +73,28 @@ class AppDatabase extends _$AppDatabase {
         onboardingDone: const Value(true),
       ),
     );
+  }
+
+  /// Accept a weekly proposal: set the new target and remember the choice.
+  Future<void> acceptProposal({
+    required int targetSeconds,
+    required int growthPermille,
+    required DateTime at,
+  }) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(
+        currentTargetSeconds: Value(targetSeconds),
+        growthPermille: Value(growthPermille),
+        lastProposalAt: Value(at),
+      ),
+    );
+  }
+
+  /// Decline a weekly proposal: keep the target, just bump the timestamp so the
+  /// next proposal is due in a week.
+  Future<void> declineProposal(DateTime at) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
+        .write(AppSettingsRowsCompanion(lastProposalAt: Value(at)));
   }
 
   // ---- Situations ---------------------------------------------------------

@@ -65,15 +65,20 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
   final timerRef =
       isBaseline ? lastPit : lastPit.add(target ?? Duration.zero);
 
-  await WidgetService.init();
-  await WidgetService.write(
-    isBaseline: isBaseline,
-    timerRef: timerRef,
-    bestLabel: formatHumanDuration(best),
-    savedMoney: stats == null
-        ? '—'
-        : formatMoneyCents(stats.savedMoneyCents,
-            currencyCode: settings.currencyCode),
-    carName: car.name,
-  );
+  try {
+    await WidgetService.init();
+    await WidgetService.write(
+      isBaseline: isBaseline,
+      timerRef: timerRef,
+      bestLabel: formatHumanDuration(best),
+      savedMoney: stats == null
+          ? '—'
+          : formatMoneyCents(stats.savedMoneyCents,
+              currencyCode: settings.currencyCode),
+      carName: car.name,
+    );
+  } catch (_) {
+    // home_widget can fail on the iOS simulator (objective_c framework) —
+    // never let widget updates break the app.
+  }
 }

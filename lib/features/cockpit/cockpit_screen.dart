@@ -184,7 +184,7 @@ class _Gauge extends StatelessWidget {
       StintPhase.baseline => (
           'MESSRUNDE',
           formatStintDuration(stint?.elapsed ?? Duration.zero),
-          'Woche 1 — wir messen nur dein Tempo',
+          'Wir messen dein Tempo — bald kommt dein Ziel',
           PaceColors.textMuted,
         ),
       StintPhase.countdown => (

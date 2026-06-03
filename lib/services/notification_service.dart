@@ -32,18 +32,20 @@ abstract final class NotificationService {
   }
 
   static Future<void> requestPermission() async {
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
+    try {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
+    } catch (_) {}
   }
 
   /// (Re)schedule the overtime notification for the active stint.
   static Future<void> scheduleStintComplete(DateTime at) async {
-    await _plugin.cancel(id: _stintId);
     if (!at.isAfter(DateTime.now())) return;
-
-    await _plugin.zonedSchedule(
+    try {
+      await _plugin.cancel(id: _stintId);
+      await _plugin.zonedSchedule(
       id: _stintId,
       title: 'Stint geschafft! 🏁',
       body: 'Du bist in der Overtime — ab jetzt ist jede Sekunde geschenkte Zeit.',
@@ -62,7 +64,8 @@ abstract final class NotificationService {
           priority: Priority.high,
         ),
       ),
-    );
+      );
+    } catch (_) {}
   }
 
   static Future<void> cancelStint() => _plugin.cancel(id: _stintId);
