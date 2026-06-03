@@ -99,10 +99,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     _lights.value = 0.06;
     const stops = [0.31, 0.46, 0.61];
     for (var i = 0; i < stops.length; i++) {
-      Future<void>.delayed(Duration(milliseconds: 320 + i * 540), () {
-        if (!mounted || _step != 3 || _launching) return;
+      Future<void>.delayed(Duration(milliseconds: 650 + i * 900), () {
+        if (!mounted || _step != 4 || _launching) return;
         _lights.animateTo(stops[i],
-            duration: const Duration(milliseconds: 380), curve: Curves.easeOut);
+            duration: const Duration(milliseconds: 520), curve: Curves.easeOut);
       });
     }
   }
