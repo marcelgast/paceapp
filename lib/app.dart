@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'l10n/app_localizations.dart';
 import 'features/gamification/celebration_host.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/proposal/proposal_host.dart';
@@ -20,6 +21,10 @@ class PaceApp extends StatelessWidget {
       title: 'Pace',
       debugShowCheckedModeBanner: false,
       theme: PaceTheme.dark(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // German-first for now; English scaffolding is in place for later.
+      locale: const Locale('de'),
       home: const _Gate(),
     );
   }

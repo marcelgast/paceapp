@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../services/widget_service.dart';
 import '../../theme/pace_colors.dart';
 import '../analysis/analysis_screen.dart';
@@ -84,6 +85,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: IndexedStack(index: _index, children: _tabs),
       bottomNavigationBar: Container(
@@ -105,34 +107,36 @@ class _HomeShellState extends ConsumerState<HomeShell>
             height: 64,
             selectedIndex: _index,
             onDestinationSelected: (i) => setState(() => _index = i),
-            destinations: const [
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.speed_outlined),
-                selectedIcon: Icon(Icons.speed, color: PaceColors.neonMagenta),
-                label: 'Cockpit',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.insights_outlined),
-                selectedIcon: Icon(Icons.insights, color: PaceColors.neonMagenta),
-                label: 'Analyse',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.monitor_heart_outlined),
+                icon: const Icon(Icons.speed_outlined),
                 selectedIcon:
-                    Icon(Icons.monitor_heart, color: PaceColors.neonMagenta),
-                label: 'Körper',
+                    const Icon(Icons.speed, color: PaceColors.neonMagenta),
+                label: l10n.tabCockpit,
               ),
               NavigationDestination(
-                icon: Icon(Icons.emoji_events_outlined),
+                icon: const Icon(Icons.insights_outlined),
                 selectedIcon:
-                    Icon(Icons.emoji_events, color: PaceColors.neonMagenta),
-                label: 'Pokale',
+                    const Icon(Icons.insights, color: PaceColors.neonMagenta),
+                label: l10n.tabAnalysis,
               ),
               NavigationDestination(
-                icon: Icon(Icons.menu_book_outlined),
+                icon: const Icon(Icons.monitor_heart_outlined),
+                selectedIcon: const Icon(Icons.monitor_heart,
+                    color: PaceColors.neonMagenta),
+                label: l10n.tabBody,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.emoji_events_outlined),
+                selectedIcon: const Icon(Icons.emoji_events,
+                    color: PaceColors.neonMagenta),
+                label: l10n.tabTrophies,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.menu_book_outlined),
                 selectedIcon:
-                    Icon(Icons.menu_book, color: PaceColors.neonMagenta),
-                label: 'Journal',
+                    const Icon(Icons.menu_book, color: PaceColors.neonMagenta),
+                label: l10n.tabJournal,
               ),
             ],
           ),

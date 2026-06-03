@@ -1,0 +1,13 @@
+{
+  "@@locale": "de",
+  "appTitle": "Pace",
+  "@appTitle": {
+    "description": "Application name"
+  },
+  "tabCockpit": "Cockpit",
+  "tabAnalysis": "Analyse",
+  "tabBody": "Körper",
+  "tabTrophies": "Pokale",
+  "tabJournal": "Journal",
+  "boxenstopp": "Boxenstopp"
+}
