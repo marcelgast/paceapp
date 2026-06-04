@@ -116,8 +116,10 @@ final proposalProvider = Provider<ProposalState?>((ref) {
   final now = ref.watch(clockProvider).value;
   if (settings == null || now == null) return null;
 
-  final afterFirstWeek =
-      now.difference(settings.startedAt) >= ProposalCalculator.window;
+  // First proposal once the measuring round is over; afterwards the stretch
+  // keeps its weekly rhythm.
+  final measuringDone =
+      now.difference(settings.startedAt) >= StintCalculator.baselineDuration;
   final last = settings.lastProposalAt;
   final dueAgain =
       last == null || now.difference(last) >= ProposalCalculator.window;
@@ -137,7 +139,7 @@ final proposalProvider = Provider<ProposalState?>((ref) {
   );
 
   return ProposalState(
-    isDue: afterFirstWeek && dueAgain,
+    isDue: measuringDone && dueAgain,
     base: base,
     measured: measured,
     currentTarget: currentTarget,

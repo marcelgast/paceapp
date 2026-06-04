@@ -43,8 +43,9 @@ class StintState {
 abstract final class StintCalculator {
   static const double defaultWeeklyGrowth = 0.10;
 
-  /// Length of the baseline phase before the timer mechanic switches on.
-  static const Duration baselineDuration = Duration(days: 7);
+  /// Length of the baseline phase before the timer mechanic switches on. One
+  /// day of measuring is enough to get a feel for the rate and start the program.
+  static const Duration baselineDuration = Duration(days: 1);
 
   /// Target stint after [weeksSinceStart] weeks of growth.
   ///

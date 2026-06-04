@@ -368,7 +368,7 @@ class _WelcomePage extends StatelessWidget {
                     color: PaceColors.neonCyan,
                     title: 'Erst beobachten',
                     detail:
-                        'Eine Woche fährst du wie immer — wir lernen still dein Tempo.',
+                        'Einen Tag fährst du wie immer — wir lernen still dein Tempo.',
                   ),
                   const _FeatureRow(
                     icon: Icons.trending_up,
@@ -508,8 +508,8 @@ class _MeasureWeekPage extends StatelessWidget {
                           .copyWith(height: 1.05)),
                   const SizedBox(height: 8),
                   Text(
-                    'Kein kalter Entzug. In der ersten Woche fährst du ganz '
-                    'normal weiter — wir schauen nur zu und lernen dein Tempo.',
+                    'Kein kalter Entzug. Am ersten Tag fährst du ganz normal '
+                    'weiter — wir schauen nur zu und lernen dein Tempo.',
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 14, height: 1.4),
                   ),
@@ -517,7 +517,7 @@ class _MeasureWeekPage extends StatelessWidget {
                   const _StepRow(
                     number: '1',
                     color: PaceColors.neonCyan,
-                    title: 'Messrunde · 1 Woche',
+                    title: 'Messrunde · 1 Tag',
                     detail:
                         'Logg jede Zigarette als Boxenstopp. Kein Ziel, kein Druck.',
                   ),
