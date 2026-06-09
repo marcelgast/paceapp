@@ -293,20 +293,44 @@ final statsProvider = Provider<PaceStats?>((ref) {
   if (settings == null || now == null) return null;
 
   final all = pitStops ?? const <PitStop>[];
-  final sinceStart = now.difference(settings.startedAt);
-  final measuringEnd = settings.startedAt.add(StintCalculator.baselineDuration);
+  final start = settings.startedAt;
+  final sinceStart = now.difference(start);
+  final baseline = settings.baselineCigsPerDay.toDouble();
 
-  // Counterfactual rate from real data: running rate while still measuring,
-  // then the measured baseline (week-1 cigarettes ÷ 7). Falls back to the
-  // onboarding estimate only if no baseline was ever logged.
-  final double dailyRate;
-  if (now.isBefore(measuringEnd)) {
-    final days = sinceStart.inSeconds / Duration.secondsPerDay;
-    dailyRate = days > 0 ? all.length / days : 0;
-  } else {
-    final week1 = all.where((p) => p.occurredAt.isBefore(measuringEnd)).length;
-    final measured = week1 / StintCalculator.baselineDuration.inDays;
-    dailyRate = measured > 0 ? measured : settings.baselineCigsPerDay.toDouble();
+  // Cigarettes per calendar day — drives the rolling "yesterday" baseline.
+  final dailyCounts = <DateTime, int>{};
+  for (final p in all) {
+    final d = DateTime(p.occurredAt.year, p.occurredAt.month, p.occurredAt.day);
+    dailyCounts[d] = (dailyCounts[d] ?? 0) + 1;
+  }
+
+  // One rate segment per calendar day in [start, now]. Each day's expected rate
+  // is the previous calendar day's count (the first day uses the onboarding
+  // baseline). Savings stay a high-water mark, so they never drop.
+  final startDate = DateTime(start.year, start.month, start.day);
+  final rateSegments = <({Duration start, Duration end, double ratePerDay})>[];
+  var dayMidnight = startDate;
+  while (dayMidnight.isBefore(now)) {
+    final nextMidnight =
+        DateTime(dayMidnight.year, dayMidnight.month, dayMidnight.day + 1);
+    final segStart = dayMidnight.isBefore(start) ? start : dayMidnight;
+    final segEnd = nextMidnight.isAfter(now) ? now : nextMidnight;
+    if (segEnd.isAfter(segStart)) {
+      final double rate;
+      if (dayMidnight == startDate) {
+        rate = baseline;
+      } else {
+        final prevDay = DateTime(
+            dayMidnight.year, dayMidnight.month, dayMidnight.day - 1);
+        rate = (dailyCounts[prevDay] ?? 0).toDouble();
+      }
+      rateSegments.add((
+        start: segStart.difference(start),
+        end: segEnd.difference(start),
+        ratePerDay: rate,
+      ));
+    }
+    dayMidnight = nextMidnight;
   }
 
   final pitElapsed = all
@@ -344,8 +368,8 @@ final statsProvider = Provider<PaceStats?>((ref) {
 
   return PaceStats.compute(
     sinceStart: sinceStart,
-    dailyRate: dailyRate,
     pitElapsed: pitElapsed,
     costPeriods: costPeriods,
+    rateSegments: rateSegments,
   );
 });

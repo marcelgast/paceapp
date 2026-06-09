@@ -93,9 +93,11 @@ void main() {
   group('PaceStats', () {
     PaceStats statsFor(List<Duration> pits) => PaceStats.compute(
           sinceStart: const Duration(days: 1),
-          dailyRate: 20,
           pitElapsed: pits,
           costPeriods: const [(start: Duration.zero, perCig: 40)],
+          rateSegments: const [
+            (start: Duration.zero, end: Duration(days: 1), ratePerDay: 20)
+          ],
         );
 
     test('savings accrue against the baseline rate', () {
@@ -129,16 +131,35 @@ void main() {
       // 20/day, 2 days clean. Day 1 at 40 ct/cig, day 2 at 60 ct/cig.
       final stats = PaceStats.compute(
         sinceStart: const Duration(days: 2),
-        dailyRate: 20,
         pitElapsed: const [],
         costPeriods: const [
           (start: Duration.zero, perCig: 40),
           (start: Duration(days: 1), perCig: 60),
         ],
+        rateSegments: const [
+          (start: Duration.zero, end: Duration(days: 2), ratePerDay: 20)
+        ],
       );
       // Avoided 40 cigarettes. Money: day1 20×40 + day2 20×60 = 800 + 1200.
       expect(stats.savedCigarettes, closeTo(40, 0.0001));
       expect(stats.savedMoneyCents, 2000);
+    });
+
+    test('rolling daily rate: each day expects the previous day', () {
+      // Day 1 baseline 20 (smoked 0), day 2 expects yesterday = 20 again.
+      // Two clean days, no pits → avoided = 20 + 20 = 40.
+      final stats = PaceStats.compute(
+        sinceStart: const Duration(days: 2),
+        pitElapsed: const [],
+        costPeriods: const [(start: Duration.zero, perCig: 50)],
+        rateSegments: const [
+          (start: Duration.zero, end: Duration(days: 1), ratePerDay: 20),
+          (start: Duration(days: 1), end: Duration(days: 2), ratePerDay: 15),
+        ],
+      );
+      // Expected cigarettes = 20*1 + 15*1 = 35; money = (20+15)*50 = 1750.
+      expect(stats.savedCigarettes, closeTo(35, 0.0001));
+      expect(stats.savedMoneyCents, 1750);
     });
   });
 }

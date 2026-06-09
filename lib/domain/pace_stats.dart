@@ -38,17 +38,33 @@ class PaceStats {
   /// ascending. [costPeriods] are the cost epochs as (start-since-start, cents
   /// per cigarette), sorted ascending, the first starting at zero — so a price
   /// change is honoured from its moment forward and never re-prices the past.
+  /// [rateSegments] are the expected baseline rate over time as (start, end,
+  /// cigarettes-per-day), each segment usually one calendar day priced at the
+  /// previous day's consumption — the "rolling yesterday" basis.
   factory PaceStats.compute({
     required Duration sinceStart,
-    required double dailyRate,
     required List<Duration> pitElapsed,
     required List<({Duration start, int perCig})> costPeriods,
+    required List<({Duration start, Duration end, double ratePerDay})>
+        rateSegments,
   }) {
-    final currentPerCig =
-        costPeriods.isEmpty ? 0 : costPeriods.last.perCig;
+    final currentPerCig = costPeriods.isEmpty ? 0 : costPeriods.last.perCig;
 
-    double expectedCigsAt(Duration t) =>
-        dailyRate * (t.inSeconds / Duration.secondsPerDay);
+    double overlapDays(
+        Duration aStart, Duration aEnd, Duration bStart, Duration bEnd) {
+      final lo = aStart > bStart ? aStart : bStart;
+      final hi = aEnd < bEnd ? aEnd : bEnd;
+      final secs = hi.inSeconds - lo.inSeconds;
+      return secs > 0 ? secs / Duration.secondsPerDay : 0;
+    }
+
+    double expectedCigsAt(Duration t) {
+      var sum = 0.0;
+      for (final s in rateSegments) {
+        sum += s.ratePerDay * overlapDays(s.start, s.end, Duration.zero, t);
+      }
+      return sum;
+    }
 
     int perCigAt(Duration e) {
       var pc = costPeriods.isEmpty ? 0 : costPeriods.first.perCig;
@@ -62,17 +78,17 @@ class PaceStats {
       return pc;
     }
 
-    // Expected money spent at baseline up to [t], each period priced its own way.
+    // Expected money up to [t]: each rate segment priced by the cost periods it
+    // overlaps — so both the rolling daily rate and price changes are honoured.
     double expectedMoneyAt(Duration t) {
       var sum = 0.0;
-      for (var i = 0; i < costPeriods.length; i++) {
-        final start = costPeriods[i].start;
-        final end =
-            i + 1 < costPeriods.length ? costPeriods[i + 1].start : t;
-        final hi = end < t ? end : t;
-        if (hi > start) {
-          final days = (hi - start).inSeconds / Duration.secondsPerDay;
-          sum += dailyRate * costPeriods[i].perCig * days;
+      for (final s in rateSegments) {
+        for (var i = 0; i < costPeriods.length; i++) {
+          final pStart = costPeriods[i].start;
+          final pEnd = i + 1 < costPeriods.length ? costPeriods[i + 1].start : t;
+          final pHi = pEnd < t ? pEnd : t;
+          final days = overlapDays(s.start, s.end, pStart, pHi);
+          if (days > 0) sum += s.ratePerDay * costPeriods[i].perCig * days;
         }
       }
       return sum;
