@@ -182,7 +182,11 @@ final achievedMilestonesProvider = Provider<List<Milestone>>((ref) {
 /// Achieved but not yet celebrated — drives the pop-up.
 final pendingMilestonesProvider = Provider<List<Milestone>>((ref) {
   final achieved = ref.watch(achievedMilestonesProvider);
-  final celebrated = ref.watch(celebratedKeysProvider).value ?? const {};
+  // Wait until the "already celebrated" set has actually loaded from the DB.
+  // Otherwise the first frame sees an empty set and re-pops every achievement
+  // on each launch.
+  final celebrated = ref.watch(celebratedKeysProvider).valueOrNull;
+  if (celebrated == null) return const [];
   return achieved.where((m) => !celebrated.contains(m.key)).toList();
 });
 
