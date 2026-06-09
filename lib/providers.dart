@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'data/database.dart';
 import 'domain/behavior_analysis.dart';
 import 'domain/clean_run.dart';
+import 'domain/sleep_window.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
@@ -33,6 +34,14 @@ final pitStopsProvider = StreamProvider<List<PitStop>>((ref) {
 /// Price/pack-size epochs. A change applies from its effective date forward.
 final costPeriodsProvider = StreamProvider<List<CostPeriod>>((ref) {
   return ref.watch(databaseProvider).watchCostPeriods();
+});
+
+/// The user's sleep window — excluded from stint/best timing.
+final sleepWindowProvider = Provider<SleepWindow>((ref) {
+  final s = ref.watch(settingsProvider).value;
+  if (s == null) return SleepWindow.defaultWindow;
+  return SleepWindow(
+      startMinutes: s.sleepStartMinutes, endMinutes: s.sleepEndMinutes);
 });
 
 /// All situations including archived — used to label historic pit stops.
@@ -86,11 +95,26 @@ final liveStintProvider = Provider<StintState?>((ref) {
       ? pitStops.first.occurredAt
       : settings.startedAt;
 
+  // The stint timer counts awake time only — sleep doesn't run the clock.
+  final awake = ref.watch(sleepWindowProvider).awakeBetween(lastPit, now);
   return StintCalculator.evaluate(
     target: target ?? Duration.zero,
-    sinceLastPit: now.difference(lastPit),
+    sinceLastPit: awake,
     inBaseline: target == null,
   );
+});
+
+/// Wall-clock time since the last pit stop — for the recovery view, where the
+/// body keeps healing during sleep (unlike the stint timer).
+final wallClockSinceLastPitProvider = Provider<Duration>((ref) {
+  final settings = ref.watch(settingsProvider).value;
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final now = ref.watch(clockProvider).value;
+  if (settings == null || now == null) return Duration.zero;
+  final lastPit = (pitStops != null && pitStops.isNotEmpty)
+      ? pitStops.first.occurredAt
+      : settings.startedAt;
+  return now.difference(lastPit);
 });
 
 /// State for the weekly "stretch your target" proposal.
@@ -164,6 +188,7 @@ final cleanRunProvider = Provider<CleanRun>((ref) {
     pitTimes: (pitStops ?? const <PitStop>[]).map((p) => p.occurredAt).toList(),
     startedAt: settings.startedAt,
     now: now,
+    sleep: ref.watch(sleepWindowProvider),
   );
 });
 

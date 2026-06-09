@@ -30,6 +30,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _price = TextEditingController();
   final _perPack = TextEditingController();
   final _perDay = TextEditingController();
+  TimeOfDay _sleepStart = const TimeOfDay(hour: 23, minute: 0);
+  TimeOfDay _sleepEnd = const TimeOfDay(hour: 7, minute: 0);
   bool _prefilled = false;
   bool _saving = false;
 
@@ -48,6 +50,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return (value * 100).round();
   }
 
+  Future<void> _pickSleep({required bool isStart}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isStart ? _sleepStart : _sleepEnd,
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isStart) {
+        _sleepStart = picked;
+      } else {
+        _sleepEnd = picked;
+      }
+    });
+  }
+
+  Widget _sleepBox(String label, TimeOfDay time, VoidCallback onTap) {
+    final value = '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: PaceColors.panel.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.5)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            const SizedBox(height: 4),
+            Text(value,
+                style: PaceTheme.dash(
+                    size: 30,
+                    weight: FontWeight.w800,
+                    color: PaceColors.neonCyan)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _save() async {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -63,10 +109,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settings = ref.read(settingsProvider).value;
     if (settings == null) return;
 
+    final sleepStartMin = _sleepStart.hour * 60 + _sleepStart.minute;
+    final sleepEndMin = _sleepEnd.hour * 60 + _sleepEnd.minute;
     final priceChanged = cents != settings.packPriceCents ||
         perPack != settings.cigarettesPerPack;
     final baselineChanged = perDay != settings.baselineCigsPerDay;
-    if (!priceChanged && !baselineChanged) {
+    final sleepChanged = sleepStartMin != settings.sleepStartMinutes ||
+        sleepEndMin != settings.sleepEndMinutes;
+    if (!priceChanged && !baselineChanged && !sleepChanged) {
       navigator.pop();
       return;
     }
@@ -113,6 +163,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (baselineChanged) {
       await db.updateBaseline(perDay);
+    }
+    if (sleepChanged) {
+      await db.updateSleepWindow(
+          startMinutes: sleepStartMin, endMinutes: sleepEndMin);
     }
     await pushPaceWidget(ref);
     if (!mounted) return;
@@ -168,6 +222,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           .replaceAll('.', ',');
       _perPack.text = settings.cigarettesPerPack.toString();
       _perDay.text = settings.baselineCigsPerDay.toString();
+      _sleepStart = TimeOfDay(
+          hour: settings.sleepStartMinutes ~/ 60,
+          minute: settings.sleepStartMinutes % 60);
+      _sleepEnd = TimeOfDay(
+          hour: settings.sleepEndMinutes ~/ 60,
+          minute: settings.sleepEndMinutes % 60);
       _prefilled = true;
     }
 
@@ -234,6 +294,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           color: PaceColors.textFaint,
                           fontSize: 12,
                           height: 1.35),
+                    ),
+                    const SizedBox(height: 26),
+                    Text('SCHLAFENSZEIT',
+                        style: TextStyle(
+                            color: PaceColors.textMuted,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 4),
+                    Text('Schlaf zählt nicht für Stints & Bestzeiten.',
+                        style: TextStyle(
+                            color: PaceColors.textFaint,
+                            fontSize: 12,
+                            height: 1.35)),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _sleepBox('Von', _sleepStart,
+                                () => _pickSleep(isStart: true))),
+                        const SizedBox(width: 12),
+                        Expanded(
+                            child: _sleepBox('Bis', _sleepEnd,
+                                () => _pickSleep(isStart: false))),
+                      ],
                     ),
                     const SizedBox(height: 24),
                     _SaveButton(saving: _saving, onTap: _saving ? null : _save),

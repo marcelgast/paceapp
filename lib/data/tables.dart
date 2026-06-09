@@ -24,6 +24,13 @@ class AppSettingsRows extends Table {
   IntColumn get growthPermille =>
       integer().withDefault(const Constant(100))();
 
+  /// Sleep window as minutes from midnight. Sleep is excluded from stint/best
+  /// timing (default 23:00–07:00).
+  IntColumn get sleepStartMinutes =>
+      integer().withDefault(const Constant(23 * 60))();
+  IntColumn get sleepEndMinutes =>
+      integer().withDefault(const Constant(7 * 60))();
+
   @override
   Set<Column> get primaryKey => {id};
 }

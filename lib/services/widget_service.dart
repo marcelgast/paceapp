@@ -4,6 +4,7 @@ import 'package:home_widget/home_widget.dart';
 
 import '../domain/clean_run.dart';
 import '../domain/milestones.dart';
+import '../domain/sleep_window.dart';
 import '../domain/stint_calculator.dart';
 import '../providers.dart';
 import '../util/format.dart';
@@ -60,6 +61,10 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
     pitTimes: pitTimes,
     startedAt: settings.startedAt,
     now: now,
+    sleep: SleepWindow(
+      startMinutes: settings.sleepStartMinutes,
+      endMinutes: settings.sleepEndMinutes,
+    ),
   ).best;
 
   final isBaseline = (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;

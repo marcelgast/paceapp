@@ -13,7 +13,9 @@ class RecoveryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final clean = ref.watch(liveStintProvider)?.elapsed ?? Duration.zero;
+    // Wall-clock since the last cigarette — the body heals during sleep too,
+    // so this is not the awake-only stint time.
+    final clean = ref.watch(wallClockSinceLastPitProvider);
 
     return Scaffold(
       body: RacetrackBackground(

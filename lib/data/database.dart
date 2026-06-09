@@ -27,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -42,6 +42,12 @@ class AppDatabase extends _$AppDatabase {
                 appSettingsRows, appSettingsRows.currentTargetSeconds);
             await m.addColumn(appSettingsRows, appSettingsRows.lastProposalAt);
             await m.addColumn(appSettingsRows, appSettingsRows.growthPermille);
+          }
+          if (from < 5) {
+            await m.addColumn(
+                appSettingsRows, appSettingsRows.sleepStartMinutes);
+            await m.addColumn(
+                appSettingsRows, appSettingsRows.sleepEndMinutes);
           }
           if (from < 4) {
             await m.createTable(costPeriods);
@@ -91,6 +97,18 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Future<void> updateSleepWindow({
+    required int startMinutes,
+    required int endMinutes,
+  }) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(
+        sleepStartMinutes: Value(startMinutes),
+        sleepEndMinutes: Value(endMinutes),
+      ),
+    );
+  }
+
   /// Corrects the baseline daily-consumption estimate. Unlike price, this is a
   /// simple overwrite — it shifts the whole expected-consumption reference.
   Future<void> updateBaseline(int baselineCigsPerDay) {
@@ -116,6 +134,8 @@ class AppDatabase extends _$AppDatabase {
     required int baselineCigsPerDay,
     required DateTime startedAt,
     String currencyCode = 'EUR',
+    int sleepStartMinutes = 23 * 60,
+    int sleepEndMinutes = 7 * 60,
   }) async {
     await into(appSettingsRows).insertOnConflictUpdate(
       AppSettingsRowsCompanion.insert(
@@ -126,6 +146,8 @@ class AppDatabase extends _$AppDatabase {
         startedAt: startedAt,
         currencyCode: Value(currencyCode),
         onboardingDone: const Value(true),
+        sleepStartMinutes: Value(sleepStartMinutes),
+        sleepEndMinutes: Value(sleepEndMinutes),
       ),
     );
     // First cost period — pricing is sourced from here onward.

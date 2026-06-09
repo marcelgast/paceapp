@@ -32,11 +32,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   final _perPack = TextEditingController(text: '20');
   final _perDay = TextEditingController(text: '15');
 
+  TimeOfDay _sleepStart = const TimeOfDay(hour: 23, minute: 0);
+  TimeOfDay _sleepEnd = const TimeOfDay(hour: 7, minute: 0);
+
   int _step = 0;
   bool _launching = false;
 
-  // Indexed by step: 0 welcome, 1-3 questions, 4 measuring-week explainer.
-  static const _stepProgress = [0.06, 0.31, 0.46, 0.61, 0.74];
+  // Indexed by step: 0 welcome, 1-3 questions, 4 sleep, 5 measuring-week.
+  static const _stepProgress = [0.06, 0.31, 0.46, 0.61, 0.68, 0.74];
 
   @override
   void dispose() {
@@ -60,7 +63,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
       1 => _priceCents() != null,
       2 => (int.tryParse(_perPack.text.trim()) ?? 0) > 0,
       3 => (int.tryParse(_perDay.text.trim()) ?? 0) > 0,
-      _ => true, // welcome (0) and explainer (4) have nothing to validate
+      _ => true, // welcome (0), sleep (4) and explainer (5) need no validation
     };
   }
 
@@ -73,12 +76,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     }
     HapticFeedback.lightImpact();
 
-    if (_step < 4) {
+    if (_step < 5) {
       setState(() => _step++);
       if (_step == 4) {
-        // The staging tree sits behind the keyboard during the questions. Now
-        // that it's finally on screen, drop the keyboard and replay the amber
-        // cascade slowly so the animation isn't wasted.
+        // Sleep page — no text field, drop the keyboard.
+        FocusScope.of(context).unfocus();
+        _lights.animateTo(_stepProgress[_step]);
+      } else if (_step == 5) {
+        // The staging tree is finally on screen — replay the amber cascade.
         FocusScope.of(context).unfocus();
         _playStagingTree();
       } else {
@@ -100,7 +105,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     const stops = [0.31, 0.46, 0.61];
     for (var i = 0; i < stops.length; i++) {
       Future<void>.delayed(Duration(milliseconds: 650 + i * 900), () {
-        if (!mounted || _step != 4 || _launching) return;
+        if (!mounted || _step != 5 || _launching) return;
         _lights.animateTo(stops[i],
             duration: const Duration(milliseconds: 520), curve: Curves.easeOut);
       });
@@ -115,6 +120,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
         duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
   }
 
+  Future<void> _pickSleep({required bool isStart}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isStart ? _sleepStart : _sleepEnd,
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isStart) {
+        _sleepStart = picked;
+      } else {
+        _sleepEnd = picked;
+      }
+    });
+  }
+
   Future<void> _launch() async {
     setState(() => _launching = true);
     await _lights.animateTo(0.9, duration: const Duration(milliseconds: 700));
@@ -124,6 +144,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
           cigarettesPerPack: int.parse(_perPack.text.trim()),
           baselineCigsPerDay: int.parse(_perDay.text.trim()),
           startedAt: DateTime.now(),
+          sleepStartMinutes: _sleepStart.hour * 60 + _sleepStart.minute,
+          sleepEndMinutes: _sleepEnd.hour * 60 + _sleepEnd.minute,
         );
     await NotificationService.requestPermission();
     // Settings stream flips the gate to the cockpit.
@@ -182,7 +204,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                                       color: PaceColors.textMuted, fontSize: 14)),
                               // The staging tree is the launch ritual — show it
                               // only on the measuring-week page.
-                              if (_step == 4) ...[
+                              if (_step == 5) ...[
                                 const SizedBox(height: 16),
                                 AnimatedBuilder(
                                   animation: _lights,
@@ -240,6 +262,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                           onNext: _next,
                           onBack: _back,
                           launching: false,
+                        ),
+                        _SleepPage(
+                          start: _sleepStart,
+                          end: _sleepEnd,
+                          onPickStart: () => _pickSleep(isStart: true),
+                          onPickEnd: () => _pickSleep(isStart: false),
+                          onNext: _next,
+                          onBack: _back,
                         ),
                         _MeasureWeekPage(
                           onNext: _next,
@@ -468,6 +498,131 @@ class _FeatureRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SleepPage extends StatelessWidget {
+  const _SleepPage({
+    required this.start,
+    required this.end,
+    required this.onPickStart,
+    required this.onPickEnd,
+    required this.onNext,
+    required this.onBack,
+  });
+
+  final TimeOfDay start;
+  final TimeOfDay end;
+  final VoidCallback onPickStart;
+  final VoidCallback onPickEnd;
+  final VoidCallback onNext;
+  final VoidCallback onBack;
+
+  static String _fmt(TimeOfDay t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('DEIN SCHLAF',
+                      style: TextStyle(
+                          color: PaceColors.neonOrange,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 10),
+                  Text('Wann schläfst du ungefähr?',
+                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
+                          .copyWith(height: 1.05)),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Schlaf zählt nicht für Stints und Bestzeiten — sonst wäre '
+                    'die Nacht immer deine längste Strecke. Später in den '
+                    'Einstellungen änderbar.',
+                    style: TextStyle(
+                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: _TimeBox(
+                              label: 'Von',
+                              value: _fmt(start),
+                              onTap: onPickStart)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: _TimeBox(
+                              label: 'Bis',
+                              value: _fmt(end),
+                              onTap: onPickEnd)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _BackButton(onTap: onBack),
+              const SizedBox(width: 12),
+              Expanded(child: _PrimaryButton(label: 'WEITER', onTap: onNext)),
+            ],
+          ),
+        ],
+      ).animate(key: const ValueKey('sleep')).fadeIn(duration: 320.ms).slideX(
+            begin: 0.15,
+            curve: Curves.easeOutCubic,
+            duration: 320.ms,
+          ),
+    );
+  }
+}
+
+class _TimeBox extends StatelessWidget {
+  const _TimeBox(
+      {required this.label, required this.value, required this.onTap});
+
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: PaceColors.panel.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.5)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            const SizedBox(height: 6),
+            Text(value,
+                style: PaceTheme.dash(
+                    size: 34,
+                    weight: FontWeight.w800,
+                    color: PaceColors.neonCyan)),
+          ],
+        ),
       ),
     );
   }

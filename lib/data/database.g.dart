@@ -123,6 +123,30 @@ class $AppSettingsRowsTable extends AppSettingsRows
     requiredDuringInsert: false,
     defaultValue: const Constant(100),
   );
+  static const VerificationMeta _sleepStartMinutesMeta = const VerificationMeta(
+    'sleepStartMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> sleepStartMinutes = GeneratedColumn<int>(
+    'sleep_start_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(23 * 60),
+  );
+  static const VerificationMeta _sleepEndMinutesMeta = const VerificationMeta(
+    'sleepEndMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> sleepEndMinutes = GeneratedColumn<int>(
+    'sleep_end_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(7 * 60),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -135,6 +159,8 @@ class $AppSettingsRowsTable extends AppSettingsRows
     currentTargetSeconds,
     lastProposalAt,
     growthPermille,
+    sleepStartMinutes,
+    sleepEndMinutes,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -237,6 +263,24 @@ class $AppSettingsRowsTable extends AppSettingsRows
         ),
       );
     }
+    if (data.containsKey('sleep_start_minutes')) {
+      context.handle(
+        _sleepStartMinutesMeta,
+        sleepStartMinutes.isAcceptableOrUnknown(
+          data['sleep_start_minutes']!,
+          _sleepStartMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sleep_end_minutes')) {
+      context.handle(
+        _sleepEndMinutesMeta,
+        sleepEndMinutes.isAcceptableOrUnknown(
+          data['sleep_end_minutes']!,
+          _sleepEndMinutesMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -286,6 +330,14 @@ class $AppSettingsRowsTable extends AppSettingsRows
         DriftSqlType.int,
         data['${effectivePrefix}growth_permille'],
       )!,
+      sleepStartMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sleep_start_minutes'],
+      )!,
+      sleepEndMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sleep_end_minutes'],
+      )!,
     );
   }
 
@@ -312,6 +364,11 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
 
   /// Last chosen weekly stretch in per-mille (100 = 10 %). Pre-fills the slider.
   final int growthPermille;
+
+  /// Sleep window as minutes from midnight. Sleep is excluded from stint/best
+  /// timing (default 23:00–07:00).
+  final int sleepStartMinutes;
+  final int sleepEndMinutes;
   const AppSettingsRow({
     required this.id,
     required this.packPriceCents,
@@ -323,6 +380,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     this.currentTargetSeconds,
     this.lastProposalAt,
     required this.growthPermille,
+    required this.sleepStartMinutes,
+    required this.sleepEndMinutes,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -341,6 +400,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       map['last_proposal_at'] = Variable<DateTime>(lastProposalAt);
     }
     map['growth_permille'] = Variable<int>(growthPermille);
+    map['sleep_start_minutes'] = Variable<int>(sleepStartMinutes);
+    map['sleep_end_minutes'] = Variable<int>(sleepEndMinutes);
     return map;
   }
 
@@ -360,6 +421,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ? const Value.absent()
           : Value(lastProposalAt),
       growthPermille: Value(growthPermille),
+      sleepStartMinutes: Value(sleepStartMinutes),
+      sleepEndMinutes: Value(sleepEndMinutes),
     );
   }
 
@@ -381,6 +444,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       ),
       lastProposalAt: serializer.fromJson<DateTime?>(json['lastProposalAt']),
       growthPermille: serializer.fromJson<int>(json['growthPermille']),
+      sleepStartMinutes: serializer.fromJson<int>(json['sleepStartMinutes']),
+      sleepEndMinutes: serializer.fromJson<int>(json['sleepEndMinutes']),
     );
   }
   @override
@@ -397,6 +462,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       'currentTargetSeconds': serializer.toJson<int?>(currentTargetSeconds),
       'lastProposalAt': serializer.toJson<DateTime?>(lastProposalAt),
       'growthPermille': serializer.toJson<int>(growthPermille),
+      'sleepStartMinutes': serializer.toJson<int>(sleepStartMinutes),
+      'sleepEndMinutes': serializer.toJson<int>(sleepEndMinutes),
     };
   }
 
@@ -411,6 +478,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     Value<int?> currentTargetSeconds = const Value.absent(),
     Value<DateTime?> lastProposalAt = const Value.absent(),
     int? growthPermille,
+    int? sleepStartMinutes,
+    int? sleepEndMinutes,
   }) => AppSettingsRow(
     id: id ?? this.id,
     packPriceCents: packPriceCents ?? this.packPriceCents,
@@ -426,6 +495,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
         ? lastProposalAt.value
         : this.lastProposalAt,
     growthPermille: growthPermille ?? this.growthPermille,
+    sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
+    sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
   );
   AppSettingsRow copyWithCompanion(AppSettingsRowsCompanion data) {
     return AppSettingsRow(
@@ -455,6 +526,12 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       growthPermille: data.growthPermille.present
           ? data.growthPermille.value
           : this.growthPermille,
+      sleepStartMinutes: data.sleepStartMinutes.present
+          ? data.sleepStartMinutes.value
+          : this.sleepStartMinutes,
+      sleepEndMinutes: data.sleepEndMinutes.present
+          ? data.sleepEndMinutes.value
+          : this.sleepEndMinutes,
     );
   }
 
@@ -470,7 +547,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ..write('onboardingDone: $onboardingDone, ')
           ..write('currentTargetSeconds: $currentTargetSeconds, ')
           ..write('lastProposalAt: $lastProposalAt, ')
-          ..write('growthPermille: $growthPermille')
+          ..write('growthPermille: $growthPermille, ')
+          ..write('sleepStartMinutes: $sleepStartMinutes, ')
+          ..write('sleepEndMinutes: $sleepEndMinutes')
           ..write(')'))
         .toString();
   }
@@ -487,6 +566,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     currentTargetSeconds,
     lastProposalAt,
     growthPermille,
+    sleepStartMinutes,
+    sleepEndMinutes,
   );
   @override
   bool operator ==(Object other) =>
@@ -501,7 +582,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           other.onboardingDone == this.onboardingDone &&
           other.currentTargetSeconds == this.currentTargetSeconds &&
           other.lastProposalAt == this.lastProposalAt &&
-          other.growthPermille == this.growthPermille);
+          other.growthPermille == this.growthPermille &&
+          other.sleepStartMinutes == this.sleepStartMinutes &&
+          other.sleepEndMinutes == this.sleepEndMinutes);
 }
 
 class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
@@ -515,6 +598,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
   final Value<int?> currentTargetSeconds;
   final Value<DateTime?> lastProposalAt;
   final Value<int> growthPermille;
+  final Value<int> sleepStartMinutes;
+  final Value<int> sleepEndMinutes;
   const AppSettingsRowsCompanion({
     this.id = const Value.absent(),
     this.packPriceCents = const Value.absent(),
@@ -526,6 +611,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.currentTargetSeconds = const Value.absent(),
     this.lastProposalAt = const Value.absent(),
     this.growthPermille = const Value.absent(),
+    this.sleepStartMinutes = const Value.absent(),
+    this.sleepEndMinutes = const Value.absent(),
   });
   AppSettingsRowsCompanion.insert({
     this.id = const Value.absent(),
@@ -538,6 +625,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.currentTargetSeconds = const Value.absent(),
     this.lastProposalAt = const Value.absent(),
     this.growthPermille = const Value.absent(),
+    this.sleepStartMinutes = const Value.absent(),
+    this.sleepEndMinutes = const Value.absent(),
   }) : packPriceCents = Value(packPriceCents),
        cigarettesPerPack = Value(cigarettesPerPack),
        baselineCigsPerDay = Value(baselineCigsPerDay),
@@ -553,6 +642,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Expression<int>? currentTargetSeconds,
     Expression<DateTime>? lastProposalAt,
     Expression<int>? growthPermille,
+    Expression<int>? sleepStartMinutes,
+    Expression<int>? sleepEndMinutes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -567,6 +658,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
         'current_target_seconds': currentTargetSeconds,
       if (lastProposalAt != null) 'last_proposal_at': lastProposalAt,
       if (growthPermille != null) 'growth_permille': growthPermille,
+      if (sleepStartMinutes != null) 'sleep_start_minutes': sleepStartMinutes,
+      if (sleepEndMinutes != null) 'sleep_end_minutes': sleepEndMinutes,
     });
   }
 
@@ -581,6 +674,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Value<int?>? currentTargetSeconds,
     Value<DateTime?>? lastProposalAt,
     Value<int>? growthPermille,
+    Value<int>? sleepStartMinutes,
+    Value<int>? sleepEndMinutes,
   }) {
     return AppSettingsRowsCompanion(
       id: id ?? this.id,
@@ -593,6 +688,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       currentTargetSeconds: currentTargetSeconds ?? this.currentTargetSeconds,
       lastProposalAt: lastProposalAt ?? this.lastProposalAt,
       growthPermille: growthPermille ?? this.growthPermille,
+      sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
+      sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
     );
   }
 
@@ -629,6 +726,12 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     if (growthPermille.present) {
       map['growth_permille'] = Variable<int>(growthPermille.value);
     }
+    if (sleepStartMinutes.present) {
+      map['sleep_start_minutes'] = Variable<int>(sleepStartMinutes.value);
+    }
+    if (sleepEndMinutes.present) {
+      map['sleep_end_minutes'] = Variable<int>(sleepEndMinutes.value);
+    }
     return map;
   }
 
@@ -644,7 +747,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
           ..write('onboardingDone: $onboardingDone, ')
           ..write('currentTargetSeconds: $currentTargetSeconds, ')
           ..write('lastProposalAt: $lastProposalAt, ')
-          ..write('growthPermille: $growthPermille')
+          ..write('growthPermille: $growthPermille, ')
+          ..write('sleepStartMinutes: $sleepStartMinutes, ')
+          ..write('sleepEndMinutes: $sleepEndMinutes')
           ..write(')'))
         .toString();
   }
@@ -2202,6 +2307,8 @@ typedef $$AppSettingsRowsTableCreateCompanionBuilder =
       Value<int?> currentTargetSeconds,
       Value<DateTime?> lastProposalAt,
       Value<int> growthPermille,
+      Value<int> sleepStartMinutes,
+      Value<int> sleepEndMinutes,
     });
 typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
     AppSettingsRowsCompanion Function({
@@ -2215,6 +2322,8 @@ typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
       Value<int?> currentTargetSeconds,
       Value<DateTime?> lastProposalAt,
       Value<int> growthPermille,
+      Value<int> sleepStartMinutes,
+      Value<int> sleepEndMinutes,
     });
 
 class $$AppSettingsRowsTableFilterComposer
@@ -2273,6 +2382,16 @@ class $$AppSettingsRowsTableFilterComposer
 
   ColumnFilters<int> get growthPermille => $composableBuilder(
     column: $table.growthPermille,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sleepStartMinutes => $composableBuilder(
+    column: $table.sleepStartMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sleepEndMinutes => $composableBuilder(
+    column: $table.sleepEndMinutes,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2335,6 +2454,16 @@ class $$AppSettingsRowsTableOrderingComposer
     column: $table.growthPermille,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get sleepStartMinutes => $composableBuilder(
+    column: $table.sleepStartMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sleepEndMinutes => $composableBuilder(
+    column: $table.sleepEndMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AppSettingsRowsTableAnnotationComposer
@@ -2391,6 +2520,16 @@ class $$AppSettingsRowsTableAnnotationComposer
     column: $table.growthPermille,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get sleepStartMinutes => $composableBuilder(
+    column: $table.sleepStartMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sleepEndMinutes => $composableBuilder(
+    column: $table.sleepEndMinutes,
+    builder: (column) => column,
+  );
 }
 
 class $$AppSettingsRowsTableTableManager
@@ -2440,6 +2579,8 @@ class $$AppSettingsRowsTableTableManager
                 Value<int?> currentTargetSeconds = const Value.absent(),
                 Value<DateTime?> lastProposalAt = const Value.absent(),
                 Value<int> growthPermille = const Value.absent(),
+                Value<int> sleepStartMinutes = const Value.absent(),
+                Value<int> sleepEndMinutes = const Value.absent(),
               }) => AppSettingsRowsCompanion(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2451,6 +2592,8 @@ class $$AppSettingsRowsTableTableManager
                 currentTargetSeconds: currentTargetSeconds,
                 lastProposalAt: lastProposalAt,
                 growthPermille: growthPermille,
+                sleepStartMinutes: sleepStartMinutes,
+                sleepEndMinutes: sleepEndMinutes,
               ),
           createCompanionCallback:
               ({
@@ -2464,6 +2607,8 @@ class $$AppSettingsRowsTableTableManager
                 Value<int?> currentTargetSeconds = const Value.absent(),
                 Value<DateTime?> lastProposalAt = const Value.absent(),
                 Value<int> growthPermille = const Value.absent(),
+                Value<int> sleepStartMinutes = const Value.absent(),
+                Value<int> sleepEndMinutes = const Value.absent(),
               }) => AppSettingsRowsCompanion.insert(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2475,6 +2620,8 @@ class $$AppSettingsRowsTableTableManager
                 currentTargetSeconds: currentTargetSeconds,
                 lastProposalAt: lastProposalAt,
                 growthPermille: growthPermille,
+                sleepStartMinutes: sleepStartMinutes,
+                sleepEndMinutes: sleepEndMinutes,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
