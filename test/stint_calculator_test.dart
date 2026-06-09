@@ -90,76 +90,56 @@ void main() {
     });
   });
 
-  group('PaceStats', () {
-    PaceStats statsFor(List<Duration> pits) => PaceStats.compute(
-          sinceStart: const Duration(days: 1),
-          pitElapsed: pits,
-          costPeriods: const [(start: Duration.zero, perCig: 40)],
-          rateSegments: const [
-            (start: Duration.zero, end: Duration(days: 1), ratePerDay: 20)
-          ],
+  group('PaceStats (overtime laps)', () {
+    PaceStats forStints(
+      List<({int awakeSeconds, int targetSeconds, int perCig})> stints, {
+      int actual = 0,
+      int perCig = 40,
+    }) =>
+        PaceStats.compute(
+          sinceStart: const Duration(hours: 1),
+          actualCigarettes: actual,
+          currentPerCig: perCig,
+          stints: stints,
         );
 
-    test('savings accrue against the baseline rate', () {
-      // 20/day baseline, 1 day elapsed, smoked 12 early → saved 8 cigarettes.
-      final stats = statsFor(List.filled(12, Duration.zero));
-      expect(stats.costPerCigaretteCents, 40);
-      expect(stats.savedCigarettes, closeTo(8, 0.0001));
-      expect(stats.savedMoneyCents, 320);
+    test('no target earns nothing', () {
+      final s = forStints(
+          const [(awakeSeconds: 5 * 3600, targetSeconds: 0, perCig: 40)]);
+      expect(s.savedCigarettes, 0);
+      expect(s.savedMoneyCents, 0);
     });
 
-    test('never goes negative when over baseline', () {
-      final stats = statsFor(List.filled(40, Duration.zero));
-      expect(stats.savedCigarettes, 0);
-      expect(stats.savedMoneyCents, 0);
-    });
-
-    test('saved never drops when another cigarette is logged', () {
-      // Built up a lead, then smoke one more right now.
-      final before = statsFor(List.filled(5, Duration.zero));
-      final after = statsFor([
-        ...List.filled(5, Duration.zero),
-        const Duration(days: 1),
+    test('one full lap of overtime is one avoided cigarette', () {
+      // target 1 h, stint 2 h awake → 1 h overtime → 1 lap.
+      final s = forStints(const [
+        (awakeSeconds: 2 * 3600, targetSeconds: 3600, perCig: 40),
       ]);
-      expect(after.savedCigarettes,
-          greaterThanOrEqualTo(before.savedCigarettes));
-      expect(after.savedMoneyCents,
-          greaterThanOrEqualTo(before.savedMoneyCents));
+      expect(s.savedCigarettes, 1);
+      expect(s.savedMoneyCents, 40);
     });
 
-    test('a price change applies from its date forward, not retroactively', () {
-      // 20/day, 2 days clean. Day 1 at 40 ct/cig, day 2 at 60 ct/cig.
-      final stats = PaceStats.compute(
-        sinceStart: const Duration(days: 2),
-        pitElapsed: const [],
-        costPeriods: const [
-          (start: Duration.zero, perCig: 40),
-          (start: Duration(days: 1), perCig: 60),
-        ],
-        rateSegments: const [
-          (start: Duration.zero, end: Duration(days: 2), ratePerDay: 20)
-        ],
-      );
-      // Avoided 40 cigarettes. Money: day1 20×40 + day2 20×60 = 800 + 1200.
-      expect(stats.savedCigarettes, closeTo(40, 0.0001));
-      expect(stats.savedMoneyCents, 2000);
+    test('partial overtime does not count until it is full', () {
+      // target 1 h, stint 1 h 40 → 40 min overtime → 0 laps.
+      final s = forStints(const [
+        (awakeSeconds: 100 * 60, targetSeconds: 3600, perCig: 40),
+      ]);
+      expect(s.savedCigarettes, 0);
+      expect(s.savedMoneyCents, 0);
     });
 
-    test('rolling daily rate: each day expects the previous day', () {
-      // Day 1 baseline 20 (smoked 0), day 2 expects yesterday = 20 again.
-      // Two clean days, no pits → avoided = 20 + 20 = 40.
-      final stats = PaceStats.compute(
-        sinceStart: const Duration(days: 2),
-        pitElapsed: const [],
-        costPeriods: const [(start: Duration.zero, perCig: 50)],
-        rateSegments: const [
-          (start: Duration.zero, end: Duration(days: 1), ratePerDay: 20),
-          (start: Duration(days: 1), end: Duration(days: 2), ratePerDay: 15),
+    test('laps accumulate across stints, each priced for its stint', () {
+      final s = forStints(
+        const [
+          // 3 h stint, target 1 h → 2 h overtime → 2 laps × 40
+          (awakeSeconds: 3 * 3600, targetSeconds: 3600, perCig: 40),
+          // 2 h stint, target 1 h → 1 h overtime → 1 lap × 60
+          (awakeSeconds: 2 * 3600, targetSeconds: 3600, perCig: 60),
         ],
+        actual: 2,
       );
-      // Expected cigarettes = 20*1 + 15*1 = 35; money = (20+15)*50 = 1750.
-      expect(stats.savedCigarettes, closeTo(35, 0.0001));
-      expect(stats.savedMoneyCents, 1750);
+      expect(s.savedCigarettes, 3);
+      expect(s.savedMoneyCents, 2 * 40 + 1 * 60);
     });
   });
 }

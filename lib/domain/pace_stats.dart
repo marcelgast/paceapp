@@ -1,14 +1,11 @@
-/// Pure aggregate stats — money & cigarettes saved versus the baseline rate.
+/// Aggregate stats — cigarettes avoided and money saved. Pure & testable.
 ///
-/// "Saved" is measured against what the user *would* have smoked at their
-/// onboarding baseline rate. Every second that passes without a pit stop nudges
-/// expected consumption up, so the savings tick upward in real time — the
-/// engine behind "celebrate from second one".
-///
-/// Crucially it never drops when a cigarette is logged: a cigarette you already
-/// avoided stays avoided. We report the running *high-water mark* of
-/// (expected − actual) — the peak just before each pit plus the live value now
-/// — so logging a pit can pause the growth but never erase earned progress.
+/// "Avoided" is driven by the stint mechanic: once a stint runs past its target,
+/// every *full* extra target-length in overtime is one cigarette you skipped
+/// (`overtime ÷ target`). Those banked laps are summed across every stint, so
+/// the figure only grows — logging a cigarette ends the current stint but keeps
+/// the laps it already earned. "Saved" prices each avoided cigarette at the
+/// cost in effect for that stint.
 class PaceStats {
   const PaceStats({
     required this.costPerCigaretteCents,
@@ -34,93 +31,31 @@ class PaceStats {
     return (packPriceCents / cigarettesPerPack).round();
   }
 
-  /// [pitElapsed] are the pit-stop times as durations since the start, sorted
-  /// ascending. [costPeriods] are the cost epochs as (start-since-start, cents
-  /// per cigarette), sorted ascending, the first starting at zero — so a price
-  /// change is honoured from its moment forward and never re-prices the past.
-  /// [rateSegments] are the expected baseline rate over time as (start, end,
-  /// cigarettes-per-day), each segment usually one calendar day priced at the
-  /// previous day's consumption — the "rolling yesterday" basis.
+  /// [stints] are every stint (completed and ongoing), each with its awake
+  /// length, the target that was active, and the price per cigarette then. A
+  /// stint with no target (the measuring phase) earns nothing.
   factory PaceStats.compute({
     required Duration sinceStart,
-    required List<Duration> pitElapsed,
-    required List<({Duration start, int perCig})> costPeriods,
-    required List<({Duration start, Duration end, double ratePerDay})>
-        rateSegments,
+    required int actualCigarettes,
+    required int currentPerCig,
+    required List<({int awakeSeconds, int targetSeconds, int perCig})> stints,
   }) {
-    final currentPerCig = costPeriods.isEmpty ? 0 : costPeriods.last.perCig;
-
-    double overlapDays(
-        Duration aStart, Duration aEnd, Duration bStart, Duration bEnd) {
-      final lo = aStart > bStart ? aStart : bStart;
-      final hi = aEnd < bEnd ? aEnd : bEnd;
-      final secs = hi.inSeconds - lo.inSeconds;
-      return secs > 0 ? secs / Duration.secondsPerDay : 0;
+    var laps = 0;
+    var moneyCents = 0;
+    for (final s in stints) {
+      if (s.targetSeconds <= 0) continue;
+      final overtime = s.awakeSeconds - s.targetSeconds;
+      if (overtime <= 0) continue;
+      final stintLaps = overtime ~/ s.targetSeconds;
+      laps += stintLaps;
+      moneyCents += stintLaps * s.perCig;
     }
-
-    double expectedCigsAt(Duration t) {
-      var sum = 0.0;
-      for (final s in rateSegments) {
-        sum += s.ratePerDay * overlapDays(s.start, s.end, Duration.zero, t);
-      }
-      return sum;
-    }
-
-    int perCigAt(Duration e) {
-      var pc = costPeriods.isEmpty ? 0 : costPeriods.first.perCig;
-      for (final p in costPeriods) {
-        if (p.start <= e) {
-          pc = p.perCig;
-        } else {
-          break;
-        }
-      }
-      return pc;
-    }
-
-    // Expected money up to [t]: each rate segment priced by the cost periods it
-    // overlaps — so both the rolling daily rate and price changes are honoured.
-    double expectedMoneyAt(Duration t) {
-      var sum = 0.0;
-      for (final s in rateSegments) {
-        for (var i = 0; i < costPeriods.length; i++) {
-          final pStart = costPeriods[i].start;
-          final pEnd = i + 1 < costPeriods.length ? costPeriods[i + 1].start : t;
-          final pHi = pEnd < t ? pEnd : t;
-          final days = overlapDays(s.start, s.end, pStart, pHi);
-          if (days > 0) sum += s.ratePerDay * costPeriods[i].perCig * days;
-        }
-      }
-      return sum;
-    }
-
-    final n = pitElapsed.length;
-
-    // High-water mark of (expected − actual): the live value now plus the peak
-    // just before each pit (actual still the prior count). Logging a cigarette
-    // captures the pre-smoke peak, so neither figure ever decreases.
-    var cigPeak = expectedCigsAt(sinceStart) - n;
-    var moneyActual = 0.0;
-    var moneyPeak = double.negativeInfinity;
-    for (var k = 0; k < n; k++) {
-      final c = expectedCigsAt(pitElapsed[k]) - k;
-      if (c > cigPeak) cigPeak = c;
-      final m = expectedMoneyAt(pitElapsed[k]) - moneyActual;
-      if (m > moneyPeak) moneyPeak = m;
-      moneyActual += perCigAt(pitElapsed[k]);
-    }
-    final moneyNow = expectedMoneyAt(sinceStart) - moneyActual;
-    if (moneyNow > moneyPeak) moneyPeak = moneyNow;
-
-    final savedCigs = cigPeak.clamp(0.0, double.infinity);
-    final savedMoney = moneyPeak.clamp(0.0, double.infinity);
-
     return PaceStats(
       costPerCigaretteCents: currentPerCig,
-      expectedCigarettes: expectedCigsAt(sinceStart),
-      actualCigarettes: n,
-      savedCigarettes: savedCigs,
-      savedMoneyCents: savedMoney.round(),
+      expectedCigarettes: (actualCigarettes + laps).toDouble(),
+      actualCigarettes: actualCigarettes,
+      savedCigarettes: laps.toDouble(),
+      savedMoneyCents: moneyCents,
       sinceStart: sinceStart,
     );
   }

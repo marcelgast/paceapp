@@ -295,81 +295,54 @@ final statsProvider = Provider<PaceStats?>((ref) {
   final all = pitStops ?? const <PitStop>[];
   final start = settings.startedAt;
   final sinceStart = now.difference(start);
-  final baseline = settings.baselineCigsPerDay.toDouble();
+  final sleep = ref.watch(sleepWindowProvider);
 
-  // Cigarettes per calendar day — drives the rolling "yesterday" baseline.
-  final dailyCounts = <DateTime, int>{};
-  for (final p in all) {
-    final d = DateTime(p.occurredAt.year, p.occurredAt.month, p.occurredAt.day);
-    dailyCounts[d] = (dailyCounts[d] ?? 0) + 1;
-  }
-
-  // One rate segment per calendar day in [start, now]. Each day's expected rate
-  // is the previous calendar day's count (the first day uses the onboarding
-  // baseline). Savings stay a high-water mark, so they never drop.
-  final startDate = DateTime(start.year, start.month, start.day);
-  final rateSegments = <({Duration start, Duration end, double ratePerDay})>[];
-  var dayMidnight = startDate;
-  while (dayMidnight.isBefore(now)) {
-    final nextMidnight =
-        DateTime(dayMidnight.year, dayMidnight.month, dayMidnight.day + 1);
-    final segStart = dayMidnight.isBefore(start) ? start : dayMidnight;
-    final segEnd = nextMidnight.isAfter(now) ? now : nextMidnight;
-    if (segEnd.isAfter(segStart)) {
-      final double rate;
-      if (dayMidnight == startDate) {
-        rate = baseline;
-      } else {
-        final prevDay = DateTime(
-            dayMidnight.year, dayMidnight.month, dayMidnight.day - 1);
-        rate = (dailyCounts[prevDay] ?? 0).toDouble();
-      }
-      rateSegments.add((
-        start: segStart.difference(start),
-        end: segEnd.difference(start),
-        ratePerDay: rate,
-      ));
-    }
-    dayMidnight = nextMidnight;
-  }
-
-  final pitElapsed = all
-      .map((p) => p.occurredAt.difference(settings.startedAt))
-      .where((d) => !d.isNegative)
-      .toList()
-    ..sort();
-
-  // Cost epochs as (offset-from-start, cents-per-cigarette), anchored at zero.
+  // Cents per cigarette in effect at a given time (price changes apply forward).
   final periods = ref.watch(costPeriodsProvider).value ?? const <CostPeriod>[];
-  final costPeriods = <({Duration start, int perCig})>[];
-  if (periods.isEmpty) {
-    costPeriods.add((
-      start: Duration.zero,
-      perCig: PaceStats.centsPerCigarette(
-        packPriceCents: settings.packPriceCents,
-        cigarettesPerPack: settings.cigarettesPerPack,
-      ),
-    ));
-  } else {
-    final sorted = [...periods]
-      ..sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
-    for (final p in sorted) {
-      final offset = p.effectiveFrom.difference(settings.startedAt);
-      costPeriods.add((
-        start: offset.isNegative ? Duration.zero : offset,
-        perCig: PaceStats.centsPerCigarette(
+  final sortedPeriods = [...periods]
+    ..sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
+  int perCigAt(DateTime t) {
+    var pc = PaceStats.centsPerCigarette(
+      packPriceCents: settings.packPriceCents,
+      cigarettesPerPack: settings.cigarettesPerPack,
+    );
+    for (final p in sortedPeriods) {
+      if (!p.effectiveFrom.isAfter(t)) {
+        pc = PaceStats.centsPerCigarette(
           packPriceCents: p.packPriceCents,
           cigarettesPerPack: p.cigarettesPerPack,
-        ),
-      ));
+        );
+      } else {
+        break;
+      }
     }
-    costPeriods[0] = (start: Duration.zero, perCig: costPeriods[0].perCig);
+    return pc;
   }
+
+  // One stint per gap between cigarettes, plus the ongoing one. Each carries the
+  // target that was active (stored on the pit) and the price then; sleep is
+  // excluded from the awake length.
+  final asc = [...all]..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
+  final stints = <({int awakeSeconds, int targetSeconds, int perCig})>[];
+  var prev = start;
+  for (final p in asc) {
+    stints.add((
+      awakeSeconds: sleep.awakeBetween(prev, p.occurredAt).inSeconds,
+      targetSeconds: p.targetIntervalSeconds ?? 0,
+      perCig: perCigAt(p.occurredAt),
+    ));
+    prev = p.occurredAt;
+  }
+  stints.add((
+    awakeSeconds: sleep.awakeBetween(prev, now).inSeconds,
+    targetSeconds: settings.currentTargetSeconds ?? 0,
+    perCig: perCigAt(now),
+  ));
 
   return PaceStats.compute(
     sinceStart: sinceStart,
-    pitElapsed: pitElapsed,
-    costPeriods: costPeriods,
-    rateSegments: rateSegments,
+    actualCigarettes: all.length,
+    currentPerCig: perCigAt(now),
+    stints: stints,
   );
 });
