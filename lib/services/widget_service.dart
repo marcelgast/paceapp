@@ -8,6 +8,8 @@ import '../domain/sleep_window.dart';
 import '../domain/stint_calculator.dart';
 import '../providers.dart';
 import '../util/format.dart';
+import 'entitlements.dart';
+import 'live_activity_service.dart';
 
 /// Bridges app state to the iOS home-screen widget via the shared App Group.
 /// The widget renders a self-updating SwiftUI timer from [timerRef], so we only
@@ -92,5 +94,24 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
   } catch (_) {
     // home_widget can fail on the iOS simulator (objective_c framework) —
     // never let widget updates break the app.
+  }
+
+  // Live Activity (Pro): mirror the stint to the Dynamic Island / lock screen.
+  final liveOn = settings.liveActivityEnabled &&
+      ref.read(entitlementsProvider).can(PaceProFeature.liveActivity);
+  if (liveOn) {
+    await LiveActivityService.push({
+      'timerRefMs': timerRef.millisecondsSinceEpoch.toString(),
+      'isBaseline': isBaseline ? 'true' : 'false',
+      'best': formatHumanDuration(best),
+      'savedMoney': stats == null
+          ? '—'
+          : formatMoneyCents(stats.savedMoneyCents,
+              currencyCode: settings.currencyCode),
+      'carName': car.name,
+      'streak': streak.toString(),
+    });
+  } else {
+    await LiveActivityService.stop();
   }
 }

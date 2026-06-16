@@ -216,5 +216,7 @@
   "settingsProRaceEngineer": "Race Engineer",
   "settingsProRaceEngineerSub": "Deep analytics — patterns, triggers, trend.",
   "settingsProSkin": "SKIN",
+  "settingsProLiveActivity": "Live Activity",
+  "settingsProLiveActivitySub": "Stint timer in the Dynamic Island & on the lock screen.",
   "proBadge": "PRO"
 }

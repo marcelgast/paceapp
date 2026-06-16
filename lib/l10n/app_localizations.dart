@@ -1358,6 +1358,18 @@ abstract class AppLocalizations {
   /// **'SKIN'**
   String get settingsProSkin;
 
+  /// No description provided for @settingsProLiveActivity.
+  ///
+  /// In de, this message translates to:
+  /// **'Live Activity'**
+  String get settingsProLiveActivity;
+
+  /// No description provided for @settingsProLiveActivitySub.
+  ///
+  /// In de, this message translates to:
+  /// **'Stint-Timer in der Dynamic Island & am Lockscreen.'**
+  String get settingsProLiveActivitySub;
+
   /// No description provided for @proBadge.
   ///
   /// In de, this message translates to:

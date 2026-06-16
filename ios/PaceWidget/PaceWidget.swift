@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import ActivityKit
 
 private let kAppGroup = "group.de.mgstudios.pace"
 private let kBoxenstopp = URL(string: "pace://boxenstopp")
@@ -169,7 +170,6 @@ struct PaceWidgetEntryView: View {
     }
 }
 
-@main
 struct PaceWidget: Widget {
     let kind = "PaceWidget"
 
@@ -190,5 +190,113 @@ struct PaceWidget: Widget {
         .configurationDisplayName("Pace")
         .description("Stint-Timer, Bestzeit, Gespart — und ein Boxenstopp-Knopf.")
         .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+// ---- Live Activity (Pro) -------------------------------------------------
+//
+// Mirrors the running stint to the Dynamic Island and lock screen. Dynamic
+// values are written by the `live_activities` Flutter plugin into the shared
+// App Group under "<activityId>_<key>", read here via `prefixedKey`.
+
+struct LiveActivitiesAppAttributes: ActivityAttributes, Identifiable {
+    public struct ContentState: Codable, Hashable {}
+    var id = UUID()
+}
+
+extension LiveActivitiesAppAttributes {
+    func prefixedKey(_ key: String) -> String { "\(id)_\(key)" }
+}
+
+private let liveDefaults = UserDefaults(suiteName: kAppGroup)
+
+@available(iOS 16.1, *)
+private func liveStr(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>, _ key: String) -> String {
+    liveDefaults?.string(forKey: ctx.attributes.prefixedKey(key)) ?? ""
+}
+
+@available(iOS 16.1, *)
+private func liveTimerRef(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Date {
+    let ms = Double(liveStr(ctx, "timerRefMs")) ?? 0
+    return ms > 0 ? Date(timeIntervalSince1970: ms / 1000.0) : Date()
+}
+
+@available(iOS 16.1, *)
+private func liveBaseline(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Bool {
+    liveStr(ctx, "isBaseline") == "true"
+}
+
+@available(iOS 16.1, *)
+private func liveAccent(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Color {
+    let overtime = !liveBaseline(ctx) && liveTimerRef(ctx) <= Date()
+    return overtime ? lime : cyan
+}
+
+@available(iOS 16.1, *)
+private func liveLabel(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
+    if liveBaseline(ctx) { return "MESSRUNDE" }
+    return liveTimerRef(ctx) <= Date() ? "OVERTIME" : "NÄCHSTER STINT"
+}
+
+@available(iOS 16.1, *)
+struct PaceLiveActivity: Widget {
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: LiveActivitiesAppAttributes.self) { context in
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PACE")
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .italic().foregroundColor(.white)
+                    Text(liveLabel(context))
+                        .font(.system(size: 9, weight: .bold)).tracking(1.5)
+                        .foregroundColor(liveAccent(context))
+                }
+                Spacer()
+                Text(liveTimerRef(context), style: .timer)
+                    .font(.system(size: 30, weight: .heavy, design: .rounded))
+                    .monospacedDigit().foregroundColor(liveAccent(context))
+                    .frame(maxWidth: 130, alignment: .trailing)
+            }
+            .padding(16)
+            .activityBackgroundTint(Color(red: 0.07, green: 0.06, blue: 0.09))
+            .activitySystemActionForegroundColor(.white)
+        } dynamicIsland: { context in
+            DynamicIsland {
+                DynamicIslandExpandedRegion(.leading) {
+                    Image(systemName: "flame.fill")
+                        .foregroundColor(magenta).font(.system(size: 22))
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    Text(liveTimerRef(context), style: .timer)
+                        .font(.system(size: 22, weight: .heavy, design: .rounded))
+                        .monospacedDigit().foregroundColor(liveAccent(context))
+                        .frame(maxWidth: 110, alignment: .trailing)
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    Text(liveLabel(context))
+                        .font(.system(size: 11, weight: .bold)).tracking(1.5)
+                        .foregroundColor(liveAccent(context))
+                }
+            } compactLeading: {
+                Image(systemName: "flame.fill").foregroundColor(magenta)
+            } compactTrailing: {
+                Text(liveTimerRef(context), style: .timer)
+                    .monospacedDigit().foregroundColor(liveAccent(context))
+                    .frame(maxWidth: 56)
+            } minimal: {
+                Image(systemName: "flame.fill").foregroundColor(magenta)
+            }
+        }
+    }
+}
+
+@main
+struct PaceWidgetBundle: WidgetBundle {
+    @WidgetBundleBuilder
+    var body: some Widget {
+        PaceWidget()
+        if #available(iOS 16.1, *) {
+            PaceLiveActivity()
+        }
     }
 }

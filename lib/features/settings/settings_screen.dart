@@ -353,6 +353,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           PaceProFeature.raceEngineer,
                           () => RaceEngineerScreen.open(context)),
                     ),
+                    _ProToggleRow(
+                      icon: Icons.bolt,
+                      title: l10n.settingsProLiveActivity,
+                      subtitle: l10n.settingsProLiveActivitySub,
+                      badge: l10n.proBadge,
+                      value: settings?.liveActivityEnabled ?? false,
+                      onChanged: (v) => _openPro(
+                        PaceProFeature.liveActivity,
+                        () {
+                          ref.read(databaseProvider).updateLiveActivityEnabled(v);
+                          pushPaceWidget(ref);
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -584,6 +598,90 @@ class _SkinSwatch extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProToggleRow extends StatelessWidget {
+  const _ProToggleRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String badge;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            PaceColors.neonMagenta.withValues(alpha: 0.12),
+            PaceColors.neonPurple.withValues(alpha: 0.08),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: PaceColors.neonMagenta, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(title,
+                        style: const TextStyle(
+                            color: PaceColors.textPrimary,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: PaceColors.neonMagenta,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(badge,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              letterSpacing: 1,
+                              fontWeight: FontWeight.w900)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(subtitle,
+                    style: TextStyle(
+                        color: PaceColors.textMuted, fontSize: 12)),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeThumbColor: PaceColors.neonMagenta,
           ),
         ],
       ),

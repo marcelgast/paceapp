@@ -35,6 +35,10 @@ class AppSettingsRows extends Table {
   TextColumn get skinId =>
       text().withDefault(const Constant('underground'))();
 
+  /// Live Activity / Dynamic Island stint timer (Pro). Off by default.
+  BoolColumn get liveActivityEnabled =>
+      boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column> get primaryKey => {id};
 }

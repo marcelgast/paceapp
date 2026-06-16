@@ -157,6 +157,20 @@ class $AppSettingsRowsTable extends AppSettingsRows
     requiredDuringInsert: false,
     defaultValue: const Constant('underground'),
   );
+  static const VerificationMeta _liveActivityEnabledMeta =
+      const VerificationMeta('liveActivityEnabled');
+  @override
+  late final GeneratedColumn<bool> liveActivityEnabled = GeneratedColumn<bool>(
+    'live_activity_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("live_activity_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -172,6 +186,7 @@ class $AppSettingsRowsTable extends AppSettingsRows
     sleepStartMinutes,
     sleepEndMinutes,
     skinId,
+    liveActivityEnabled,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -298,6 +313,15 @@ class $AppSettingsRowsTable extends AppSettingsRows
         skinId.isAcceptableOrUnknown(data['skin_id']!, _skinIdMeta),
       );
     }
+    if (data.containsKey('live_activity_enabled')) {
+      context.handle(
+        _liveActivityEnabledMeta,
+        liveActivityEnabled.isAcceptableOrUnknown(
+          data['live_activity_enabled']!,
+          _liveActivityEnabledMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -359,6 +383,10 @@ class $AppSettingsRowsTable extends AppSettingsRows
         DriftSqlType.string,
         data['${effectivePrefix}skin_id'],
       )!,
+      liveActivityEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}live_activity_enabled'],
+      )!,
     );
   }
 
@@ -393,6 +421,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
 
   /// Selected neon skin (Pro). Defaults to the original "Underground".
   final String skinId;
+
+  /// Live Activity / Dynamic Island stint timer (Pro). Off by default.
+  final bool liveActivityEnabled;
   const AppSettingsRow({
     required this.id,
     required this.packPriceCents,
@@ -407,6 +438,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     required this.sleepStartMinutes,
     required this.sleepEndMinutes,
     required this.skinId,
+    required this.liveActivityEnabled,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -428,6 +460,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     map['sleep_start_minutes'] = Variable<int>(sleepStartMinutes);
     map['sleep_end_minutes'] = Variable<int>(sleepEndMinutes);
     map['skin_id'] = Variable<String>(skinId);
+    map['live_activity_enabled'] = Variable<bool>(liveActivityEnabled);
     return map;
   }
 
@@ -450,6 +483,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       sleepStartMinutes: Value(sleepStartMinutes),
       sleepEndMinutes: Value(sleepEndMinutes),
       skinId: Value(skinId),
+      liveActivityEnabled: Value(liveActivityEnabled),
     );
   }
 
@@ -474,6 +508,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       sleepStartMinutes: serializer.fromJson<int>(json['sleepStartMinutes']),
       sleepEndMinutes: serializer.fromJson<int>(json['sleepEndMinutes']),
       skinId: serializer.fromJson<String>(json['skinId']),
+      liveActivityEnabled: serializer.fromJson<bool>(
+        json['liveActivityEnabled'],
+      ),
     );
   }
   @override
@@ -493,6 +530,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       'sleepStartMinutes': serializer.toJson<int>(sleepStartMinutes),
       'sleepEndMinutes': serializer.toJson<int>(sleepEndMinutes),
       'skinId': serializer.toJson<String>(skinId),
+      'liveActivityEnabled': serializer.toJson<bool>(liveActivityEnabled),
     };
   }
 
@@ -510,6 +548,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     int? sleepStartMinutes,
     int? sleepEndMinutes,
     String? skinId,
+    bool? liveActivityEnabled,
   }) => AppSettingsRow(
     id: id ?? this.id,
     packPriceCents: packPriceCents ?? this.packPriceCents,
@@ -528,6 +567,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
     sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
     skinId: skinId ?? this.skinId,
+    liveActivityEnabled: liveActivityEnabled ?? this.liveActivityEnabled,
   );
   AppSettingsRow copyWithCompanion(AppSettingsRowsCompanion data) {
     return AppSettingsRow(
@@ -564,6 +604,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ? data.sleepEndMinutes.value
           : this.sleepEndMinutes,
       skinId: data.skinId.present ? data.skinId.value : this.skinId,
+      liveActivityEnabled: data.liveActivityEnabled.present
+          ? data.liveActivityEnabled.value
+          : this.liveActivityEnabled,
     );
   }
 
@@ -582,7 +625,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ..write('growthPermille: $growthPermille, ')
           ..write('sleepStartMinutes: $sleepStartMinutes, ')
           ..write('sleepEndMinutes: $sleepEndMinutes, ')
-          ..write('skinId: $skinId')
+          ..write('skinId: $skinId, ')
+          ..write('liveActivityEnabled: $liveActivityEnabled')
           ..write(')'))
         .toString();
   }
@@ -602,6 +646,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     sleepStartMinutes,
     sleepEndMinutes,
     skinId,
+    liveActivityEnabled,
   );
   @override
   bool operator ==(Object other) =>
@@ -619,7 +664,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           other.growthPermille == this.growthPermille &&
           other.sleepStartMinutes == this.sleepStartMinutes &&
           other.sleepEndMinutes == this.sleepEndMinutes &&
-          other.skinId == this.skinId);
+          other.skinId == this.skinId &&
+          other.liveActivityEnabled == this.liveActivityEnabled);
 }
 
 class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
@@ -636,6 +682,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
   final Value<int> sleepStartMinutes;
   final Value<int> sleepEndMinutes;
   final Value<String> skinId;
+  final Value<bool> liveActivityEnabled;
   const AppSettingsRowsCompanion({
     this.id = const Value.absent(),
     this.packPriceCents = const Value.absent(),
@@ -650,6 +697,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.sleepStartMinutes = const Value.absent(),
     this.sleepEndMinutes = const Value.absent(),
     this.skinId = const Value.absent(),
+    this.liveActivityEnabled = const Value.absent(),
   });
   AppSettingsRowsCompanion.insert({
     this.id = const Value.absent(),
@@ -665,6 +713,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.sleepStartMinutes = const Value.absent(),
     this.sleepEndMinutes = const Value.absent(),
     this.skinId = const Value.absent(),
+    this.liveActivityEnabled = const Value.absent(),
   }) : packPriceCents = Value(packPriceCents),
        cigarettesPerPack = Value(cigarettesPerPack),
        baselineCigsPerDay = Value(baselineCigsPerDay),
@@ -683,6 +732,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Expression<int>? sleepStartMinutes,
     Expression<int>? sleepEndMinutes,
     Expression<String>? skinId,
+    Expression<bool>? liveActivityEnabled,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -700,6 +750,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       if (sleepStartMinutes != null) 'sleep_start_minutes': sleepStartMinutes,
       if (sleepEndMinutes != null) 'sleep_end_minutes': sleepEndMinutes,
       if (skinId != null) 'skin_id': skinId,
+      if (liveActivityEnabled != null)
+        'live_activity_enabled': liveActivityEnabled,
     });
   }
 
@@ -717,6 +769,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Value<int>? sleepStartMinutes,
     Value<int>? sleepEndMinutes,
     Value<String>? skinId,
+    Value<bool>? liveActivityEnabled,
   }) {
     return AppSettingsRowsCompanion(
       id: id ?? this.id,
@@ -732,6 +785,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
       sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
       skinId: skinId ?? this.skinId,
+      liveActivityEnabled: liveActivityEnabled ?? this.liveActivityEnabled,
     );
   }
 
@@ -777,6 +831,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     if (skinId.present) {
       map['skin_id'] = Variable<String>(skinId.value);
     }
+    if (liveActivityEnabled.present) {
+      map['live_activity_enabled'] = Variable<bool>(liveActivityEnabled.value);
+    }
     return map;
   }
 
@@ -795,7 +852,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
           ..write('growthPermille: $growthPermille, ')
           ..write('sleepStartMinutes: $sleepStartMinutes, ')
           ..write('sleepEndMinutes: $sleepEndMinutes, ')
-          ..write('skinId: $skinId')
+          ..write('skinId: $skinId, ')
+          ..write('liveActivityEnabled: $liveActivityEnabled')
           ..write(')'))
         .toString();
   }
@@ -2356,6 +2414,7 @@ typedef $$AppSettingsRowsTableCreateCompanionBuilder =
       Value<int> sleepStartMinutes,
       Value<int> sleepEndMinutes,
       Value<String> skinId,
+      Value<bool> liveActivityEnabled,
     });
 typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
     AppSettingsRowsCompanion Function({
@@ -2372,6 +2431,7 @@ typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
       Value<int> sleepStartMinutes,
       Value<int> sleepEndMinutes,
       Value<String> skinId,
+      Value<bool> liveActivityEnabled,
     });
 
 class $$AppSettingsRowsTableFilterComposer
@@ -2445,6 +2505,11 @@ class $$AppSettingsRowsTableFilterComposer
 
   ColumnFilters<String> get skinId => $composableBuilder(
     column: $table.skinId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get liveActivityEnabled => $composableBuilder(
+    column: $table.liveActivityEnabled,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2522,6 +2587,11 @@ class $$AppSettingsRowsTableOrderingComposer
     column: $table.skinId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get liveActivityEnabled => $composableBuilder(
+    column: $table.liveActivityEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AppSettingsRowsTableAnnotationComposer
@@ -2591,6 +2661,11 @@ class $$AppSettingsRowsTableAnnotationComposer
 
   GeneratedColumn<String> get skinId =>
       $composableBuilder(column: $table.skinId, builder: (column) => column);
+
+  GeneratedColumn<bool> get liveActivityEnabled => $composableBuilder(
+    column: $table.liveActivityEnabled,
+    builder: (column) => column,
+  );
 }
 
 class $$AppSettingsRowsTableTableManager
@@ -2643,6 +2718,7 @@ class $$AppSettingsRowsTableTableManager
                 Value<int> sleepStartMinutes = const Value.absent(),
                 Value<int> sleepEndMinutes = const Value.absent(),
                 Value<String> skinId = const Value.absent(),
+                Value<bool> liveActivityEnabled = const Value.absent(),
               }) => AppSettingsRowsCompanion(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2657,6 +2733,7 @@ class $$AppSettingsRowsTableTableManager
                 sleepStartMinutes: sleepStartMinutes,
                 sleepEndMinutes: sleepEndMinutes,
                 skinId: skinId,
+                liveActivityEnabled: liveActivityEnabled,
               ),
           createCompanionCallback:
               ({
@@ -2673,6 +2750,7 @@ class $$AppSettingsRowsTableTableManager
                 Value<int> sleepStartMinutes = const Value.absent(),
                 Value<int> sleepEndMinutes = const Value.absent(),
                 Value<String> skinId = const Value.absent(),
+                Value<bool> liveActivityEnabled = const Value.absent(),
               }) => AppSettingsRowsCompanion.insert(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2687,6 +2765,7 @@ class $$AppSettingsRowsTableTableManager
                 sleepStartMinutes: sleepStartMinutes,
                 sleepEndMinutes: sleepEndMinutes,
                 skinId: skinId,
+                liveActivityEnabled: liveActivityEnabled,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

@@ -717,5 +717,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsProSkin => 'SKIN';
 
   @override
+  String get settingsProLiveActivity => 'Live Activity';
+
+  @override
+  String get settingsProLiveActivitySub =>
+      'Stint timer in the Dynamic Island & on the lock screen.';
+
+  @override
   String get proBadge => 'PRO';
 }

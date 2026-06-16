@@ -27,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -51,6 +51,10 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 6) {
             await m.addColumn(appSettingsRows, appSettingsRows.skinId);
+          }
+          if (from < 7) {
+            await m.addColumn(
+                appSettingsRows, appSettingsRows.liveActivityEnabled);
           }
           if (from < 4) {
             await m.createTable(costPeriods);
@@ -103,6 +107,11 @@ class AppDatabase extends _$AppDatabase {
   Future<void> updateSkin(String skinId) {
     return (update(appSettingsRows)..where((t) => t.id.equals(1)))
         .write(AppSettingsRowsCompanion(skinId: Value(skinId)));
+  }
+
+  Future<void> updateLiveActivityEnabled(bool enabled) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
+        .write(AppSettingsRowsCompanion(liveActivityEnabled: Value(enabled)));
   }
 
   Future<void> updateSleepWindow({
