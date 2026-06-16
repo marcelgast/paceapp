@@ -70,6 +70,33 @@ class Skin {
       orange: Color(0xFFFF8AC2),
       lime: Color(0xFF8AF0E0),
     ),
+    Skin(
+      id: 'police',
+      name: 'Police',
+      magenta: Color(0xFFFF2D4B), // siren red
+      cyan: Color(0xFF2D7BFF), // siren blue
+      purple: Color(0xFF5468FF),
+      orange: Color(0xFFFF5630),
+      lime: Color(0xFF36C5FF),
+    ),
+    Skin(
+      id: 'nightshade',
+      name: 'Nightshade',
+      magenta: Color(0xFFB14BFF), // deep purple
+      cyan: Color(0xFF00C2A8), // teal pop
+      purple: Color(0xFF7A1FFF),
+      orange: Color(0xFFD24BFF),
+      lime: Color(0xFF8C5CFF),
+    ),
+    Skin(
+      id: 'inferno',
+      name: 'Inferno',
+      magenta: Color(0xFFFF4D2E), // fire
+      cyan: Color(0xFFFFB020), // amber
+      purple: Color(0xFFFF6A3D),
+      orange: Color(0xFFFF2A1A), // deep red
+      lime: Color(0xFFFFD23B), // flame yellow
+    ),
   ];
 
   static Skin byId(String? id) =>
