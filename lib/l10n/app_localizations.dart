@@ -1255,6 +1255,108 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Quellen: American Cancer Society, NHS / US Surgeon General.'**
   String get recoverySources;
+
+  /// No description provided for @analysisNoSituation.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Angabe'**
+  String get analysisNoSituation;
+
+  /// No description provided for @raceEngineerTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Race Engineer'**
+  String get raceEngineerTitle;
+
+  /// No description provided for @raceEngineerSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Wann, wo und wie stark dich das Verlangen trifft — und dein Trend.'**
+  String get raceEngineerSubtitle;
+
+  /// No description provided for @raceEngineerByHour.
+  ///
+  /// In de, this message translates to:
+  /// **'TAGESZEIT'**
+  String get raceEngineerByHour;
+
+  /// No description provided for @raceEngineerPeakHour.
+  ///
+  /// In de, this message translates to:
+  /// **'Spitzenzeit: {hour} Uhr'**
+  String raceEngineerPeakHour(Object hour);
+
+  /// No description provided for @raceEngineerByWeekday.
+  ///
+  /// In de, this message translates to:
+  /// **'WOCHENTAGE'**
+  String get raceEngineerByWeekday;
+
+  /// No description provided for @raceEngineerTriggers.
+  ///
+  /// In de, this message translates to:
+  /// **'TOP-AUSLÖSER'**
+  String get raceEngineerTriggers;
+
+  /// No description provided for @raceEngineerTrend.
+  ///
+  /// In de, this message translates to:
+  /// **'TREND'**
+  String get raceEngineerTrend;
+
+  /// No description provided for @raceEngineerTrendDown.
+  ///
+  /// In de, this message translates to:
+  /// **'↓ {amount} weniger pro Tag seit dem Start'**
+  String raceEngineerTrendDown(Object amount);
+
+  /// No description provided for @raceEngineerTrendFlat.
+  ///
+  /// In de, this message translates to:
+  /// **'Halte dran — der Trend kommt.'**
+  String get raceEngineerTrendFlat;
+
+  /// No description provided for @raceEngineerTrendAxis.
+  ///
+  /// In de, this message translates to:
+  /// **'Zigaretten/Tag · Woche für Woche'**
+  String get raceEngineerTrendAxis;
+
+  /// No description provided for @raceEngineerEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Daten'**
+  String get raceEngineerEmptyTitle;
+
+  /// No description provided for @raceEngineerEmptyBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.'**
+  String get raceEngineerEmptyBody;
+
+  /// No description provided for @settingsProSection.
+  ///
+  /// In de, this message translates to:
+  /// **'PACE PRO'**
+  String get settingsProSection;
+
+  /// No description provided for @settingsProRaceEngineer.
+  ///
+  /// In de, this message translates to:
+  /// **'Race Engineer'**
+  String get settingsProRaceEngineer;
+
+  /// No description provided for @settingsProRaceEngineerSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Deep Analytics — Muster, Auslöser, Trend.'**
+  String get settingsProRaceEngineerSub;
+
+  /// No description provided for @proBadge.
+  ///
+  /// In de, this message translates to:
+  /// **'PRO'**
+  String get proBadge;
 }
 
 class _AppLocalizationsDelegate

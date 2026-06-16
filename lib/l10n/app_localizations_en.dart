@@ -657,4 +657,62 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recoverySources =>
       'Sources: American Cancer Society, NHS / US Surgeon General.';
+
+  @override
+  String get analysisNoSituation => 'Not specified';
+
+  @override
+  String get raceEngineerTitle => 'Race Engineer';
+
+  @override
+  String get raceEngineerSubtitle =>
+      'When, where and how hard the craving hits — and your trend.';
+
+  @override
+  String get raceEngineerByHour => 'TIME OF DAY';
+
+  @override
+  String raceEngineerPeakHour(Object hour) {
+    return 'Peak time: $hour:00';
+  }
+
+  @override
+  String get raceEngineerByWeekday => 'WEEKDAYS';
+
+  @override
+  String get raceEngineerTriggers => 'TOP TRIGGERS';
+
+  @override
+  String get raceEngineerTrend => 'TREND';
+
+  @override
+  String raceEngineerTrendDown(Object amount) {
+    return '↓ $amount fewer per day since the start';
+  }
+
+  @override
+  String get raceEngineerTrendFlat => 'Keep at it — the trend is coming.';
+
+  @override
+  String get raceEngineerTrendAxis => 'Cigarettes/day · week by week';
+
+  @override
+  String get raceEngineerEmptyTitle => 'No data yet';
+
+  @override
+  String get raceEngineerEmptyBody =>
+      'Log a few pit stops and the Race Engineer reads your pattern.';
+
+  @override
+  String get settingsProSection => 'PACE PRO';
+
+  @override
+  String get settingsProRaceEngineer => 'Race Engineer';
+
+  @override
+  String get settingsProRaceEngineerSub =>
+      'Deep analytics — patterns, triggers, trend.';
+
+  @override
+  String get proBadge => 'PRO';
 }

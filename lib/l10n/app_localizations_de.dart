@@ -657,4 +657,62 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get recoverySources =>
       'Quellen: American Cancer Society, NHS / US Surgeon General.';
+
+  @override
+  String get analysisNoSituation => 'Ohne Angabe';
+
+  @override
+  String get raceEngineerTitle => 'Race Engineer';
+
+  @override
+  String get raceEngineerSubtitle =>
+      'Wann, wo und wie stark dich das Verlangen trifft — und dein Trend.';
+
+  @override
+  String get raceEngineerByHour => 'TAGESZEIT';
+
+  @override
+  String raceEngineerPeakHour(Object hour) {
+    return 'Spitzenzeit: $hour Uhr';
+  }
+
+  @override
+  String get raceEngineerByWeekday => 'WOCHENTAGE';
+
+  @override
+  String get raceEngineerTriggers => 'TOP-AUSLÖSER';
+
+  @override
+  String get raceEngineerTrend => 'TREND';
+
+  @override
+  String raceEngineerTrendDown(Object amount) {
+    return '↓ $amount weniger pro Tag seit dem Start';
+  }
+
+  @override
+  String get raceEngineerTrendFlat => 'Halte dran — der Trend kommt.';
+
+  @override
+  String get raceEngineerTrendAxis => 'Zigaretten/Tag · Woche für Woche';
+
+  @override
+  String get raceEngineerEmptyTitle => 'Noch keine Daten';
+
+  @override
+  String get raceEngineerEmptyBody =>
+      'Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.';
+
+  @override
+  String get settingsProSection => 'PACE PRO';
+
+  @override
+  String get settingsProRaceEngineer => 'Race Engineer';
+
+  @override
+  String get settingsProRaceEngineerSub =>
+      'Deep Analytics — Muster, Auslöser, Trend.';
+
+  @override
+  String get proBadge => 'PRO';
 }

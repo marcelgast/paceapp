@@ -218,5 +218,26 @@
   "recoveryCurrentStint": "Aktueller Stint: {duration}",
   "@recoveryCurrentStint": { "placeholders": { "duration": {} } },
   "recoveryLongTerm": "Langzeit — wenn du rauchfrei wirst",
-  "recoverySources": "Quellen: American Cancer Society, NHS / US Surgeon General."
+  "recoverySources": "Quellen: American Cancer Society, NHS / US Surgeon General.",
+
+  "analysisNoSituation": "Ohne Angabe",
+  "raceEngineerTitle": "Race Engineer",
+  "raceEngineerSubtitle": "Wann, wo und wie stark dich das Verlangen trifft — und dein Trend.",
+  "raceEngineerByHour": "TAGESZEIT",
+  "raceEngineerPeakHour": "Spitzenzeit: {hour} Uhr",
+  "@raceEngineerPeakHour": { "placeholders": { "hour": {} } },
+  "raceEngineerByWeekday": "WOCHENTAGE",
+  "raceEngineerTriggers": "TOP-AUSLÖSER",
+  "raceEngineerTrend": "TREND",
+  "raceEngineerTrendDown": "↓ {amount} weniger pro Tag seit dem Start",
+  "@raceEngineerTrendDown": { "placeholders": { "amount": {} } },
+  "raceEngineerTrendFlat": "Halte dran — der Trend kommt.",
+  "raceEngineerTrendAxis": "Zigaretten/Tag · Woche für Woche",
+  "raceEngineerEmptyTitle": "Noch keine Daten",
+  "raceEngineerEmptyBody": "Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.",
+
+  "settingsProSection": "PACE PRO",
+  "settingsProRaceEngineer": "Race Engineer",
+  "settingsProRaceEngineerSub": "Deep Analytics — Muster, Auslöser, Trend.",
+  "proBadge": "PRO"
 }

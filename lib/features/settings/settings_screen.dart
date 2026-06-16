@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../services/entitlements.dart';
 import '../../services/widget_service.dart';
+import '../race_engineer/race_engineer_screen.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
@@ -174,6 +176,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  void _openPro(PaceProFeature feature, VoidCallback onOpen) {
+    // Free test phase unlocks everything; later this gates behind the purchase.
+    if (ref.read(entitlementsProvider).can(feature)) onOpen();
+  }
+
   Future<void> _reset() async {
     final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
@@ -328,6 +335,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       for (final p in periods.reversed)
                         _HistoryRow(period: p, currency: currency),
                     ],
+                    const SizedBox(height: 32),
+                    Text(l10n.settingsProSection,
+                        style: TextStyle(
+                            color: PaceColors.textMuted,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 10),
+                    _ProRow(
+                      icon: Icons.insights,
+                      title: l10n.settingsProRaceEngineer,
+                      subtitle: l10n.settingsProRaceEngineerSub,
+                      badge: l10n.proBadge,
+                      onTap: () => _openPro(
+                          PaceProFeature.raceEngineer,
+                          () => RaceEngineerScreen.open(context)),
+                    ),
                     const SizedBox(height: 40),
                     GestureDetector(
                       onTap: _reset,
@@ -450,6 +474,88 @@ class _SaveButton extends StatelessWidget {
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2)),
+      ),
+    );
+  }
+}
+
+class _ProRow extends StatelessWidget {
+  const _ProRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String badge;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              PaceColors.neonMagenta.withValues(alpha: 0.12),
+              PaceColors.neonPurple.withValues(alpha: 0.08),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border:
+              Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: PaceColors.neonMagenta, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(title,
+                          style: const TextStyle(
+                              color: PaceColors.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: PaceColors.neonMagenta,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(badge,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.w900)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(subtitle,
+                      style: TextStyle(
+                          color: PaceColors.textMuted, fontSize: 12)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: PaceColors.textMuted),
+          ],
+        ),
       ),
     );
   }

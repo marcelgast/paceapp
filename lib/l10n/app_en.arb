@@ -196,5 +196,24 @@
   "recoveryEveryStintHeals": "Every stint heals",
   "recoveryCurrentStint": "Current stint: {duration}",
   "recoveryLongTerm": "Long term — once you stay smoke-free",
-  "recoverySources": "Sources: American Cancer Society, NHS / US Surgeon General."
+  "recoverySources": "Sources: American Cancer Society, NHS / US Surgeon General.",
+
+  "analysisNoSituation": "Not specified",
+  "raceEngineerTitle": "Race Engineer",
+  "raceEngineerSubtitle": "When, where and how hard the craving hits — and your trend.",
+  "raceEngineerByHour": "TIME OF DAY",
+  "raceEngineerPeakHour": "Peak time: {hour}:00",
+  "raceEngineerByWeekday": "WEEKDAYS",
+  "raceEngineerTriggers": "TOP TRIGGERS",
+  "raceEngineerTrend": "TREND",
+  "raceEngineerTrendDown": "↓ {amount} fewer per day since the start",
+  "raceEngineerTrendFlat": "Keep at it — the trend is coming.",
+  "raceEngineerTrendAxis": "Cigarettes/day · week by week",
+  "raceEngineerEmptyTitle": "No data yet",
+  "raceEngineerEmptyBody": "Log a few pit stops and the Race Engineer reads your pattern.",
+
+  "settingsProSection": "PACE PRO",
+  "settingsProRaceEngineer": "Race Engineer",
+  "settingsProRaceEngineerSub": "Deep analytics — patterns, triggers, trend.",
+  "proBadge": "PRO"
 }

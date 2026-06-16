@@ -1,10 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Premium features Pace will gate once monetisation goes live. Race Cards are
-/// deliberately NOT in here — sharing stays free forever.
+/// Premium features Pace will gate once monetisation goes live. Race Cards and
+/// everything that helps you quit stay free forever — only added value is paid.
 enum PaceProFeature {
-  /// Alternative neon palettes & graffiti skins (first paid feature).
+  /// Alternative neon palettes & skins for the cockpit.
   themes,
+
+  /// Deep analytics: time-of-day patterns, triggers, trends.
+  raceEngineer,
+
+  /// Live Activity / Dynamic Island stint timer.
+  liveActivity,
 }
 
 /// Single source of truth for paid entitlements.
