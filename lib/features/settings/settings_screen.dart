@@ -361,9 +361,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       value: settings?.liveActivityEnabled ?? false,
                       onChanged: (v) => _openPro(
                         PaceProFeature.liveActivity,
-                        () {
-                          ref.read(databaseProvider).updateLiveActivityEnabled(v);
-                          pushPaceWidget(ref);
+                        () async {
+                          await ref
+                              .read(databaseProvider)
+                              .updateLiveActivityEnabled(v);
+                          await pushPaceWidget(ref, liveActivityOverride: v);
                         },
                       ),
                     ),

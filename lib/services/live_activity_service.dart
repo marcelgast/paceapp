@@ -23,7 +23,13 @@ abstract final class LiveActivityService {
       if (_activityId != null) {
         await _plugin.updateActivity(_activityId!, data);
       } else {
-        _activityId = await _plugin.createActivity('pace-stint', data);
+        // Local-only activity — no push token, so we don't need (and don't
+        // have) the Push-Notifications capability that remote updates require.
+        _activityId = await _plugin.createActivity(
+          'pace-stint',
+          data,
+          iOSEnableRemoteUpdates: false,
+        );
       }
     } catch (_) {
       // ActivityKit unavailable / not permitted — ignore.

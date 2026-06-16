@@ -43,7 +43,7 @@ abstract final class WidgetService {
 
 /// Reads the current state and pushes it to the widget. Safe to call even
 /// before the widget extension exists (updateWidget then simply no-ops).
-Future<void> pushPaceWidget(WidgetRef ref) async {
+Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
   final settings = ref.read(settingsProvider).value;
   if (settings == null) return;
 
@@ -68,6 +68,11 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
       endMinutes: settings.sleepEndMinutes,
     ),
   ).best;
+
+  final today = DateTime(now.year, now.month, now.day);
+  final smokedToday = pitTimes
+      .where((t) => !t.isBefore(today) && t.isBefore(today.add(const Duration(days: 1))))
+      .length;
 
   final isBaseline = (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
   final timerRef =
@@ -97,7 +102,10 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
   }
 
   // Live Activity (Pro): mirror the stint to the Dynamic Island / lock screen.
-  final liveOn = settings.liveActivityEnabled &&
+  // [liveActivityOverride] lets the settings toggle pass its new value directly,
+  // since the settings stream hasn't propagated the DB write yet at that point.
+  final liveEnabled = liveActivityOverride ?? settings.liveActivityEnabled;
+  final liveOn = liveEnabled &&
       ref.read(entitlementsProvider).can(PaceProFeature.liveActivity);
   if (liveOn) {
     await LiveActivityService.push({
@@ -110,6 +118,7 @@ Future<void> pushPaceWidget(WidgetRef ref) async {
               currencyCode: settings.currencyCode),
       'carName': car.name,
       'streak': streak.toString(),
+      'smokedToday': smokedToday.toString(),
     });
   } else {
     await LiveActivityService.stop();

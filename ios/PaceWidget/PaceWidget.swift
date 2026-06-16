@@ -216,6 +216,11 @@ private func liveStr(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>, _ 
 }
 
 @available(iOS 16.1, *)
+private func liveInt(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>, _ key: String) -> Int {
+    Int(liveStr(ctx, key)) ?? 0
+}
+
+@available(iOS 16.1, *)
 private func liveTimerRef(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Date {
     let ms = Double(liveStr(ctx, "timerRefMs")) ?? 0
     return ms > 0 ? Date(timeIntervalSince1970: ms / 1000.0) : Date()
@@ -263,8 +268,18 @@ struct PaceLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: "flame.fill")
-                        .foregroundColor(magenta).font(.system(size: 22))
+                    VStack(alignment: .leading, spacing: 1) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "flag.fill")
+                                .foregroundColor(.yellow).font(.system(size: 18))
+                            Text("\(liveInt(context, "smokedToday"))")
+                                .font(.system(size: 22, weight: .heavy, design: .rounded))
+                                .foregroundColor(.white).monospacedDigit()
+                        }
+                        Text("HEUTE")
+                            .font(.system(size: 9, weight: .bold)).tracking(1.5)
+                            .foregroundColor(.gray)
+                    }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text(liveTimerRef(context), style: .timer)
@@ -278,7 +293,13 @@ struct PaceLiveActivity: Widget {
                         .foregroundColor(liveAccent(context))
                 }
             } compactLeading: {
-                Image(systemName: "flame.fill").foregroundColor(magenta)
+                HStack(spacing: 3) {
+                    Image(systemName: "flag.fill")
+                        .foregroundColor(.yellow).font(.system(size: 13))
+                    Text("\(liveInt(context, "smokedToday"))")
+                        .font(.system(size: 15, weight: .heavy, design: .rounded))
+                        .foregroundColor(.white).monospacedDigit()
+                }
             } compactTrailing: {
                 Text(liveTimerRef(context), style: .timer)
                     .monospacedDigit().foregroundColor(liveAccent(context))
