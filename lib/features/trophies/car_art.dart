@@ -17,7 +17,7 @@ class CarArt extends StatelessWidget {
   final bool unlocked;
 
   /// Accent colour per garage tier (borders, glow, hubs).
-  static const List<Color> tierColors = [
+  static final List<Color> tierColors = [
     Color(0xFF8A7A6A), // Rostlaube
     PaceColors.neonCyan, // Tuned Hatchback
     PaceColors.neonMagenta, // Street Coupé

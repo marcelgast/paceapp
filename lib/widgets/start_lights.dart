@@ -83,7 +83,7 @@ class StartLights extends StatelessWidget {
                       letterSpacing: 3,
                       color: PaceColors.neonLimeBright,
                       shadows: [
-                        const Shadow(color: PaceColors.neonLime, blurRadius: 24),
+                        Shadow(color: PaceColors.neonLime, blurRadius: 24),
                         Shadow(
                           color: PaceColors.neonLime.withValues(alpha: 0.6),
                           blurRadius: 48,

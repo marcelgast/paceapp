@@ -68,7 +68,7 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: PaceColors.panel,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           border: Border(

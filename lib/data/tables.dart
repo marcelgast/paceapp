@@ -31,6 +31,10 @@ class AppSettingsRows extends Table {
   IntColumn get sleepEndMinutes =>
       integer().withDefault(const Constant(7 * 60))();
 
+  /// Selected neon skin (Pro). Defaults to the original "Underground".
+  TextColumn get skinId =>
+      text().withDefault(const Constant('underground'))();
+
   @override
   Set<Column> get primaryKey => {id};
 }

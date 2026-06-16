@@ -714,5 +714,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Deep analytics — patterns, triggers, trend.';
 
   @override
+  String get settingsProSkin => 'SKIN';
+
+  @override
   String get proBadge => 'PRO';
 }

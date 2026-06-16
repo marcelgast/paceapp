@@ -147,6 +147,16 @@ class $AppSettingsRowsTable extends AppSettingsRows
     requiredDuringInsert: false,
     defaultValue: const Constant(7 * 60),
   );
+  static const VerificationMeta _skinIdMeta = const VerificationMeta('skinId');
+  @override
+  late final GeneratedColumn<String> skinId = GeneratedColumn<String>(
+    'skin_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('underground'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -161,6 +171,7 @@ class $AppSettingsRowsTable extends AppSettingsRows
     growthPermille,
     sleepStartMinutes,
     sleepEndMinutes,
+    skinId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -281,6 +292,12 @@ class $AppSettingsRowsTable extends AppSettingsRows
         ),
       );
     }
+    if (data.containsKey('skin_id')) {
+      context.handle(
+        _skinIdMeta,
+        skinId.isAcceptableOrUnknown(data['skin_id']!, _skinIdMeta),
+      );
+    }
     return context;
   }
 
@@ -338,6 +355,10 @@ class $AppSettingsRowsTable extends AppSettingsRows
         DriftSqlType.int,
         data['${effectivePrefix}sleep_end_minutes'],
       )!,
+      skinId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skin_id'],
+      )!,
     );
   }
 
@@ -369,6 +390,9 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
   /// timing (default 23:00–07:00).
   final int sleepStartMinutes;
   final int sleepEndMinutes;
+
+  /// Selected neon skin (Pro). Defaults to the original "Underground".
+  final String skinId;
   const AppSettingsRow({
     required this.id,
     required this.packPriceCents,
@@ -382,6 +406,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     required this.growthPermille,
     required this.sleepStartMinutes,
     required this.sleepEndMinutes,
+    required this.skinId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -402,6 +427,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     map['growth_permille'] = Variable<int>(growthPermille);
     map['sleep_start_minutes'] = Variable<int>(sleepStartMinutes);
     map['sleep_end_minutes'] = Variable<int>(sleepEndMinutes);
+    map['skin_id'] = Variable<String>(skinId);
     return map;
   }
 
@@ -423,6 +449,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       growthPermille: Value(growthPermille),
       sleepStartMinutes: Value(sleepStartMinutes),
       sleepEndMinutes: Value(sleepEndMinutes),
+      skinId: Value(skinId),
     );
   }
 
@@ -446,6 +473,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       growthPermille: serializer.fromJson<int>(json['growthPermille']),
       sleepStartMinutes: serializer.fromJson<int>(json['sleepStartMinutes']),
       sleepEndMinutes: serializer.fromJson<int>(json['sleepEndMinutes']),
+      skinId: serializer.fromJson<String>(json['skinId']),
     );
   }
   @override
@@ -464,6 +492,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       'growthPermille': serializer.toJson<int>(growthPermille),
       'sleepStartMinutes': serializer.toJson<int>(sleepStartMinutes),
       'sleepEndMinutes': serializer.toJson<int>(sleepEndMinutes),
+      'skinId': serializer.toJson<String>(skinId),
     };
   }
 
@@ -480,6 +509,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     int? growthPermille,
     int? sleepStartMinutes,
     int? sleepEndMinutes,
+    String? skinId,
   }) => AppSettingsRow(
     id: id ?? this.id,
     packPriceCents: packPriceCents ?? this.packPriceCents,
@@ -497,6 +527,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     growthPermille: growthPermille ?? this.growthPermille,
     sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
     sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
+    skinId: skinId ?? this.skinId,
   );
   AppSettingsRow copyWithCompanion(AppSettingsRowsCompanion data) {
     return AppSettingsRow(
@@ -532,6 +563,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
       sleepEndMinutes: data.sleepEndMinutes.present
           ? data.sleepEndMinutes.value
           : this.sleepEndMinutes,
+      skinId: data.skinId.present ? data.skinId.value : this.skinId,
     );
   }
 
@@ -549,7 +581,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           ..write('lastProposalAt: $lastProposalAt, ')
           ..write('growthPermille: $growthPermille, ')
           ..write('sleepStartMinutes: $sleepStartMinutes, ')
-          ..write('sleepEndMinutes: $sleepEndMinutes')
+          ..write('sleepEndMinutes: $sleepEndMinutes, ')
+          ..write('skinId: $skinId')
           ..write(')'))
         .toString();
   }
@@ -568,6 +601,7 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
     growthPermille,
     sleepStartMinutes,
     sleepEndMinutes,
+    skinId,
   );
   @override
   bool operator ==(Object other) =>
@@ -584,7 +618,8 @@ class AppSettingsRow extends DataClass implements Insertable<AppSettingsRow> {
           other.lastProposalAt == this.lastProposalAt &&
           other.growthPermille == this.growthPermille &&
           other.sleepStartMinutes == this.sleepStartMinutes &&
-          other.sleepEndMinutes == this.sleepEndMinutes);
+          other.sleepEndMinutes == this.sleepEndMinutes &&
+          other.skinId == this.skinId);
 }
 
 class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
@@ -600,6 +635,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
   final Value<int> growthPermille;
   final Value<int> sleepStartMinutes;
   final Value<int> sleepEndMinutes;
+  final Value<String> skinId;
   const AppSettingsRowsCompanion({
     this.id = const Value.absent(),
     this.packPriceCents = const Value.absent(),
@@ -613,6 +649,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.growthPermille = const Value.absent(),
     this.sleepStartMinutes = const Value.absent(),
     this.sleepEndMinutes = const Value.absent(),
+    this.skinId = const Value.absent(),
   });
   AppSettingsRowsCompanion.insert({
     this.id = const Value.absent(),
@@ -627,6 +664,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     this.growthPermille = const Value.absent(),
     this.sleepStartMinutes = const Value.absent(),
     this.sleepEndMinutes = const Value.absent(),
+    this.skinId = const Value.absent(),
   }) : packPriceCents = Value(packPriceCents),
        cigarettesPerPack = Value(cigarettesPerPack),
        baselineCigsPerDay = Value(baselineCigsPerDay),
@@ -644,6 +682,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Expression<int>? growthPermille,
     Expression<int>? sleepStartMinutes,
     Expression<int>? sleepEndMinutes,
+    Expression<String>? skinId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -660,6 +699,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       if (growthPermille != null) 'growth_permille': growthPermille,
       if (sleepStartMinutes != null) 'sleep_start_minutes': sleepStartMinutes,
       if (sleepEndMinutes != null) 'sleep_end_minutes': sleepEndMinutes,
+      if (skinId != null) 'skin_id': skinId,
     });
   }
 
@@ -676,6 +716,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     Value<int>? growthPermille,
     Value<int>? sleepStartMinutes,
     Value<int>? sleepEndMinutes,
+    Value<String>? skinId,
   }) {
     return AppSettingsRowsCompanion(
       id: id ?? this.id,
@@ -690,6 +731,7 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
       growthPermille: growthPermille ?? this.growthPermille,
       sleepStartMinutes: sleepStartMinutes ?? this.sleepStartMinutes,
       sleepEndMinutes: sleepEndMinutes ?? this.sleepEndMinutes,
+      skinId: skinId ?? this.skinId,
     );
   }
 
@@ -732,6 +774,9 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
     if (sleepEndMinutes.present) {
       map['sleep_end_minutes'] = Variable<int>(sleepEndMinutes.value);
     }
+    if (skinId.present) {
+      map['skin_id'] = Variable<String>(skinId.value);
+    }
     return map;
   }
 
@@ -749,7 +794,8 @@ class AppSettingsRowsCompanion extends UpdateCompanion<AppSettingsRow> {
           ..write('lastProposalAt: $lastProposalAt, ')
           ..write('growthPermille: $growthPermille, ')
           ..write('sleepStartMinutes: $sleepStartMinutes, ')
-          ..write('sleepEndMinutes: $sleepEndMinutes')
+          ..write('sleepEndMinutes: $sleepEndMinutes, ')
+          ..write('skinId: $skinId')
           ..write(')'))
         .toString();
   }
@@ -2309,6 +2355,7 @@ typedef $$AppSettingsRowsTableCreateCompanionBuilder =
       Value<int> growthPermille,
       Value<int> sleepStartMinutes,
       Value<int> sleepEndMinutes,
+      Value<String> skinId,
     });
 typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
     AppSettingsRowsCompanion Function({
@@ -2324,6 +2371,7 @@ typedef $$AppSettingsRowsTableUpdateCompanionBuilder =
       Value<int> growthPermille,
       Value<int> sleepStartMinutes,
       Value<int> sleepEndMinutes,
+      Value<String> skinId,
     });
 
 class $$AppSettingsRowsTableFilterComposer
@@ -2392,6 +2440,11 @@ class $$AppSettingsRowsTableFilterComposer
 
   ColumnFilters<int> get sleepEndMinutes => $composableBuilder(
     column: $table.sleepEndMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skinId => $composableBuilder(
+    column: $table.skinId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2464,6 +2517,11 @@ class $$AppSettingsRowsTableOrderingComposer
     column: $table.sleepEndMinutes,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get skinId => $composableBuilder(
+    column: $table.skinId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AppSettingsRowsTableAnnotationComposer
@@ -2530,6 +2588,9 @@ class $$AppSettingsRowsTableAnnotationComposer
     column: $table.sleepEndMinutes,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get skinId =>
+      $composableBuilder(column: $table.skinId, builder: (column) => column);
 }
 
 class $$AppSettingsRowsTableTableManager
@@ -2581,6 +2642,7 @@ class $$AppSettingsRowsTableTableManager
                 Value<int> growthPermille = const Value.absent(),
                 Value<int> sleepStartMinutes = const Value.absent(),
                 Value<int> sleepEndMinutes = const Value.absent(),
+                Value<String> skinId = const Value.absent(),
               }) => AppSettingsRowsCompanion(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2594,6 +2656,7 @@ class $$AppSettingsRowsTableTableManager
                 growthPermille: growthPermille,
                 sleepStartMinutes: sleepStartMinutes,
                 sleepEndMinutes: sleepEndMinutes,
+                skinId: skinId,
               ),
           createCompanionCallback:
               ({
@@ -2609,6 +2672,7 @@ class $$AppSettingsRowsTableTableManager
                 Value<int> growthPermille = const Value.absent(),
                 Value<int> sleepStartMinutes = const Value.absent(),
                 Value<int> sleepEndMinutes = const Value.absent(),
+                Value<String> skinId = const Value.absent(),
               }) => AppSettingsRowsCompanion.insert(
                 id: id,
                 packPriceCents: packPriceCents,
@@ -2622,6 +2686,7 @@ class $$AppSettingsRowsTableTableManager
                 growthPermille: growthPermille,
                 sleepStartMinutes: sleepStartMinutes,
                 sleepEndMinutes: sleepEndMinutes,
+                skinId: skinId,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

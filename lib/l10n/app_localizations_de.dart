@@ -714,5 +714,8 @@ class AppLocalizationsDe extends AppLocalizations {
       'Deep Analytics — Muster, Auslöser, Trend.';
 
   @override
+  String get settingsProSkin => 'SKIN';
+
+  @override
   String get proBadge => 'PRO';
 }

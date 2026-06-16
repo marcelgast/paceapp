@@ -27,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -48,6 +48,9 @@ class AppDatabase extends _$AppDatabase {
                 appSettingsRows, appSettingsRows.sleepStartMinutes);
             await m.addColumn(
                 appSettingsRows, appSettingsRows.sleepEndMinutes);
+          }
+          if (from < 6) {
+            await m.addColumn(appSettingsRows, appSettingsRows.skinId);
           }
           if (from < 4) {
             await m.createTable(costPeriods);
@@ -95,6 +98,11 @@ class AppDatabase extends _$AppDatabase {
         cigarettesPerPack: Value(cigarettesPerPack),
       ),
     );
+  }
+
+  Future<void> updateSkin(String skinId) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
+        .write(AppSettingsRowsCompanion(skinId: Value(skinId)));
   }
 
   Future<void> updateSleepWindow({

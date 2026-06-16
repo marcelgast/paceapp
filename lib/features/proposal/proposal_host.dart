@@ -102,7 +102,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
                 minBlastForce: 8,
                 gravity: 0.25,
                 emissionFrequency: 0.05,
-                colors: const [
+                colors: [
                   PaceColors.neonMagenta,
                   PaceColors.neonCyan,
                   PaceColors.neonLime,
@@ -175,7 +175,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
           children: [
             Text(l10n.proposalStretchBy, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
             Text(l10n.proposalPercent(pct),
-                style: const TextStyle(
+                style: TextStyle(
                     color: PaceColors.neonMagenta, fontSize: 18, fontWeight: FontWeight.w900)),
           ],
         ),
@@ -216,7 +216,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.flag_circle, color: PaceColors.neonLime, size: 96)
+        Icon(Icons.flag_circle, color: PaceColors.neonLime, size: 96)
             .animate(onPlay: (c) => c.repeat(reverse: true))
             .scaleXY(begin: 1.0, end: 1.12, duration: 700.ms, curve: Curves.easeInOut),
         const SizedBox(height: 20),
@@ -252,7 +252,7 @@ class _AcceptButton extends StatelessWidget {
         width: double.infinity,
         height: 58,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: PaceColors.underglow),
+          gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

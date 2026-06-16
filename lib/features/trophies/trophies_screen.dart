@@ -132,10 +132,10 @@ class _ShareChip extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
+            Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
             const SizedBox(width: 6),
             Text(l10n.shareLabel,
-                style: const TextStyle(
+                style: TextStyle(
                     color: PaceColors.neonMagenta,
                     fontSize: 13,
                     fontWeight: FontWeight.w700)),
@@ -265,7 +265,7 @@ class _GarageCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              const Icon(Icons.directions_car_filled,
+              Icon(Icons.directions_car_filled,
                   color: PaceColors.neonMagenta, size: 30),
               const SizedBox(width: 10),
               Expanded(
@@ -295,12 +295,12 @@ class _GarageCard extends StatelessWidget {
               minHeight: 10,
               backgroundColor: PaceColors.night,
               valueColor:
-                  const AlwaysStoppedAnimation(PaceColors.neonLime),
+                  AlwaysStoppedAnimation(PaceColors.neonLime),
             ),
           ),
           const SizedBox(height: 8),
           Text(hint,
-              style: const TextStyle(
+              style: TextStyle(
                   color: PaceColors.neonLime, fontSize: 13, fontWeight: FontWeight.w600)),
         ],
       ),

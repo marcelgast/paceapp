@@ -47,7 +47,7 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: PaceColors.panel,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           border: Border(top: BorderSide(color: PaceColors.neonCyan, width: 2)),
@@ -85,7 +85,7 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           children: [
-                            const Icon(Icons.place_outlined,
+                            Icon(Icons.place_outlined,
                                 color: PaceColors.neonCyan, size: 20),
                             const SizedBox(width: 12),
                             Expanded(

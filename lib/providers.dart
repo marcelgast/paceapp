@@ -6,6 +6,7 @@ import 'data/database.dart';
 import 'domain/behavior_analysis.dart';
 import 'domain/clean_run.dart';
 import 'domain/sleep_window.dart';
+import 'theme/skin.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/stint_calculator.dart';
@@ -34,6 +35,12 @@ final pitStopsProvider = StreamProvider<List<PitStop>>((ref) {
 /// Price/pack-size epochs. A change applies from its effective date forward.
 final costPeriodsProvider = StreamProvider<List<CostPeriod>>((ref) {
   return ref.watch(databaseProvider).watchCostPeriods();
+});
+
+/// The selected neon skin (Pro). Drives the runtime accent recolouring.
+final skinProvider = Provider<Skin>((ref) {
+  final id = ref.watch(settingsProvider).value?.skinId;
+  return Skin.byId(id);
 });
 
 /// The user's sleep window — excluded from stint/best timing.

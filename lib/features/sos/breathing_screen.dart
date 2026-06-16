@@ -237,7 +237,7 @@ class _StopButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(l10n.sosStopButton,
-            style: const TextStyle(
+            style: TextStyle(
                 color: PaceColors.neonLime,
                 fontSize: 16,
                 fontWeight: FontWeight.w800,

@@ -164,7 +164,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
         child: Stack(
           children: [
             // Decorative tags, tucked clear of the logo and content.
-            const Positioned(
+            Positioned(
               left: -6,
               bottom: 96,
               child: GraffitiTag(
@@ -174,7 +174,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   angle: -0.14,
                   opacity: 0.3),
             ),
-            const Positioned(
+            Positioned(
               right: -4,
               top: 150,
               child: GraffitiTag(
@@ -322,7 +322,7 @@ class _QuestionPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(eyebrow,
-              style: const TextStyle(
+              style: TextStyle(
                   color: PaceColors.neonOrange,
                   fontSize: 12,
                   letterSpacing: 2,
@@ -380,7 +380,7 @@ class _WelcomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.onboardingWelcomeEyebrow,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
@@ -536,7 +536,7 @@ class _SleepPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.onboardingSleepEyebrow,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
@@ -653,7 +653,7 @@ class _MeasureWeekPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.onboardingMeasureEyebrow,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
@@ -811,7 +811,7 @@ class _BigField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: PaceColors.neonCyan, width: 2),
+          borderSide: BorderSide(color: PaceColors.neonCyan, width: 2),
         ),
       ),
     );
@@ -831,7 +831,7 @@ class _PrimaryButton extends StatelessWidget {
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: PaceColors.underglow),
+          gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

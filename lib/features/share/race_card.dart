@@ -151,7 +151,7 @@ class RaceCard extends StatelessWidget {
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
           child: ShaderMask(
-            shaderCallback: (rect) => const LinearGradient(
+            shaderCallback: (rect) => LinearGradient(
               colors: [PaceColors.neonCyan, PaceColors.neonMagenta],
             ).createShader(rect),
             child: Text(

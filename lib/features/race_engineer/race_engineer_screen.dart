@@ -134,7 +134,7 @@ class _Card extends StatelessWidget {
           if (caption != null) ...[
             const SizedBox(height: 4),
             Text(caption!,
-                style: const TextStyle(
+                style: TextStyle(
                     color: PaceColors.neonOrange,
                     fontSize: 14,
                     fontWeight: FontWeight.w700)),
@@ -320,7 +320,7 @@ class _TriggersCard extends StatelessWidget {
                         value: maxV == 0 ? 0 : t.count / maxV,
                         minHeight: 10,
                         backgroundColor: PaceColors.night,
-                        valueColor: const AlwaysStoppedAnimation(
+                        valueColor: AlwaysStoppedAnimation(
                             PaceColors.neonCyan),
                       ),
                     ),
@@ -400,7 +400,7 @@ class _Empty extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
+            Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
             const SizedBox(height: 16),
             Text(l10n.raceEngineerEmptyTitle,
                 style: PaceTheme.dash(size: 22, italic: true)),

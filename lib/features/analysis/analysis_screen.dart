@@ -124,7 +124,7 @@ class _MedianPaceCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.speed, color: PaceColors.neonCyan, size: 18),
+              Icon(Icons.speed, color: PaceColors.neonCyan, size: 18),
               const SizedBox(width: 6),
               Text(l10n.analysisMedianPace,
                   style: TextStyle(
@@ -302,7 +302,7 @@ class _SituationBars extends StatelessWidget {
                           widthFactor: max == 0 ? 0 : s.count / max,
                           child: Container(
                             height: 22,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
                                   PaceColors.neonMagenta,
@@ -373,7 +373,7 @@ class _WeekBars extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [PaceColors.neonCyan, PaceColors.neonLime],
@@ -405,7 +405,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
+            Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
             const SizedBox(height: 16),
             Text(l10n.analysisEmptyTitle,
                 style: PaceTheme.dash(size: 24, italic: true)),

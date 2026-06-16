@@ -120,31 +120,31 @@ class _HomeShellState extends ConsumerState<HomeShell>
               NavigationDestination(
                 icon: const Icon(Icons.speed_outlined),
                 selectedIcon:
-                    const Icon(Icons.speed, color: PaceColors.neonMagenta),
+                    Icon(Icons.speed, color: PaceColors.neonMagenta),
                 label: l10n.tabCockpit,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.insights_outlined),
                 selectedIcon:
-                    const Icon(Icons.insights, color: PaceColors.neonMagenta),
+                    Icon(Icons.insights, color: PaceColors.neonMagenta),
                 label: l10n.tabAnalysis,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.monitor_heart_outlined),
-                selectedIcon: const Icon(Icons.monitor_heart,
+                selectedIcon: Icon(Icons.monitor_heart,
                     color: PaceColors.neonMagenta),
                 label: l10n.tabBody,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.emoji_events_outlined),
-                selectedIcon: const Icon(Icons.emoji_events,
+                selectedIcon: Icon(Icons.emoji_events,
                     color: PaceColors.neonMagenta),
                 label: l10n.tabTrophies,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.menu_book_outlined),
                 selectedIcon:
-                    const Icon(Icons.menu_book, color: PaceColors.neonMagenta),
+                    Icon(Icons.menu_book, color: PaceColors.neonMagenta),
                 label: l10n.tabJournal,
               ),
             ],

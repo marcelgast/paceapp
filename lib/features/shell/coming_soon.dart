@@ -40,7 +40,7 @@ class ComingSoon extends StatelessWidget {
                     border: Border.all(color: PaceColors.neonCyan),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text('IN DER BOXENGASSE',
+                  child: Text('IN DER BOXENGASSE',
                       style: TextStyle(
                           color: PaceColors.neonCyan,
                           fontSize: 11,

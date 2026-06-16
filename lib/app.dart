@@ -11,11 +11,15 @@ import 'providers.dart';
 import 'theme/pace_colors.dart';
 import 'theme/pace_theme.dart';
 
-class PaceApp extends StatelessWidget {
+class PaceApp extends ConsumerWidget {
   const PaceApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Apply the selected skin's accents before the tree builds; re-keying the
+    // subtree on skin change forces every widget to re-read the new colours.
+    final skin = ref.watch(skinProvider);
+    PaceColors.applySkin(skin);
     SystemChrome.setSystemUIOverlayStyle(PaceTheme.overlay);
     return MaterialApp(
       title: 'Pace',
@@ -24,7 +28,7 @@ class PaceApp extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       // Follow the device language (German or English); falls back to German.
-      home: const _Gate(),
+      home: KeyedSubtree(key: ValueKey(skin.id), child: const _Gate()),
     );
   }
 }
@@ -51,7 +55,7 @@ class _Splash extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: PaceColors.night,
       body: Center(
         child: CircularProgressIndicator(color: PaceColors.neonMagenta),

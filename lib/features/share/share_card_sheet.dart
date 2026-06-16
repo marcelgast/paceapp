@@ -183,7 +183,7 @@ class _ShareButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: PaceColors.underglow),
+          gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(

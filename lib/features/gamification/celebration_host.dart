@@ -133,7 +133,7 @@ class _CelebrationOverlay extends StatelessWidget {
                 maxBlastForce: 22,
                 minBlastForce: 8,
                 gravity: 0.25,
-                colors: const [
+                colors: [
                   PaceColors.neonMagenta,
                   PaceColors.neonCyan,
                   PaceColors.neonLime,
@@ -182,7 +182,7 @@ class _CelebrationOverlay extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: PaceColors.underglow),
+                          gradient: LinearGradient(colors: PaceColors.underglow),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(

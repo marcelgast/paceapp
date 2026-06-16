@@ -1352,6 +1352,12 @@ abstract class AppLocalizations {
   /// **'Deep Analytics — Muster, Auslöser, Trend.'**
   String get settingsProRaceEngineerSub;
 
+  /// No description provided for @settingsProSkin.
+  ///
+  /// In de, this message translates to:
+  /// **'SKIN'**
+  String get settingsProSkin;
+
   /// No description provided for @proBadge.
   ///
   /// In de, this message translates to:

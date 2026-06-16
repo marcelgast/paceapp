@@ -11,6 +11,7 @@ import '../race_engineer/race_engineer_screen.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
+import '../../theme/skin.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
 
@@ -352,6 +353,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           PaceProFeature.raceEngineer,
                           () => RaceEngineerScreen.open(context)),
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(l10n.settingsProSkin,
+                            style: TextStyle(
+                                color: PaceColors.textMuted,
+                                fontSize: 12,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.w700)),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: PaceColors.neonMagenta,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(l10n.proBadge,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w900)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        for (final s in Skin.all)
+                          _SkinSwatch(
+                            skin: s,
+                            selected: s.id ==
+                                (settings?.skinId ?? Skin.underground.id),
+                            onTap: () => _openPro(
+                                PaceProFeature.themes,
+                                () => ref
+                                    .read(databaseProvider)
+                                    .updateSkin(s.id)),
+                          ),
+                      ],
+                    ),
                     const SizedBox(height: 40),
                     GestureDetector(
                       onTap: _reset,
@@ -367,11 +412,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.restart_alt,
+                            Icon(Icons.restart_alt,
                                 color: PaceColors.neonOrange, size: 20),
                             const SizedBox(width: 8),
                             Text(l10n.settingsResetEverything,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: PaceColors.neonOrange,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
@@ -430,7 +475,7 @@ class _Field extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: PaceColors.neonCyan, width: 2),
+              borderSide: BorderSide(color: PaceColors.neonCyan, width: 2),
             ),
           ),
         ),
@@ -453,7 +498,7 @@ class _SaveButton extends StatelessWidget {
       child: Container(
         height: 58,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: PaceColors.underglow),
+          gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -474,6 +519,73 @@ class _SaveButton extends StatelessWidget {
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2)),
+      ),
+    );
+  }
+}
+
+class _SkinSwatch extends StatelessWidget {
+  const _SkinSwatch({
+    required this.skin,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final Skin skin;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [skin.magenta, skin.purple, skin.cyan],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(
+                color: selected ? Colors.white : PaceColors.chrome,
+                width: selected ? 3 : 1.5,
+              ),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                          color: skin.magenta.withValues(alpha: 0.6),
+                          blurRadius: 14),
+                    ]
+                  : null,
+            ),
+            child: selected
+                ? const Icon(Icons.check, color: Colors.white, size: 22)
+                : null,
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            width: 66,
+            child: Text(
+              skin.name,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: selected
+                      ? PaceColors.textPrimary
+                      : PaceColors.textMuted,
+                  fontSize: 11,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500),
+            ),
+          ),
+        ],
       ),
     );
   }

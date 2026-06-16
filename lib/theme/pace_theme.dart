@@ -49,7 +49,7 @@ abstract final class PaceTheme {
     return base.copyWith(
       scaffoldBackgroundColor: PaceColors.night,
       textTheme: textTheme,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: ColorScheme.dark(
         primary: PaceColors.neonMagenta,
         secondary: PaceColors.neonCyan,
         tertiary: PaceColors.neonPurple,

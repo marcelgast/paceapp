@@ -33,7 +33,7 @@ class RecoveryScreen extends ConsumerWidget {
               _SectionLabel(l10n.recoveryEveryStintHeals),
               const SizedBox(height: 4),
               Text(l10n.recoveryCurrentStint(formatHumanDuration(clean)),
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: PaceColors.neonCyan,
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
@@ -113,7 +113,7 @@ class _StintRow extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation(color),
                 ),
                 if (reached)
-                  const Icon(Icons.check, color: PaceColors.neonLime, size: 18),
+                  Icon(Icons.check, color: PaceColors.neonLime, size: 18),
               ],
             ),
           ),
@@ -173,7 +173,7 @@ class _LongTermRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(marker.localizedTimeLabel(lang),
-                style: const TextStyle(
+                style: TextStyle(
                     color: PaceColors.neonPurple,
                     fontSize: 11,
                     fontWeight: FontWeight.w800)),

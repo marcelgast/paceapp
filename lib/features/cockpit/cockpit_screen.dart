@@ -107,7 +107,7 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                       minBlastForce: 6,
                       gravity: 0.3,
                       emissionFrequency: 0.05,
-                      colors: const [
+                      colors: [
                         PaceColors.neonLime,
                         PaceColors.neonCyan,
                         PaceColors.neonMagenta,
@@ -298,7 +298,7 @@ class _PitButton extends StatelessWidget {
         width: double.infinity,
         height: 72,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: PaceColors.underglow),
+          gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -359,10 +359,10 @@ class _SosButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
+            Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
             const SizedBox(width: 10),
             Text(l10n.cockpitSosButton,
-                style: const TextStyle(
+                style: TextStyle(
                     color: PaceColors.neonCyan,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,

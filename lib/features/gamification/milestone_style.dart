@@ -14,10 +14,10 @@ class MilestoneStyle {
   static MilestoneStyle of(MilestoneKind kind) {
     return switch (kind) {
       MilestoneKind.time =>
-        const MilestoneStyle(Icons.timer_outlined, PaceColors.neonCyan, 'ZEIT'),
+        MilestoneStyle(Icons.timer_outlined, PaceColors.neonCyan, 'ZEIT'),
       MilestoneKind.money =>
-        const MilestoneStyle(Icons.savings_outlined, PaceColors.neonLime, 'BUDGET'),
-      MilestoneKind.avoided => const MilestoneStyle(
+        MilestoneStyle(Icons.savings_outlined, PaceColors.neonLime, 'BUDGET'),
+      MilestoneKind.avoided => MilestoneStyle(
           Icons.smoke_free, PaceColors.neonMagenta, 'VERMIEDEN'),
     };
   }

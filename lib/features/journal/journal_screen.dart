@@ -47,10 +47,10 @@ class JournalScreen extends ConsumerWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.tune, color: PaceColors.neonCyan, size: 16),
+                            Icon(Icons.tune, color: PaceColors.neonCyan, size: 16),
                             const SizedBox(width: 6),
                             Text(l10n.journalSituations,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: PaceColors.neonCyan,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600)),
@@ -158,10 +158,10 @@ class _ReportCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.flag_circle, color: PaceColors.neonMagenta, size: 20),
+              Icon(Icons.flag_circle, color: PaceColors.neonMagenta, size: 20),
               const SizedBox(width: 8),
               Text(l10n.journalRaceReportWeek(report.weekNumber.toString()),
-                  style: const TextStyle(
+                  style: TextStyle(
                       color: PaceColors.neonMagenta,
                       fontSize: 12,
                       letterSpacing: 1.5,
@@ -327,7 +327,7 @@ class _PitStopCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(l10n.journalSpinBadge,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 10,
                           letterSpacing: 1,
@@ -416,7 +416,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.flag_outlined,
+            Icon(Icons.flag_outlined,
                 color: PaceColors.neonLime, size: 56),
             const SizedBox(height: 16),
             Text(l10n.journalEmptyTitle,
