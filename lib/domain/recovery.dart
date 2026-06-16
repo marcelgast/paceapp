@@ -17,6 +17,9 @@ class RecoveryMarker {
     required this.timeLabel,
     required this.title,
     required this.detail,
+    required this.timeLabelEn,
+    required this.titleEn,
+    required this.detailEn,
     this.stintTime,
   });
 
@@ -28,6 +31,14 @@ class RecoveryMarker {
 
   final String title;
   final String detail;
+  final String timeLabelEn;
+  final String titleEn;
+  final String detailEn;
+
+  String localizedTitle(String lang) => lang == 'en' ? titleEn : title;
+  String localizedDetail(String lang) => lang == 'en' ? detailEn : detail;
+  String localizedTimeLabel(String lang) =>
+      lang == 'en' ? timeLabelEn : timeLabel;
 }
 
 /// Recovery within a clean stint (resets with each cigarette).
@@ -37,30 +48,45 @@ const List<RecoveryMarker> kStintRecovery = [
     stintTime: Duration(minutes: 20),
     title: 'Puls & Blutdruck',
     detail: 'sinken wieder Richtung Normalwerte.',
+    timeLabelEn: '20 min',
+    titleEn: 'Heart Rate & Blood Pressure',
+    detailEn: 'drop back toward normal levels.',
   ),
   RecoveryMarker(
     timeLabel: '8 Std',
     stintTime: Duration(hours: 8),
     title: 'Kohlenmonoxid',
     detail: 'im Blut sinkt, der Sauerstoff steigt.',
+    timeLabelEn: '8 h',
+    titleEn: 'Carbon Monoxide',
+    detailEn: 'in your blood drops, oxygen rises.',
   ),
   RecoveryMarker(
     timeLabel: '24 Std',
     stintTime: Duration(hours: 24),
     title: 'Nikotin',
     detail: 'beginnt deinen Körper zu verlassen.',
+    timeLabelEn: '24 h',
+    titleEn: 'Nicotine',
+    detailEn: 'starts leaving your body.',
   ),
   RecoveryMarker(
     timeLabel: '48 Std',
     stintTime: Duration(hours: 48),
     title: 'Geschmack & Geruch',
     detail: 'Nervenenden erholen sich, die Sinne kommen zurück.',
+    timeLabelEn: '48 h',
+    titleEn: 'Taste & Smell',
+    detailEn: 'nerve endings recover, your senses come back.',
   ),
   RecoveryMarker(
     timeLabel: '72 Std',
     stintTime: Duration(hours: 72),
     title: 'Atmung',
     detail: 'Bronchien entspannen, Atmen fällt leichter.',
+    timeLabelEn: '72 h',
+    titleEn: 'Breathing',
+    detailEn: 'bronchial tubes relax, breathing gets easier.',
   ),
 ];
 
@@ -70,31 +96,50 @@ const List<RecoveryMarker> kLongTermRecovery = [
     timeLabel: '2 Wo – 3 Mon',
     title: 'Durchblutung & Lunge',
     detail: 'Kreislauf und Lungenfunktion verbessern sich.',
+    timeLabelEn: '2 wk – 3 mo',
+    titleEn: 'Circulation & Lungs',
+    detailEn: 'circulation and lung function improve.',
   ),
   RecoveryMarker(
     timeLabel: '1 – 12 Mon',
     title: 'Husten lässt nach',
     detail: 'Husten und Kurzatmigkeit gehen zurück.',
+    timeLabelEn: '1 – 12 mo',
+    titleEn: 'Coughing Eases',
+    detailEn: 'coughing and shortness of breath recede.',
   ),
   RecoveryMarker(
     timeLabel: '1 – 2 Jahre',
     title: 'Herzinfarkt-Risiko',
     detail: 'sinkt deutlich.',
+    timeLabelEn: '1 – 2 yrs',
+    titleEn: 'Heart Attack Risk',
+    detailEn: 'drops significantly.',
   ),
   RecoveryMarker(
     timeLabel: '5 – 10 Jahre',
     title: 'Krebs & Schlaganfall',
     detail: 'Risiko für Mund-/Rachen-/Kehlkopfkrebs halbiert sich, '
         'Schlaganfall-Risiko sinkt.',
+    timeLabelEn: '5 – 10 yrs',
+    titleEn: 'Cancer & Stroke',
+    detailEn: 'risk of mouth/throat/larynx cancer halves, '
+        'stroke risk drops.',
   ),
   RecoveryMarker(
     timeLabel: '10 Jahre',
     title: 'Lungenkrebs-Risiko',
     detail: 'etwa halb so hoch wie bei Weiterrauchen.',
+    timeLabelEn: '10 yrs',
+    titleEn: 'Lung Cancer Risk',
+    detailEn: 'about half that of someone who keeps smoking.',
   ),
   RecoveryMarker(
     timeLabel: '15 Jahre',
     title: 'Herzkrankheit',
     detail: 'Risiko nahe dem einer Person, die nie geraucht hat.',
+    timeLabelEn: '15 yrs',
+    titleEn: 'Heart Disease',
+    detailEn: 'risk close to that of someone who never smoked.',
   ),
 ];

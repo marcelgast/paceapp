@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/milestones.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../widgets/graffiti_headline.dart';
@@ -88,8 +89,10 @@ class _CelebrationHostState extends ConsumerState<CelebrationHost> {
             milestone: _current!,
             confetti: _confetti,
             onDismiss: _dismiss,
-            onShare: () =>
-                showRaceCardSheet(context, milestoneCard(ref, _current!)),
+            onShare: () => showRaceCardSheet(
+                context,
+                milestoneCard(ref, _current!, AppLocalizations.of(context),
+                    Localizations.localeOf(context).languageCode)),
           ),
       ],
     );
@@ -111,6 +114,8 @@ class _CelebrationOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final style = MilestoneStyle.of(milestone.kind);
     return Positioned.fill(
       child: Material(
@@ -146,7 +151,7 @@ class _CelebrationOverlay extends StatelessWidget {
                     _Badge(icon: style.icon, color: style.color),
                     const SizedBox(height: 24),
                     Text(
-                      'MEILENSTEIN',
+                      l10n.celebrationMilestone,
                       style: TextStyle(
                         color: style.color,
                         fontSize: 14,
@@ -155,7 +160,7 @@ class _CelebrationOverlay extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    GraffitiHeadline(milestone.title, size: 38, color: style.color)
+                    GraffitiHeadline(milestone.localizedTitle(lang), size: 38, color: style.color)
                         .animate()
                         .shimmer(
                           duration: 1400.ms,
@@ -163,7 +168,7 @@ class _CelebrationOverlay extends StatelessWidget {
                         ),
                     const SizedBox(height: 14),
                     Text(
-                      milestone.detail,
+                      milestone.localizedDetail(lang),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: PaceColors.textPrimary,
@@ -186,9 +191,9 @@ class _CelebrationOverlay extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const Text(
-                          'LASS KRACHEN',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.celebrationLetsGo,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -201,7 +206,7 @@ class _CelebrationOverlay extends StatelessWidget {
                     TextButton.icon(
                       onPressed: onShare,
                       icon: Icon(Icons.ios_share, color: style.color, size: 18),
-                      label: Text('Als Karte teilen',
+                      label: Text(l10n.celebrationShareAsCard,
                           style: TextStyle(
                               color: style.color,
                               fontWeight: FontWeight.w700,

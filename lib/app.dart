@@ -23,8 +23,7 @@ class PaceApp extends StatelessWidget {
       theme: PaceTheme.dark(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // German-first for now; English scaffolding is in place for later.
-      locale: const Locale('de'),
+      // Follow the device language (German or English); falls back to German.
       home: const _Gate(),
     );
   }

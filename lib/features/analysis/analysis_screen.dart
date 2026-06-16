@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/behavior_analysis.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -15,6 +16,7 @@ class AnalysisScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final a = ref.watch(behaviorAnalysisProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: RacetrackBackground(
@@ -24,18 +26,18 @@ class AnalysisScreen extends ConsumerWidget {
               : ListView(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                   children: [
-                    const GraffitiHeadline('Race Analysis', size: 26),
+                    GraffitiHeadline(l10n.analysisTitle, size: 26),
                     const SizedBox(height: 16),
                     _MedianPaceCard(
                         pace: a.medianPace, prev: a.previousMedianPace),
                     const SizedBox(height: 16),
                     _SummaryRow(a: a),
                     const SizedBox(height: 28),
-                    _SectionLabel('Deine Auslöser'),
+                    _SectionLabel(l10n.analysisTriggers),
                     const SizedBox(height: 12),
                     _SituationBars(a: a),
                     const SizedBox(height: 28),
-                    _SectionLabel('Letzte 7 Tage'),
+                    _SectionLabel(l10n.analysisLast7Days),
                     const SizedBox(height: 12),
                     _WeekBars(a: a),
                   ],
@@ -54,6 +56,7 @@ class _MedianPaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final has = pace != null;
     return Container(
       width: double.infinity,
@@ -74,7 +77,7 @@ class _MedianPaceCard extends StatelessWidget {
             children: [
               const Icon(Icons.speed, color: PaceColors.neonCyan, size: 18),
               const SizedBox(width: 6),
-              Text('MEDIAN-PACE',
+              Text(l10n.analysisMedianPace,
                   style: TextStyle(
                       color: PaceColors.neonCyan,
                       fontSize: 12,
@@ -89,7 +92,9 @@ class _MedianPaceCard extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  has ? 'alle ${formatHumanDuration(pace!)}' : 'sammelt noch …',
+                  has
+                      ? l10n.analysisEvery(formatHumanDuration(pace!))
+                      : l10n.analysisCollecting,
                   style: PaceTheme.dash(
                       size: has ? 38 : 26,
                       weight: FontWeight.w900,
@@ -104,9 +109,7 @@ class _MedianPaceCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            has
-                ? 'Typischer Abstand zwischen zwei Kippen — je größer, desto besser 🏁'
-                : 'Trag ein paar Boxenstopps ein, dann erscheint dein Schnitt.',
+            has ? l10n.analysisMedianHint : l10n.analysisMedianEmptyHint,
             style: TextStyle(color: PaceColors.textMuted, fontSize: 13, height: 1.3),
           ),
         ],
@@ -122,13 +125,14 @@ class _TrendChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final flat = delta.inMinutes.abs() < 1;
     final up = delta.inSeconds > 0;
     final color = flat
         ? PaceColors.textMuted
         : (up ? PaceColors.neonLime : PaceColors.neonOrange);
     final label = flat
-        ? '= Vorwoche'
+        ? l10n.analysisSameAsLastWeek
         : '${up ? '▲' : '▼'} ${formatHumanDuration(delta.abs())}';
 
     return Container(
@@ -165,20 +169,21 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         _StatTile(
-            label: '⌀ Verlangen',
+            label: l10n.analysisAvgCraving,
             value: a.avgCraving.toStringAsFixed(1),
             color: PaceColors.neonMagenta),
         const SizedBox(width: 12),
         _StatTile(
-            label: '⌀ Stress',
+            label: l10n.analysisAvgStress,
             value: a.avgStress.toStringAsFixed(1),
             color: PaceColors.neonOrange),
         const SizedBox(width: 12),
         _StatTile(
-            label: 'Dreher',
+            label: l10n.analysisSpins,
             value: '${(a.earlyRate * 100).round()}%',
             color: PaceColors.neonCyan),
       ],
@@ -281,10 +286,18 @@ class _WeekBars extends StatelessWidget {
   const _WeekBars({required this.a});
   final BehaviorAnalysis a;
 
-  static const _letters = ['M', 'D', 'M', 'D', 'F', 'S', 'S'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final letters = [
+      l10n.analysisWeekdayMon,
+      l10n.analysisWeekdayTue,
+      l10n.analysisWeekdayWed,
+      l10n.analysisWeekdayThu,
+      l10n.analysisWeekdayFri,
+      l10n.analysisWeekdaySat,
+      l10n.analysisWeekdaySun,
+    ];
     final max = a.last7Days.fold<int>(1, (m, d) => d.count > m ? d.count : m);
     return Container(
       height: 150,
@@ -319,7 +332,7 @@ class _WeekBars extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(_letters[d.day.weekday - 1],
+                  Text(letters[d.day.weekday - 1],
                       style: const TextStyle(
                           color: PaceColors.textFaint, fontSize: 11)),
                 ],
@@ -336,6 +349,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -344,14 +358,13 @@ class _EmptyState extends StatelessWidget {
           children: [
             const Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
             const SizedBox(height: 16),
-            Text('Noch keine Telemetrie',
+            Text(l10n.analysisEmptyTitle,
                 style: PaceTheme.dash(size: 24, italic: true)),
             const SizedBox(height: 8),
-            const Text(
-              'Sobald du Boxenstopps einträgst, erkennen wir hier dein Muster — '
-              'wann, wo und wie stark dein Verlangen ist.',
+            Text(
+              l10n.analysisEmptyBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: PaceColors.textMuted, fontSize: 14),
+              style: const TextStyle(color: PaceColors.textMuted, fontSize: 14),
             ),
           ],
         ),

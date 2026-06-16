@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 
@@ -52,6 +53,7 @@ class RaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       width: width,
       height: height,
@@ -93,13 +95,13 @@ class RaceCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _header(),
+                _header(l10n),
                 const Spacer(flex: 3),
                 _hero(),
                 const SizedBox(height: 4),
                 Expanded(flex: 9, child: _car()),
                 const Spacer(flex: 2),
-                _stats(),
+                _stats(l10n),
                 const SizedBox(height: 20),
                 _footer(),
               ],
@@ -110,14 +112,14 @@ class RaceCard extends StatelessWidget {
     );
   }
 
-  Widget _header() {
+  Widget _header(AppLocalizations l10n) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Image.asset('assets/branding/logo.png', height: 30),
         Text(
-          'BOXENSTOPP-\nREPORT',
+          l10n.sharePitStopReport,
           textAlign: TextAlign.right,
           style: TextStyle(
             color: PaceColors.textMuted,
@@ -209,7 +211,7 @@ class RaceCard extends StatelessWidget {
     );
   }
 
-  Widget _stats() {
+  Widget _stats(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       decoration: BoxDecoration(
@@ -219,11 +221,14 @@ class RaceCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _kpi('GESPART', data.savedMoney, PaceColors.neonLime),
+          _kpi(l10n.shareSaved, data.savedMoney, PaceColors.neonLime),
           _divider(),
-          _kpi('VERMIEDEN', '${data.avoidedCigarettes}', PaceColors.neonCyan),
+          _kpi(l10n.shareAvoided, '${data.avoidedCigarettes}',
+              PaceColors.neonCyan),
           _divider(),
-          _kpi('STREAK', data.streak > 0 ? '${data.streak} T' : '—',
+          _kpi(
+              l10n.shareStreak,
+              data.streak > 0 ? l10n.shareStreakDays(data.streak) : '—',
               PaceColors.neonOrange),
         ],
       ),

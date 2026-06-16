@@ -98,7 +98,7 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
-  /// Application name
+  /// No description provided for @appTitle.
   ///
   /// In de, this message translates to:
   /// **'Pace'**
@@ -139,6 +139,1122 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Boxenstopp'**
   String get boxenstopp;
+
+  /// No description provided for @onboardingInvalidValue.
+  ///
+  /// In de, this message translates to:
+  /// **'Trag bitte einen gültigen Wert ein.'**
+  String get onboardingInvalidValue;
+
+  /// No description provided for @onboardingTagline.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Stopp-Datum. Nur dein Tempo.'**
+  String get onboardingTagline;
+
+  /// No description provided for @onboardingPitCheck1of3.
+  ///
+  /// In de, this message translates to:
+  /// **'BOXEN-CHECK · 1/3'**
+  String get onboardingPitCheck1of3;
+
+  /// No description provided for @onboardingPitCheck2of3.
+  ///
+  /// In de, this message translates to:
+  /// **'BOXEN-CHECK · 2/3'**
+  String get onboardingPitCheck2of3;
+
+  /// No description provided for @onboardingPitCheck3of3.
+  ///
+  /// In de, this message translates to:
+  /// **'BOXEN-CHECK · 3/3'**
+  String get onboardingPitCheck3of3;
+
+  /// No description provided for @onboardingPackPriceHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Was kostet dich eine Schachtel?'**
+  String get onboardingPackPriceHeadline;
+
+  /// No description provided for @onboardingPackPriceSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Damit zählen wir jeden Euro, den du zurückholst.'**
+  String get onboardingPackPriceSub;
+
+  /// No description provided for @onboardingPerPackHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie viele Kippen sind drin?'**
+  String get onboardingPerPackHeadline;
+
+  /// No description provided for @onboardingPerPackSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Standard sind 20 — pass es an deine Marke an.'**
+  String get onboardingPerPackSub;
+
+  /// No description provided for @onboardingPerDayHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie viele am Tag — ehrlich?'**
+  String get onboardingPerDayHeadline;
+
+  /// No description provided for @onboardingPerDaySub.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Wertung. Das ist nur deine Startlinie.'**
+  String get onboardingPerDaySub;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In de, this message translates to:
+  /// **'WEITER'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingCountdown.
+  ///
+  /// In de, this message translates to:
+  /// **'3 · 2 · 1 …'**
+  String get onboardingCountdown;
+
+  /// No description provided for @onboardingWelcomeEyebrow.
+  ///
+  /// In de, this message translates to:
+  /// **'WILLKOMMEN BEI PACE'**
+  String get onboardingWelcomeEyebrow;
+
+  /// No description provided for @onboardingWelcomeHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Rennen, dein Tempo'**
+  String get onboardingWelcomeHeadline;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Pace bringt dich rauchfrei — Schritt für Schritt, ohne kalten Entzug. Lass dich drauf ein, und das Programm trägt dich in deinem Tempo.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingFeatureObserveTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Erst beobachten'**
+  String get onboardingFeatureObserveTitle;
+
+  /// No description provided for @onboardingFeatureObserveDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Einen Tag fährst du wie immer — wir lernen still dein Tempo.'**
+  String get onboardingFeatureObserveDetail;
+
+  /// No description provided for @onboardingFeatureStretchTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Dann dehnen'**
+  String get onboardingFeatureStretchTitle;
+
+  /// No description provided for @onboardingFeatureStretchDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Woche für Woche etwas mehr Zeit zwischen zwei Zigaretten — immer nur, wenn du bereit bist.'**
+  String get onboardingFeatureStretchDetail;
+
+  /// No description provided for @onboardingFeatureCelebrateTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Unterwegs feiern'**
+  String get onboardingFeatureCelebrateTitle;
+
+  /// No description provided for @onboardingFeatureCelebrateDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Schalte Erfolge frei und fahr dir vom gesparten Geld bessere Autos frei.'**
+  String get onboardingFeatureCelebrateDetail;
+
+  /// No description provided for @onboardingFeatureEmergencyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Für den Notfall'**
+  String get onboardingFeatureEmergencyTitle;
+
+  /// No description provided for @onboardingFeatureEmergencyDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Akutes Verlangen? Die bewährte Atemübung holt dich da durch.'**
+  String get onboardingFeatureEmergencyDetail;
+
+  /// No description provided for @onboardingWelcomeClosing.
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder schafft das. In seinem Tempo.'**
+  String get onboardingWelcomeClosing;
+
+  /// No description provided for @onboardingLetsGo.
+  ///
+  /// In de, this message translates to:
+  /// **'LOS GEHT\'S'**
+  String get onboardingLetsGo;
+
+  /// No description provided for @onboardingSleepEyebrow.
+  ///
+  /// In de, this message translates to:
+  /// **'DEIN SCHLAF'**
+  String get onboardingSleepEyebrow;
+
+  /// No description provided for @onboardingSleepHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Wann schläfst du ungefähr?'**
+  String get onboardingSleepHeadline;
+
+  /// No description provided for @onboardingSleepBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Schlaf zählt nicht für Stints und Bestzeiten — sonst wäre die Nacht immer deine längste Strecke. Später in den Einstellungen änderbar.'**
+  String get onboardingSleepBody;
+
+  /// No description provided for @onboardingSleepFrom.
+  ///
+  /// In de, this message translates to:
+  /// **'Von'**
+  String get onboardingSleepFrom;
+
+  /// No description provided for @onboardingSleepTo.
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get onboardingSleepTo;
+
+  /// No description provided for @onboardingMeasureEyebrow.
+  ///
+  /// In de, this message translates to:
+  /// **'SO LÄUFT DEIN START'**
+  String get onboardingMeasureEyebrow;
+
+  /// No description provided for @onboardingMeasureHeadline.
+  ///
+  /// In de, this message translates to:
+  /// **'Erst messen, dann dehnen'**
+  String get onboardingMeasureHeadline;
+
+  /// No description provided for @onboardingMeasureBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein kalter Entzug. Am ersten Tag fährst du ganz normal weiter — wir schauen nur zu und lernen dein Tempo.'**
+  String get onboardingMeasureBody;
+
+  /// No description provided for @onboardingStepMeasureTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Messrunde · 1 Tag'**
+  String get onboardingStepMeasureTitle;
+
+  /// No description provided for @onboardingStepMeasureDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Logg jede Zigarette als Boxenstopp. Kein Ziel, kein Druck.'**
+  String get onboardingStepMeasureDetail;
+
+  /// No description provided for @onboardingStepTargetTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein erstes Ziel'**
+  String get onboardingStepTargetTitle;
+
+  /// No description provided for @onboardingStepTargetDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Wir werten dein Muster aus und schlagen dir dein Stint-Intervall vor.'**
+  String get onboardingStepTargetDetail;
+
+  /// No description provided for @onboardingStepRaceTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Das Rennen läuft'**
+  String get onboardingStepRaceTitle;
+
+  /// No description provided for @onboardingStepRaceDetail.
+  ///
+  /// In de, this message translates to:
+  /// **'Stints dehnen, Streak bauen, Wagen freifahren.'**
+  String get onboardingStepRaceDetail;
+
+  /// No description provided for @onboardingStartMeasuringLap.
+  ///
+  /// In de, this message translates to:
+  /// **'MESSRUNDE STARTEN'**
+  String get onboardingStartMeasuringLap;
+
+  /// No description provided for @cockpitBaselineMeasuring.
+  ///
+  /// In de, this message translates to:
+  /// **'Wir messen dein Tempo'**
+  String get cockpitBaselineMeasuring;
+
+  /// No description provided for @cockpitBaselineEndsToday.
+  ///
+  /// In de, this message translates to:
+  /// **'endet heute'**
+  String get cockpitBaselineEndsToday;
+
+  /// No description provided for @cockpitBaselineEndsTomorrow.
+  ///
+  /// In de, this message translates to:
+  /// **'endet morgen'**
+  String get cockpitBaselineEndsTomorrow;
+
+  /// No description provided for @cockpitBaselineDaysLeft.
+  ///
+  /// In de, this message translates to:
+  /// **'noch {days} Tage'**
+  String cockpitBaselineDaysLeft(Object days);
+
+  /// No description provided for @cockpitStatSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'Gespart'**
+  String get cockpitStatSaved;
+
+  /// No description provided for @cockpitStatAvoided.
+  ///
+  /// In de, this message translates to:
+  /// **'Vermieden'**
+  String get cockpitStatAvoided;
+
+  /// No description provided for @cockpitStatInRace.
+  ///
+  /// In de, this message translates to:
+  /// **'Im Rennen'**
+  String get cockpitStatInRace;
+
+  /// No description provided for @cockpitGaugeMeasuringLap.
+  ///
+  /// In de, this message translates to:
+  /// **'MESSRUNDE'**
+  String get cockpitGaugeMeasuringLap;
+
+  /// No description provided for @cockpitGaugeNextStint.
+  ///
+  /// In de, this message translates to:
+  /// **'NÄCHSTER STINT'**
+  String get cockpitGaugeNextStint;
+
+  /// No description provided for @cockpitGaugeTarget.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel: {target}'**
+  String cockpitGaugeTarget(Object target);
+
+  /// No description provided for @cockpitGaugeOvertime.
+  ///
+  /// In de, this message translates to:
+  /// **'OVERTIME'**
+  String get cockpitGaugeOvertime;
+
+  /// No description provided for @cockpitGaugeBonusLap.
+  ///
+  /// In de, this message translates to:
+  /// **'Bonus-Runde {lap} — du fährst vorne! 🔥'**
+  String cockpitGaugeBonusLap(Object lap);
+
+  /// No description provided for @cockpitGaugeBonusTime.
+  ///
+  /// In de, this message translates to:
+  /// **'geschenkte Zeit — du fährst vorne!'**
+  String get cockpitGaugeBonusTime;
+
+  /// No description provided for @cockpitPitButtonTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'BOXENSTOPP'**
+  String get cockpitPitButtonTitle;
+
+  /// No description provided for @cockpitPitButtonSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Zigarette geraucht  ·  +1'**
+  String get cockpitPitButtonSubtitle;
+
+  /// No description provided for @cockpitSosButton.
+  ///
+  /// In de, this message translates to:
+  /// **'VERLANGEN? DURCHATMEN'**
+  String get cockpitSosButton;
+
+  /// No description provided for @cockpitStreakDay.
+  ///
+  /// In de, this message translates to:
+  /// **'{days} Tag'**
+  String cockpitStreakDay(Object days);
+
+  /// No description provided for @cockpitStreakDays.
+  ///
+  /// In de, this message translates to:
+  /// **'{days} Tage'**
+  String cockpitStreakDays(Object days);
+
+  /// No description provided for @cockpitStreakLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Streak'**
+  String get cockpitStreakLabel;
+
+  /// No description provided for @cockpitPitStopTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Boxenstopp'**
+  String get cockpitPitStopTitle;
+
+  /// No description provided for @cockpitPitStopSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Kurz festhalten — daraus lernt deine Analyse.'**
+  String get cockpitPitStopSubtitle;
+
+  /// No description provided for @cockpitCraving.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlangen'**
+  String get cockpitCraving;
+
+  /// No description provided for @cockpitStress.
+  ///
+  /// In de, this message translates to:
+  /// **'Stress'**
+  String get cockpitStress;
+
+  /// No description provided for @cockpitSituation.
+  ///
+  /// In de, this message translates to:
+  /// **'Situation'**
+  String get cockpitSituation;
+
+  /// No description provided for @cockpitSituationNew.
+  ///
+  /// In de, this message translates to:
+  /// **'+ Neu'**
+  String get cockpitSituationNew;
+
+  /// No description provided for @cockpitLevelValue.
+  ///
+  /// In de, this message translates to:
+  /// **'{value}/5'**
+  String cockpitLevelValue(Object value);
+
+  /// No description provided for @cockpitNoteHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz (optional)'**
+  String get cockpitNoteHint;
+
+  /// No description provided for @cockpitSubmit.
+  ///
+  /// In de, this message translates to:
+  /// **'EINTRAGEN'**
+  String get cockpitSubmit;
+
+  /// No description provided for @cockpitNewSituationTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Situation'**
+  String get cockpitNewSituationTitle;
+
+  /// No description provided for @cockpitNewSituationHint.
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Pause, Telefonat …'**
+  String get cockpitNewSituationHint;
+
+  /// No description provided for @cockpitCancel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get cockpitCancel;
+
+  /// No description provided for @cockpitCreate.
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get cockpitCreate;
+
+  /// No description provided for @sosInhale.
+  ///
+  /// In de, this message translates to:
+  /// **'Einatmen'**
+  String get sosInhale;
+
+  /// No description provided for @sosHold.
+  ///
+  /// In de, this message translates to:
+  /// **'Halten'**
+  String get sosHold;
+
+  /// No description provided for @sosExhale.
+  ///
+  /// In de, this message translates to:
+  /// **'Ausatmen'**
+  String get sosExhale;
+
+  /// No description provided for @sosCravingPassing.
+  ///
+  /// In de, this message translates to:
+  /// **'VERLANGEN REITET VORBEI'**
+  String get sosCravingPassing;
+
+  /// No description provided for @sosBreatheAlong.
+  ///
+  /// In de, this message translates to:
+  /// **'Atme mit. Du musst nichts tun.'**
+  String get sosBreatheAlong;
+
+  /// No description provided for @sosNoBreathYet.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein voller Atemzug'**
+  String get sosNoBreathYet;
+
+  /// No description provided for @sosBreathsDone.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Atemzüge geschafft'**
+  String sosBreathsDone(Object count);
+
+  /// No description provided for @sosStopButton.
+  ///
+  /// In de, this message translates to:
+  /// **'GEHT WIEDER — STOPP'**
+  String get sosStopButton;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellungen'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsPriceIntro.
+  ///
+  /// In de, this message translates to:
+  /// **'Preis oder Packungsgröße geändert? Neue Werte gelten ab jetzt — bisher Gespartes bleibt zum alten Preis erhalten.'**
+  String get settingsPriceIntro;
+
+  /// No description provided for @settingsPricePerPack.
+  ///
+  /// In de, this message translates to:
+  /// **'Preis pro Schachtel'**
+  String get settingsPricePerPack;
+
+  /// No description provided for @settingsCigarettesPerPack.
+  ///
+  /// In de, this message translates to:
+  /// **'Kippen pro Schachtel'**
+  String get settingsCigarettesPerPack;
+
+  /// No description provided for @settingsCigarettesPerDay.
+  ///
+  /// In de, this message translates to:
+  /// **'Kippen pro Tag (vorher)'**
+  String get settingsCigarettesPerDay;
+
+  /// No description provided for @settingsBaselineHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Vergleichsbasis. Ändern verfälscht Gespart & Vermieden — nur korrigieren, wenn du dich vertippt hast.'**
+  String get settingsBaselineHint;
+
+  /// No description provided for @settingsSleepTime.
+  ///
+  /// In de, this message translates to:
+  /// **'SCHLAFENSZEIT'**
+  String get settingsSleepTime;
+
+  /// No description provided for @settingsSleepHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Schlaf zählt nicht für Stints & Bestzeiten.'**
+  String get settingsSleepHint;
+
+  /// No description provided for @settingsFrom.
+  ///
+  /// In de, this message translates to:
+  /// **'Von'**
+  String get settingsFrom;
+
+  /// No description provided for @settingsTo.
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get settingsTo;
+
+  /// No description provided for @settingsHistory.
+  ///
+  /// In de, this message translates to:
+  /// **'VERLAUF'**
+  String get settingsHistory;
+
+  /// No description provided for @settingsSaveButton.
+  ///
+  /// In de, this message translates to:
+  /// **'SPEICHERN'**
+  String get settingsSaveButton;
+
+  /// No description provided for @settingsSave.
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern'**
+  String get settingsSave;
+
+  /// No description provided for @settingsCancel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get settingsCancel;
+
+  /// No description provided for @settingsResetEverything.
+  ///
+  /// In de, this message translates to:
+  /// **'ALLES ZURÜCKSETZEN'**
+  String get settingsResetEverything;
+
+  /// No description provided for @settingsResetTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Alles zurücksetzen?'**
+  String get settingsResetTitle;
+
+  /// No description provided for @settingsResetBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Daten werden gelöscht: Einstellungen, Boxenstopps, Erfolge und Autos. Du startest wieder beim Welcome-Screen. Das lässt sich nicht rückgängig machen.'**
+  String get settingsResetBody;
+
+  /// No description provided for @settingsResetConfirm.
+  ///
+  /// In de, this message translates to:
+  /// **'Zurücksetzen'**
+  String get settingsResetConfirm;
+
+  /// No description provided for @settingsBaselineChangeTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Tageskonsum ändern?'**
+  String get settingsBaselineChangeTitle;
+
+  /// No description provided for @settingsBaselineChangeBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Tageskonsum ist die Vergleichsbasis. Ihn zu ändern verfälscht deine angezeigten Werte (Gespart, Vermieden) deutlich. Trotzdem speichern?'**
+  String get settingsBaselineChangeBody;
+
+  /// No description provided for @settingsInvalidValues.
+  ///
+  /// In de, this message translates to:
+  /// **'Trag bitte gültige Werte ein.'**
+  String get settingsInvalidValues;
+
+  /// No description provided for @settingsSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert.'**
+  String get settingsSaved;
+
+  /// No description provided for @settingsHistorySince.
+  ///
+  /// In de, this message translates to:
+  /// **'seit {date}'**
+  String settingsHistorySince(Object date);
+
+  /// No description provided for @settingsHistoryPriceLine.
+  ///
+  /// In de, this message translates to:
+  /// **'{price} · {count}/Schachtel'**
+  String settingsHistoryPriceLine(Object price, Object count);
+
+  /// No description provided for @journalTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Journal'**
+  String get journalTitle;
+
+  /// No description provided for @journalSituations.
+  ///
+  /// In de, this message translates to:
+  /// **'Situationen'**
+  String get journalSituations;
+
+  /// No description provided for @journalRaceReportWeek.
+  ///
+  /// In de, this message translates to:
+  /// **'RENNBERICHT · WOCHE {week}'**
+  String journalRaceReportWeek(Object week);
+
+  /// No description provided for @journalEvery.
+  ///
+  /// In de, this message translates to:
+  /// **'alle {duration}'**
+  String journalEvery(Object duration);
+
+  /// No description provided for @journalMedianPace.
+  ///
+  /// In de, this message translates to:
+  /// **'Median-Pace'**
+  String get journalMedianPace;
+
+  /// No description provided for @journalCigarettes.
+  ///
+  /// In de, this message translates to:
+  /// **'Kippen'**
+  String get journalCigarettes;
+
+  /// No description provided for @journalSpin.
+  ///
+  /// In de, this message translates to:
+  /// **'Dreher'**
+  String get journalSpin;
+
+  /// No description provided for @journalFewer.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} weniger 🏁'**
+  String journalFewer(Object count);
+
+  /// No description provided for @journalDeletePitStopTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Boxenstopp löschen?'**
+  String get journalDeletePitStopTitle;
+
+  /// No description provided for @journalDeletePitStopBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Versehentlich doppelt erfasst? Löschen verändert deine angezeigten Werte (Gespart, Vermieden, Streak).'**
+  String get journalDeletePitStopBody;
+
+  /// No description provided for @journalCancel.
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get journalCancel;
+
+  /// No description provided for @journalDelete.
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get journalDelete;
+
+  /// No description provided for @journalSpinBadge.
+  ///
+  /// In de, this message translates to:
+  /// **'DREHER'**
+  String get journalSpinBadge;
+
+  /// No description provided for @journalCraving.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlangen'**
+  String get journalCraving;
+
+  /// No description provided for @journalStress.
+  ///
+  /// In de, this message translates to:
+  /// **'Stress'**
+  String get journalStress;
+
+  /// No description provided for @journalEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Boxenstopps'**
+  String get journalEmptyTitle;
+
+  /// No description provided for @journalEmptyBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Und das ist gut so. Sobald du einen Boxenstopp einträgst, siehst du hier dein Muster.'**
+  String get journalEmptyBody;
+
+  /// No description provided for @situationsIntro.
+  ///
+  /// In de, this message translates to:
+  /// **'Lege an, was zu deinem Alltag passt.'**
+  String get situationsIntro;
+
+  /// No description provided for @situationsNewHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Situation'**
+  String get situationsNewHint;
+
+  /// No description provided for @trophiesTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Pokalvitrine'**
+  String get trophiesTitle;
+
+  /// No description provided for @trophiesGarageSection.
+  ///
+  /// In de, this message translates to:
+  /// **'GARAGE'**
+  String get trophiesGarageSection;
+
+  /// No description provided for @trophiesMilestonesSection.
+  ///
+  /// In de, this message translates to:
+  /// **'MEILENSTEINE'**
+  String get trophiesMilestonesSection;
+
+  /// No description provided for @trophiesUnlocked.
+  ///
+  /// In de, this message translates to:
+  /// **'freigeschaltet'**
+  String get trophiesUnlocked;
+
+  /// No description provided for @trophiesGarageComplete.
+  ///
+  /// In de, this message translates to:
+  /// **'Garage komplett — alles freigeschaltet!'**
+  String get trophiesGarageComplete;
+
+  /// No description provided for @trophiesGarageRemaining.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch {amount} bis {car}'**
+  String trophiesGarageRemaining(Object amount, Object car);
+
+  /// No description provided for @trophiesYourRide.
+  ///
+  /// In de, this message translates to:
+  /// **'DEIN WAGEN'**
+  String get trophiesYourRide;
+
+  /// No description provided for @trophiesCigsCount.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Kippen'**
+  String trophiesCigsCount(Object count);
+
+  /// No description provided for @shareLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get shareLabel;
+
+  /// No description provided for @shareButton.
+  ///
+  /// In de, this message translates to:
+  /// **'TEILEN'**
+  String get shareButton;
+
+  /// No description provided for @shareCurrentLap.
+  ///
+  /// In de, this message translates to:
+  /// **'AKTUELLE RUNDE'**
+  String get shareCurrentLap;
+
+  /// No description provided for @shareCurrentLapText.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Runde: {clock} ohne Zigarette. 🏁'**
+  String shareCurrentLapText(Object clock);
+
+  /// No description provided for @shareMilestone.
+  ///
+  /// In de, this message translates to:
+  /// **'MEILENSTEIN'**
+  String get shareMilestone;
+
+  /// No description provided for @shareMilestoneText.
+  ///
+  /// In de, this message translates to:
+  /// **'Meilenstein geknackt: {title} 🏁'**
+  String shareMilestoneText(Object title);
+
+  /// No description provided for @sharePitStopReport.
+  ///
+  /// In de, this message translates to:
+  /// **'BOXENSTOPP-\nREPORT'**
+  String get sharePitStopReport;
+
+  /// No description provided for @shareSaved.
+  ///
+  /// In de, this message translates to:
+  /// **'GESPART'**
+  String get shareSaved;
+
+  /// No description provided for @shareAvoided.
+  ///
+  /// In de, this message translates to:
+  /// **'VERMIEDEN'**
+  String get shareAvoided;
+
+  /// No description provided for @shareStreak.
+  ///
+  /// In de, this message translates to:
+  /// **'STREAK'**
+  String get shareStreak;
+
+  /// No description provided for @shareStreakDays.
+  ///
+  /// In de, this message translates to:
+  /// **'{days} T'**
+  String shareStreakDays(Object days);
+
+  /// No description provided for @analysisTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Race Analysis'**
+  String get analysisTitle;
+
+  /// No description provided for @analysisTriggers.
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Auslöser'**
+  String get analysisTriggers;
+
+  /// No description provided for @analysisLast7Days.
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte 7 Tage'**
+  String get analysisLast7Days;
+
+  /// No description provided for @analysisMedianPace.
+  ///
+  /// In de, this message translates to:
+  /// **'MEDIAN-PACE'**
+  String get analysisMedianPace;
+
+  /// No description provided for @analysisEvery.
+  ///
+  /// In de, this message translates to:
+  /// **'alle {duration}'**
+  String analysisEvery(Object duration);
+
+  /// No description provided for @analysisCollecting.
+  ///
+  /// In de, this message translates to:
+  /// **'sammelt noch …'**
+  String get analysisCollecting;
+
+  /// No description provided for @analysisMedianHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Typischer Abstand zwischen zwei Kippen — je größer, desto besser 🏁'**
+  String get analysisMedianHint;
+
+  /// No description provided for @analysisMedianEmptyHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Trag ein paar Boxenstopps ein, dann erscheint dein Schnitt.'**
+  String get analysisMedianEmptyHint;
+
+  /// No description provided for @analysisSameAsLastWeek.
+  ///
+  /// In de, this message translates to:
+  /// **'= Vorwoche'**
+  String get analysisSameAsLastWeek;
+
+  /// No description provided for @analysisAvgCraving.
+  ///
+  /// In de, this message translates to:
+  /// **'⌀ Verlangen'**
+  String get analysisAvgCraving;
+
+  /// No description provided for @analysisAvgStress.
+  ///
+  /// In de, this message translates to:
+  /// **'⌀ Stress'**
+  String get analysisAvgStress;
+
+  /// No description provided for @analysisSpins.
+  ///
+  /// In de, this message translates to:
+  /// **'Dreher'**
+  String get analysisSpins;
+
+  /// No description provided for @analysisWeekdayMon.
+  ///
+  /// In de, this message translates to:
+  /// **'M'**
+  String get analysisWeekdayMon;
+
+  /// No description provided for @analysisWeekdayTue.
+  ///
+  /// In de, this message translates to:
+  /// **'D'**
+  String get analysisWeekdayTue;
+
+  /// No description provided for @analysisWeekdayWed.
+  ///
+  /// In de, this message translates to:
+  /// **'M'**
+  String get analysisWeekdayWed;
+
+  /// No description provided for @analysisWeekdayThu.
+  ///
+  /// In de, this message translates to:
+  /// **'D'**
+  String get analysisWeekdayThu;
+
+  /// No description provided for @analysisWeekdayFri.
+  ///
+  /// In de, this message translates to:
+  /// **'F'**
+  String get analysisWeekdayFri;
+
+  /// No description provided for @analysisWeekdaySat.
+  ///
+  /// In de, this message translates to:
+  /// **'S'**
+  String get analysisWeekdaySat;
+
+  /// No description provided for @analysisWeekdaySun.
+  ///
+  /// In de, this message translates to:
+  /// **'S'**
+  String get analysisWeekdaySun;
+
+  /// No description provided for @analysisEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Telemetrie'**
+  String get analysisEmptyTitle;
+
+  /// No description provided for @analysisEmptyBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Sobald du Boxenstopps einträgst, erkennen wir hier dein Muster — wann, wo und wie stark dein Verlangen ist.'**
+  String get analysisEmptyBody;
+
+  /// No description provided for @proposalStretchCheck.
+  ///
+  /// In de, this message translates to:
+  /// **'STRECKEN-CHECK'**
+  String get proposalStretchCheck;
+
+  /// No description provided for @proposalWeekDone.
+  ///
+  /// In de, this message translates to:
+  /// **'Woche geschafft!'**
+  String get proposalWeekDone;
+
+  /// No description provided for @proposalFirstTargetPrompt.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Messrunde ist rum. Setzen wir dein erstes Ziel-Intervall?'**
+  String get proposalFirstTargetPrompt;
+
+  /// No description provided for @proposalStretchPrompt.
+  ///
+  /// In de, this message translates to:
+  /// **'Stark gefahren. Dehnen wir den Abstand zwischen zwei Kippen?'**
+  String get proposalStretchPrompt;
+
+  /// No description provided for @proposalNewTarget.
+  ///
+  /// In de, this message translates to:
+  /// **'NEUES ZIEL'**
+  String get proposalNewTarget;
+
+  /// No description provided for @proposalEvery.
+  ///
+  /// In de, this message translates to:
+  /// **'alle {duration}'**
+  String proposalEvery(Object duration);
+
+  /// No description provided for @proposalMoreRoom.
+  ///
+  /// In de, this message translates to:
+  /// **'+{duration} mehr Luft pro Stint'**
+  String proposalMoreRoom(Object duration);
+
+  /// No description provided for @proposalStretchBy.
+  ///
+  /// In de, this message translates to:
+  /// **'Dehnen um'**
+  String get proposalStretchBy;
+
+  /// No description provided for @proposalPercent.
+  ///
+  /// In de, this message translates to:
+  /// **'+{pct} %'**
+  String proposalPercent(Object pct);
+
+  /// No description provided for @proposalApply.
+  ///
+  /// In de, this message translates to:
+  /// **'ÜBERNEHMEN'**
+  String get proposalApply;
+
+  /// No description provided for @proposalKeepIt.
+  ///
+  /// In de, this message translates to:
+  /// **'Bleibt so'**
+  String get proposalKeepIt;
+
+  /// No description provided for @proposalTargetSet.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel gesetzt!'**
+  String get proposalTargetSet;
+
+  /// No description provided for @proposalAcceptedHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Auf geht\'s. Du fährst das jetzt.'**
+  String get proposalAcceptedHint;
+
+  /// No description provided for @celebrationMilestone.
+  ///
+  /// In de, this message translates to:
+  /// **'MEILENSTEIN'**
+  String get celebrationMilestone;
+
+  /// No description provided for @celebrationLetsGo.
+  ///
+  /// In de, this message translates to:
+  /// **'LASS KRACHEN'**
+  String get celebrationLetsGo;
+
+  /// No description provided for @celebrationShareAsCard.
+  ///
+  /// In de, this message translates to:
+  /// **'Als Karte teilen'**
+  String get celebrationShareAsCard;
+
+  /// No description provided for @recoveryTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Recovery'**
+  String get recoveryTitle;
+
+  /// No description provided for @recoverySubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'So heilt dein Körper, wenn du nicht rauchst.'**
+  String get recoverySubtitle;
+
+  /// No description provided for @recoveryEveryStintHeals.
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder Stint heilt'**
+  String get recoveryEveryStintHeals;
+
+  /// No description provided for @recoveryCurrentStint.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktueller Stint: {duration}'**
+  String recoveryCurrentStint(Object duration);
+
+  /// No description provided for @recoveryLongTerm.
+  ///
+  /// In de, this message translates to:
+  /// **'Langzeit — wenn du rauchfrei wirst'**
+  String get recoveryLongTerm;
+
+  /// No description provided for @recoverySources.
+  ///
+  /// In de, this message translates to:
+  /// **'Quellen: American Cancer Society, NHS / US Surgeon General.'**
+  String get recoverySources;
 }
 
 class _AppLocalizationsDelegate

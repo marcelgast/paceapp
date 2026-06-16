@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/stint_calculator.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -45,6 +46,7 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
       }
     });
 
+    final l10n = AppLocalizations.of(context);
     final settings = ref.watch(settingsProvider).value;
     final stint = ref.watch(liveStintProvider);
     final stats = ref.watch(statsProvider);
@@ -52,17 +54,17 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     final now = ref.watch(clockProvider).value ?? DateTime.now();
 
     // Days left in the measuring round (shown under the baseline gauge).
-    var baselineSub = 'Wir messen dein Tempo';
+    var baselineSub = l10n.cockpitBaselineMeasuring;
     if (settings != null) {
       final end = settings.startedAt.add(StintCalculator.baselineDuration);
       final daysLeft = DateTime(end.year, end.month, end.day)
           .difference(DateTime(now.year, now.month, now.day))
           .inDays;
       baselineSub = daysLeft <= 0
-          ? 'endet heute'
+          ? l10n.cockpitBaselineEndsToday
           : daysLeft == 1
-              ? 'endet morgen'
-              : 'noch $daysLeft Tage';
+              ? l10n.cockpitBaselineEndsTomorrow
+              : l10n.cockpitBaselineDaysLeft(daysLeft.toString());
     }
 
     return Scaffold(
@@ -136,6 +138,7 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final saved = stats == null
         ? '—'
         : formatMoneyCents(stats.savedMoneyCents, currencyCode: currency);
@@ -146,11 +149,11 @@ class _StatsRow extends StatelessWidget {
 
     return Row(
       children: [
-        _Kpi(label: 'Gespart', value: saved, color: PaceColors.neonLime),
+        _Kpi(label: l10n.cockpitStatSaved, value: saved, color: PaceColors.neonLime),
         const SizedBox(width: 12),
-        _Kpi(label: 'Vermieden', value: avoided, color: PaceColors.neonCyan),
+        _Kpi(label: l10n.cockpitStatAvoided, value: avoided, color: PaceColors.neonCyan),
         const SizedBox(width: 12),
-        _Kpi(label: 'Im Rennen', value: clean, color: PaceColors.neonOrange),
+        _Kpi(label: l10n.cockpitStatInRace, value: clean, color: PaceColors.neonOrange),
       ],
     );
   }
@@ -201,6 +204,7 @@ class _Gauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final phase = stint?.phase ?? StintPhase.baseline;
     final progress = stint?.progress ?? 0;
 
@@ -219,23 +223,23 @@ class _Gauge extends StatelessWidget {
     final (String label, String time, String sub, Color color) =
         switch (phase) {
       StintPhase.baseline => (
-          'MESSRUNDE',
+          l10n.cockpitGaugeMeasuringLap,
           formatStintDuration(stint?.elapsed ?? Duration.zero),
           baselineSub,
           PaceColors.textMuted,
         ),
       StintPhase.countdown => (
-          'NÄCHSTER STINT',
+          l10n.cockpitGaugeNextStint,
           formatStintDuration(stint?.remaining ?? Duration.zero),
-          target == null ? '' : 'Ziel: ${formatHumanDuration(target!)}',
+          target == null ? '' : l10n.cockpitGaugeTarget(formatHumanDuration(target!)),
           PaceColors.neonCyan,
         ),
       StintPhase.overtime => (
-          'OVERTIME',
+          l10n.cockpitGaugeOvertime,
           formatStintDuration(stint?.overtime ?? Duration.zero),
           bonusLap >= 1
-              ? 'Bonus-Runde ${bonusLap + 1} — du fährst vorne! 🔥'
-              : 'geschenkte Zeit — du fährst vorne!',
+              ? l10n.cockpitGaugeBonusLap((bonusLap + 1).toString())
+              : l10n.cockpitGaugeBonusTime,
           PaceColors.neonLime,
         ),
     };
@@ -287,6 +291,7 @@ class _PitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -312,13 +317,13 @@ class _PitButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('BOXENSTOPP',
-                    style: TextStyle(
+                Text(l10n.cockpitPitButtonTitle,
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5)),
-                Text('Zigarette geraucht  ·  +1',
+                Text(l10n.cockpitPitButtonSubtitle,
                     style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 12)),
@@ -340,6 +345,7 @@ class _SosButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -350,13 +356,13 @@ class _SosButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.7)),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
-            SizedBox(width: 10),
-            Text('VERLANGEN? DURCHATMEN',
-                style: TextStyle(
+            const Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
+            const SizedBox(width: 10),
+            Text(l10n.cockpitSosButton,
+                style: const TextStyle(
                     color: PaceColors.neonCyan,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
@@ -399,6 +405,7 @@ class _StreakChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final active = days > 0;
     final color = active ? PaceColors.neonOrange : PaceColors.textFaint;
     return Container(
@@ -413,7 +420,12 @@ class _StreakChip extends StatelessWidget {
         children: [
           Icon(Icons.local_fire_department, color: color, size: 16),
           const SizedBox(width: 4),
-          Text(active ? '$days ${days == 1 ? 'Tag' : 'Tage'}' : 'Streak',
+          Text(
+              active
+                  ? (days == 1
+                      ? l10n.cockpitStreakDay(days.toString())
+                      : l10n.cockpitStreakDays(days.toString()))
+                  : l10n.cockpitStreakLabel,
               style: PaceTheme.dash(size: 16, color: color)),
         ],
       ),

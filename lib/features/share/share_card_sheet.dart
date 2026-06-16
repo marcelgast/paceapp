@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../domain/milestones.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -22,7 +23,7 @@ import 'race_card.dart';
   String carName,
   String carTagline,
   int carIndex,
-}) _commonBits(WidgetRef ref) {
+}) _commonBits(WidgetRef ref, String lang) {
   final stats = ref.read(statsProvider);
   final streak = ref.read(streakProvider);
   final car = ref.read(currentCarProvider);
@@ -34,20 +35,20 @@ import 'race_card.dart';
     ),
     avoided: stats?.savedCigarettes.floor() ?? 0,
     streak: streak.current,
-    carName: car.name,
-    carTagline: car.tagline,
+    carName: car.localizedName(lang),
+    carTagline: car.localizedTagline(lang),
     carIndex: kCarTiers.indexOf(car),
   );
 }
 
 /// Card for the current lap — time since the last pit stop.
-RaceCardData currentLapCard(WidgetRef ref) {
+RaceCardData currentLapCard(WidgetRef ref, AppLocalizations l10n, String lang) {
   final clock = formatStintDuration(ref.read(cleanRunProvider).current);
-  final b = _commonBits(ref);
+  final b = _commonBits(ref, lang);
   return RaceCardData(
-    heroLabel: 'AKTUELLE RUNDE',
+    heroLabel: l10n.shareCurrentLap,
     heroValue: clock,
-    shareText: 'Aktuelle Runde: $clock ohne Zigarette. 🏁',
+    shareText: l10n.shareCurrentLapText(clock),
     savedMoney: b.savedMoney,
     avoidedCigarettes: b.avoided,
     streak: b.streak,
@@ -58,13 +59,14 @@ RaceCardData currentLapCard(WidgetRef ref) {
 }
 
 /// Card for an unlocked milestone.
-RaceCardData milestoneCard(WidgetRef ref, Milestone milestone) {
-  final b = _commonBits(ref);
+RaceCardData milestoneCard(
+    WidgetRef ref, Milestone milestone, AppLocalizations l10n, String lang) {
+  final b = _commonBits(ref, lang);
   return RaceCardData(
-    heroLabel: 'MEILENSTEIN',
-    heroValue: milestone.title,
-    subline: milestone.detail,
-    shareText: 'Meilenstein geknackt: ${milestone.title} 🏁',
+    heroLabel: l10n.shareMilestone,
+    heroValue: milestone.localizedTitle(lang),
+    subline: milestone.localizedDetail(lang),
+    shareText: l10n.shareMilestoneText(milestone.localizedTitle(lang)),
     savedMoney: b.savedMoney,
     avoidedCigarettes: b.avoided,
     streak: b.streak,
@@ -175,6 +177,7 @@ class _ShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: busy ? null : onTap,
       child: Container(
@@ -201,7 +204,7 @@ class _ShareButton extends StatelessWidget {
                   children: [
                     const Icon(Icons.ios_share, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
-                    Text('TEILEN',
+                    Text(l10n.shareButton,
                         style: PaceTheme.dash(
                             size: 18,
                             weight: FontWeight.w800,

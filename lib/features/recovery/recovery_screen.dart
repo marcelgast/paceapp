@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/recovery.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/racetrack_background.dart';
@@ -16,6 +17,7 @@ class RecoveryScreen extends ConsumerWidget {
     // Wall-clock since the last cigarette — the body heals during sleep too,
     // so this is not the awake-only stint time.
     final clean = ref.watch(wallClockSinceLastPitProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: RacetrackBackground(
@@ -23,14 +25,14 @@ class RecoveryScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
             children: [
-              const GraffitiHeadline('Recovery', size: 30),
+              GraffitiHeadline(l10n.recoveryTitle, size: 30),
               const SizedBox(height: 6),
-              Text('So heilt dein Körper, wenn du nicht rauchst.',
+              Text(l10n.recoverySubtitle,
                   style: TextStyle(color: PaceColors.textMuted, fontSize: 14)),
               const SizedBox(height: 22),
-              _SectionLabel('Jeder Stint heilt'),
+              _SectionLabel(l10n.recoveryEveryStintHeals),
               const SizedBox(height: 4),
-              Text('Aktueller Stint: ${formatHumanDuration(clean)}',
+              Text(l10n.recoveryCurrentStint(formatHumanDuration(clean)),
                   style: const TextStyle(
                       color: PaceColors.neonCyan,
                       fontSize: 14,
@@ -39,12 +41,12 @@ class RecoveryScreen extends ConsumerWidget {
               for (final m in kStintRecovery)
                 _StintRow(marker: m, clean: clean),
               const SizedBox(height: 26),
-              _SectionLabel('Langzeit — wenn du rauchfrei wirst'),
+              _SectionLabel(l10n.recoveryLongTerm),
               const SizedBox(height: 12),
               for (final m in kLongTermRecovery) _LongTermRow(marker: m),
               const SizedBox(height: 20),
               Text(
-                'Quellen: American Cancer Society, NHS / US Surgeon General.',
+                l10n.recoverySources,
                 style: TextStyle(color: PaceColors.textFaint, fontSize: 11),
               ),
             ],
@@ -78,6 +80,7 @@ class _StintRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     final target = marker.stintTime!;
     final reached = clean >= target;
     final progress =
@@ -121,18 +124,18 @@ class _StintRow extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(marker.title,
+                    Text(marker.localizedTitle(lang),
                         style: const TextStyle(
                             color: PaceColors.textPrimary,
                             fontSize: 15,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(width: 8),
-                    Text(marker.timeLabel,
+                    Text(marker.localizedTimeLabel(lang),
                         style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(marker.detail,
+                Text(marker.localizedDetail(lang),
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 13, height: 1.3)),
               ],
@@ -151,6 +154,7 @@ class _LongTermRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.localeOf(context).languageCode;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -168,7 +172,7 @@ class _LongTermRow extends StatelessWidget {
               color: PaceColors.neonPurple.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(marker.timeLabel,
+            child: Text(marker.localizedTimeLabel(lang),
                 style: const TextStyle(
                     color: PaceColors.neonPurple,
                     fontSize: 11,
@@ -179,13 +183,13 @@ class _LongTermRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(marker.title,
+                Text(marker.localizedTitle(lang),
                     style: const TextStyle(
                         color: PaceColors.textPrimary,
                         fontSize: 15,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
-                Text(marker.detail,
+                Text(marker.localizedDetail(lang),
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 13, height: 1.3)),
               ],

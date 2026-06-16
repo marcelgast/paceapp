@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/weekly_proposal.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../util/format.dart';
@@ -123,6 +124,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
   }
 
   Widget _proposalView() {
+    final l10n = AppLocalizations.of(context);
     final base = widget.state.base;
     final delta = _proposed - base;
     final pct = (_growth * 100).round();
@@ -130,24 +132,24 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('STRECKEN-CHECK',
+        Text(l10n.proposalStretchCheck,
             style: TextStyle(
                 color: PaceColors.neonOrange,
                 fontSize: 13,
                 letterSpacing: 4,
                 fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
-        const GraffitiHeadline('Woche geschafft!', size: 40, color: Colors.white),
+        GraffitiHeadline(l10n.proposalWeekDone, size: 40, color: Colors.white),
         const SizedBox(height: 12),
         Text(
           widget.state.currentTarget == null
-              ? 'Die Messrunde ist rum. Setzen wir dein erstes Ziel-Intervall?'
-              : 'Stark gefahren. Dehnen wir den Abstand zwischen zwei Kippen?',
+              ? l10n.proposalFirstTargetPrompt
+              : l10n.proposalStretchPrompt,
           textAlign: TextAlign.center,
           style: const TextStyle(color: PaceColors.textMuted, fontSize: 15, height: 1.4),
         ),
         const SizedBox(height: 28),
-        Text('NEUES ZIEL',
+        Text(l10n.proposalNewTarget,
             style: TextStyle(
                 color: PaceColors.neonCyan,
                 fontSize: 11,
@@ -156,7 +158,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
         const SizedBox(height: 4),
         // Live target — re-keyed so it pops on every change.
         Text(
-          'alle ${formatHumanDuration(_proposed)}',
+          l10n.proposalEvery(formatHumanDuration(_proposed)),
           key: ValueKey(_proposed.inSeconds),
           style: const TextStyle(
             color: Colors.white,
@@ -165,14 +167,14 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
           ),
         ).animate().scaleXY(begin: 0.92, end: 1.0, duration: 180.ms, curve: Curves.easeOut),
         const SizedBox(height: 4),
-        Text('+${formatHumanDuration(delta)} mehr Luft pro Stint',
+        Text(l10n.proposalMoreRoom(formatHumanDuration(delta)),
             style: TextStyle(color: PaceColors.neonLime, fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Dehnen um', style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
-            Text('+$pct %',
+            Text(l10n.proposalStretchBy, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+            Text(l10n.proposalPercent(pct),
                 style: const TextStyle(
                     color: PaceColors.neonMagenta, fontSize: 18, fontWeight: FontWeight.w900)),
           ],
@@ -197,7 +199,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
         const SizedBox(height: 10),
         TextButton(
           onPressed: _decline,
-          child: Text('Bleibt so',
+          child: Text(l10n.proposalKeepIt,
               style: TextStyle(color: PaceColors.textMuted, fontSize: 15)),
         ),
       ],
@@ -210,6 +212,7 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
   }
 
   Widget _acceptedView() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -217,13 +220,13 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
             .animate(onPlay: (c) => c.repeat(reverse: true))
             .scaleXY(begin: 1.0, end: 1.12, duration: 700.ms, curve: Curves.easeInOut),
         const SizedBox(height: 20),
-        const GraffitiHeadline('Ziel gesetzt!', size: 40, color: PaceColors.neonLime),
+        GraffitiHeadline(l10n.proposalTargetSet, size: 40, color: PaceColors.neonLime),
         const SizedBox(height: 12),
-        Text('alle ${formatHumanDuration(_proposed)}',
+        Text(l10n.proposalEvery(formatHumanDuration(_proposed)),
             style: const TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.w900)),
         const SizedBox(height: 8),
-        Text('Auf geht\'s. Du fährst das jetzt.',
+        Text(l10n.proposalAcceptedHint,
             style: TextStyle(color: PaceColors.textMuted, fontSize: 15)),
       ],
     ).animate().fadeIn(duration: 260.ms).scaleXY(
@@ -242,6 +245,7 @@ class _AcceptButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -257,8 +261,8 @@ class _AcceptButton extends StatelessWidget {
           ],
         ),
         alignment: Alignment.center,
-        child: const Text('ÜBERNEHMEN',
-            style: TextStyle(
+        child: Text(l10n.proposalApply,
+            style: const TextStyle(
                 color: Colors.white,
                 fontSize: 17,
                 fontWeight: FontWeight.w900,

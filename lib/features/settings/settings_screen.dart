@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../services/widget_service.dart';
 import '../../theme/pace_colors.dart';
@@ -95,6 +96,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final cents = _priceCents();
@@ -102,7 +104,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final perDay = int.tryParse(_perDay.text.trim()) ?? 0;
     if (cents == null || perPack <= 0 || perDay <= 0) {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Trag bitte gültige Werte ein.')),
+        SnackBar(content: Text(l10n.settingsInvalidValues)),
       );
       return;
     }
@@ -127,23 +129,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: PaceColors.panel,
-          title: const Text('Tageskonsum ändern?'),
-          content: const Text(
-            'Dein Tageskonsum ist die Vergleichsbasis. Ihn zu ändern '
-            'verfälscht deine angezeigten Werte (Gespart, Vermieden) deutlich. '
-            'Trotzdem speichern?',
-          ),
+          title: Text(l10n.settingsBaselineChangeTitle),
+          content: Text(l10n.settingsBaselineChangeBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Abbrechen'),
+              child: Text(l10n.settingsCancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: PaceColors.neonMagenta,
                   foregroundColor: Colors.white),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Speichern'),
+              child: Text(l10n.settingsSave),
             ),
           ],
         ),
@@ -172,32 +170,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!mounted) return;
     navigator.pop();
     messenger.showSnackBar(
-      const SnackBar(content: Text('Gespeichert.')),
+      SnackBar(content: Text(l10n.settingsSaved)),
     );
   }
 
   Future<void> _reset() async {
+    final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: PaceColors.panel,
-        title: const Text('Alles zurücksetzen?'),
-        content: const Text(
-          'Alle Daten werden gelöscht: Einstellungen, Boxenstopps, Erfolge und '
-          'Autos. Du startest wieder beim Welcome-Screen. Das lässt sich nicht '
-          'rückgängig machen.',
-        ),
+        title: Text(l10n.settingsResetTitle),
+        content: Text(l10n.settingsResetBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(l10n.settingsCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: PaceColors.neonOrange,
                 foregroundColor: Colors.black),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Zurücksetzen'),
+            child: Text(l10n.settingsResetConfirm),
           ),
         ],
       ),
@@ -211,6 +206,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final settings = ref.watch(settingsProvider).value;
     final periods = ref.watch(costPeriodsProvider).value ?? const [];
     final currency = settings?.currencyCode ?? 'EUR';
@@ -246,7 +242,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       icon: const Icon(Icons.arrow_back,
                           color: PaceColors.textMuted),
                     ),
-                    const GraffitiHeadline('Einstellungen', size: 28),
+                    GraffitiHeadline(l10n.settingsTitle, size: 28),
                   ],
                 ),
               ),
@@ -255,8 +251,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   children: [
                     Text(
-                      'Preis oder Packungsgröße geändert? Neue Werte gelten ab '
-                      'jetzt — bisher Gespartes bleibt zum alten Preis erhalten.',
+                      l10n.settingsPriceIntro,
                       style: TextStyle(
                           color: PaceColors.textMuted,
                           fontSize: 14,
@@ -264,7 +259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     const SizedBox(height: 22),
                     _Field(
-                      label: 'Preis pro Schachtel',
+                      label: l10n.settingsPricePerPack,
                       controller: _price,
                       suffix: switch (currency) {
                         'USD' => '\$',
@@ -276,34 +271,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Kippen pro Schachtel',
+                      label: l10n.settingsCigarettesPerPack,
                       controller: _perPack,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     _Field(
-                      label: 'Kippen pro Tag (vorher)',
+                      label: l10n.settingsCigarettesPerDay,
                       controller: _perDay,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Deine Vergleichsbasis. Ändern verfälscht Gespart & '
-                      'Vermieden — nur korrigieren, wenn du dich vertippt hast.',
+                      l10n.settingsBaselineHint,
                       style: TextStyle(
                           color: PaceColors.textFaint,
                           fontSize: 12,
                           height: 1.35),
                     ),
                     const SizedBox(height: 26),
-                    Text('SCHLAFENSZEIT',
+                    Text(l10n.settingsSleepTime,
                         style: TextStyle(
                             color: PaceColors.textMuted,
                             fontSize: 12,
                             letterSpacing: 2,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 4),
-                    Text('Schlaf zählt nicht für Stints & Bestzeiten.',
+                    Text(l10n.settingsSleepHint,
                         style: TextStyle(
                             color: PaceColors.textFaint,
                             fontSize: 12,
@@ -312,11 +306,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Row(
                       children: [
                         Expanded(
-                            child: _sleepBox('Von', _sleepStart,
+                            child: _sleepBox(l10n.settingsFrom, _sleepStart,
                                 () => _pickSleep(isStart: true))),
                         const SizedBox(width: 12),
                         Expanded(
-                            child: _sleepBox('Bis', _sleepEnd,
+                            child: _sleepBox(l10n.settingsTo, _sleepEnd,
                                 () => _pickSleep(isStart: false))),
                       ],
                     ),
@@ -324,7 +318,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     _SaveButton(saving: _saving, onTap: _saving ? null : _save),
                     if (periods.length > 1) ...[
                       const SizedBox(height: 32),
-                      Text('VERLAUF',
+                      Text(l10n.settingsHistory,
                           style: TextStyle(
                               color: PaceColors.textMuted,
                               fontSize: 12,
@@ -346,14 +340,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               color:
                                   PaceColors.neonOrange.withValues(alpha: 0.7)),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.restart_alt,
+                            const Icon(Icons.restart_alt,
                                 color: PaceColors.neonOrange, size: 20),
-                            SizedBox(width: 8),
-                            Text('ALLES ZURÜCKSETZEN',
-                                style: TextStyle(
+                            const SizedBox(width: 8),
+                            Text(l10n.settingsResetEverything,
+                                style: const TextStyle(
                                     color: PaceColors.neonOrange,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
@@ -429,6 +423,7 @@ class _SaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -449,8 +444,8 @@ class _SaveButton extends StatelessWidget {
                 height: 22,
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white))
-            : const Text('SPEICHERN',
-                style: TextStyle(
+            : Text(l10n.settingsSaveButton,
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
@@ -468,6 +463,7 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final d = period.effectiveFrom;
     final date = '${d.day.toString().padLeft(2, '0')}.'
         '${d.month.toString().padLeft(2, '0')}.${d.year}';
@@ -482,11 +478,13 @@ class _HistoryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('seit $date',
+          Text(l10n.settingsHistorySince(date),
               style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
           Text(
-            '${formatMoneyCents(period.packPriceCents, currencyCode: currency)}'
-            ' · ${period.cigarettesPerPack}/Schachtel',
+            l10n.settingsHistoryPriceLine(
+              formatMoneyCents(period.packPriceCents, currencyCode: currency),
+              period.cigarettesPerPack.toString(),
+            ),
             style: const TextStyle(
                 color: PaceColors.textPrimary,
                 fontSize: 13,

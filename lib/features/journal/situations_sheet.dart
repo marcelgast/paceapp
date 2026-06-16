@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -39,6 +40,7 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final situations = ref.watch(situationsProvider).value ?? [];
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
@@ -66,9 +68,9 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            Text('Situationen', style: PaceTheme.dash(size: 28, italic: true)),
+            Text(l10n.journalSituations, style: PaceTheme.dash(size: 28, italic: true)),
             const SizedBox(height: 2),
-            Text('Lege an, was zu deinem Alltag passt.',
+            Text(l10n.situationsIntro,
                 style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
             const SizedBox(height: 18),
             ConstrainedBox(
@@ -116,7 +118,7 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
                     textCapitalization: TextCapitalization.sentences,
                     onSubmitted: (_) => _add(),
                     decoration: InputDecoration(
-                      hintText: 'Neue Situation',
+                      hintText: l10n.situationsNewHint,
                       hintStyle: TextStyle(color: PaceColors.textFaint),
                       filled: true,
                       fillColor: PaceColors.panelLight,

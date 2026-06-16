@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -60,6 +61,7 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final situations = ref.watch(situationsProvider).value ?? [];
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
@@ -90,28 +92,28 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              Text('Boxenstopp', style: PaceTheme.dash(size: 30, italic: true)),
+              Text(l10n.cockpitPitStopTitle, style: PaceTheme.dash(size: 30, italic: true)),
               const SizedBox(height: 2),
               Text(
-                'Kurz festhalten — daraus lernt deine Analyse.',
+                l10n.cockpitPitStopSubtitle,
                 style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
               ),
               const SizedBox(height: 22),
               _LevelSelector(
-                label: 'Verlangen',
+                label: l10n.cockpitCraving,
                 value: _craving,
                 color: PaceColors.neonMagenta,
                 onChanged: (v) => setState(() => _craving = v),
               ),
               const SizedBox(height: 18),
               _LevelSelector(
-                label: 'Stress',
+                label: l10n.cockpitStress,
                 value: _stress,
                 color: PaceColors.neonOrange,
                 onChanged: (v) => setState(() => _stress = v),
               ),
               const SizedBox(height: 22),
-              Text('Situation', style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+              Text(l10n.cockpitSituation, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -125,7 +127,7 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                           _situationId = _situationId == s.id ? null : s.id),
                     ),
                   _Chip(
-                    label: '+ Neu',
+                    label: l10n.cockpitSituationNew,
                     selected: false,
                     accent: true,
                     onTap: _addSituation,
@@ -137,7 +139,7 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 controller: _note,
                 style: const TextStyle(color: PaceColors.textPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Notiz (optional)',
+                  hintText: l10n.cockpitNoteHint,
                   hintStyle: TextStyle(color: PaceColors.textFaint),
                   filled: true,
                   fillColor: PaceColors.panelLight,
@@ -167,9 +169,9 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                       note: _note.text.trim().isEmpty ? null : _note.text.trim(),
                     ),
                   ),
-                  child: const Text(
-                    'EINTRAGEN',
-                    style: TextStyle(
+                  child: Text(
+                    l10n.cockpitSubmit,
+                    style: const TextStyle(
                         fontWeight: FontWeight.w800, letterSpacing: 1.5),
                   ),
                 ),
@@ -197,6 +199,7 @@ class _LevelSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -204,7 +207,7 @@ class _LevelSelector extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
-            Text('$value/5', style: PaceTheme.dash(size: 18, color: color)),
+            Text(l10n.cockpitLevelValue(value.toString()), style: PaceTheme.dash(size: 18, color: color)),
           ],
         ),
         const SizedBox(height: 8),
@@ -308,25 +311,26 @@ class NewSituationDialogState extends State<_NewSituationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
       backgroundColor: PaceColors.panel,
-      title: const Text('Neue Situation'),
+      title: Text(l10n.cockpitNewSituationTitle),
       content: TextField(
         controller: _controller,
         autofocus: true,
         textCapitalization: TextCapitalization.sentences,
         style: const TextStyle(color: PaceColors.textPrimary),
-        decoration: const InputDecoration(hintText: 'z. B. Pause, Telefonat …'),
+        decoration: InputDecoration(hintText: l10n.cockpitNewSituationHint),
         onSubmitted: (v) => Navigator.of(context).pop(v),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(l10n.cockpitCancel),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(context).pop(_controller.text),
-          child: const Text('Anlegen'),
+          child: Text(l10n.cockpitCreate),
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/milestones.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -25,6 +26,8 @@ class TrophiesScreen extends ConsumerWidget {
     final car = ref.watch(currentCarProvider);
     final nextCar = ref.watch(nextCarProvider);
     final savedCents = ref.watch(statsProvider)?.savedMoneyCents ?? 0;
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       body: RacetrackBackground(
@@ -37,10 +40,10 @@ class TrophiesScreen extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const GraffitiHeadline('Pokalvitrine', size: 30),
+                      GraffitiHeadline(l10n.trophiesTitle, size: 30),
                       _ShareChip(
                           onTap: () => showRaceCardSheet(
-                              context, currentLapCard(ref))),
+                              context, currentLapCard(ref, l10n, lang))),
                     ],
                   ),
                 ),
@@ -55,7 +58,7 @@ class TrophiesScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-                  child: Text('GARAGE',
+                  child: Text(l10n.trophiesGarageSection,
                       style: TextStyle(
                           color: PaceColors.textMuted,
                           fontSize: 12,
@@ -67,7 +70,7 @@ class TrophiesScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-                  child: Text('MEILENSTEINE',
+                  child: Text(l10n.trophiesMilestonesSection,
                       style: TextStyle(
                           color: PaceColors.textMuted,
                           fontSize: 12,
@@ -94,7 +97,7 @@ class TrophiesScreen extends ConsumerWidget {
                         unlocked: unlocked,
                         onShare: unlocked
                             ? () => showRaceCardSheet(
-                                context, milestoneCard(ref, m))
+                                context, milestoneCard(ref, m, l10n, lang))
                             : null,
                       );
                     },
@@ -117,6 +120,7 @@ class _ShareChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -126,12 +130,12 @@ class _ShareChip extends StatelessWidget {
           border: Border.all(color: PaceColors.neonMagenta),
           color: PaceColors.neonMagenta.withValues(alpha: 0.12),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
-            SizedBox(width: 6),
-            Text('Teilen',
-                style: TextStyle(
+            const Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
+            const SizedBox(width: 6),
+            Text(l10n.shareLabel,
+                style: const TextStyle(
                     color: PaceColors.neonMagenta,
                     fontSize: 13,
                     fontWeight: FontWeight.w700)),
@@ -149,6 +153,8 @@ class _GarageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     return SizedBox(
       height: 154,
       child: ListView.separated(
@@ -176,7 +182,7 @@ class _GarageRow extends StatelessWidget {
               children: [
                 CarArt(tierIndex: i, width: 134, unlocked: unlocked),
                 const Spacer(),
-                Text(tier.name,
+                Text(tier.localizedName(lang),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -185,7 +191,7 @@ class _GarageRow extends StatelessWidget {
                             : PaceColors.textMuted,
                         fontSize: 12,
                         fontWeight: FontWeight.w700)),
-                Text(unlocked ? 'freigeschaltet' : formatMoneyCents(tier.unlockCents),
+                Text(unlocked ? l10n.trophiesUnlocked : formatMoneyCents(tier.unlockCents),
                     style: TextStyle(
                         color: unlocked ? accent : PaceColors.textFaint,
                         fontSize: 11)),
@@ -213,19 +219,21 @@ class _GarageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final double progress;
     final String hint;
     if (nextCar == null) {
       progress = 1;
-      hint = 'Garage komplett — alles freigeschaltet!';
+      hint = l10n.trophiesGarageComplete;
     } else {
       final span = nextCar!.unlockCents - car.unlockCents;
       progress = span <= 0
           ? 0
           : ((savedCents - car.unlockCents) / span).clamp(0.0, 1.0);
       final remaining = nextCar!.unlockCents - savedCents;
-      hint =
-          'Noch ${formatMoneyCents(remaining)} bis ${nextCar!.name}';
+      hint = l10n.trophiesGarageRemaining(
+          formatMoneyCents(remaining), nextCar!.localizedName(lang));
     }
 
     return Container(
@@ -264,12 +272,12 @@ class _GarageCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('DEIN WAGEN',
+                    Text(l10n.trophiesYourRide,
                         style: TextStyle(
                             color: PaceColors.textMuted,
                             fontSize: 11,
                             letterSpacing: 2)),
-                    Text(car.name,
+                    Text(car.localizedName(lang),
                         style: PaceTheme.dash(size: 26, italic: true)),
                   ],
                 ),
@@ -277,7 +285,7 @@ class _GarageCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          Text(car.tagline,
+          Text(car.localizedTagline(lang),
               style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
           const SizedBox(height: 16),
           ClipRRect(
@@ -301,13 +309,13 @@ class _GarageCard extends StatelessWidget {
 }
 
 /// The target a milestone unlocks at, formatted per kind: "8 Std", "5 €",
-/// "50 Kippen" — so a locked tile tells you what to work toward.
-String _milestoneGoal(Milestone m) {
+/// "50 Cigs" — so a locked tile tells you what to work toward.
+String _milestoneGoal(Milestone m, AppLocalizations l10n) {
   return switch (m.kind) {
     MilestoneKind.time =>
       formatHumanDuration(Duration(seconds: m.threshold.toInt())),
     MilestoneKind.money => formatMoneyCents(m.threshold.toInt()),
-    MilestoneKind.avoided => '${m.threshold.toInt()} Kippen',
+    MilestoneKind.avoided => l10n.trophiesCigsCount(m.threshold.toInt()),
   };
 }
 
@@ -324,6 +332,8 @@ class _MilestoneTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
     final style = MilestoneStyle.of(milestone.kind);
     final color = unlocked ? style.color : PaceColors.textFaint;
 
@@ -359,7 +369,7 @@ class _MilestoneTile extends StatelessWidget {
                     color: color.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(_milestoneGoal(milestone),
+                  child: Text(_milestoneGoal(milestone, l10n),
                       style: TextStyle(
                           color: color,
                           fontSize: 12,
@@ -372,7 +382,7 @@ class _MilestoneTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    milestone.title,
+                    milestone.localizedTitle(lang),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

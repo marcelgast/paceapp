@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../services/notification_service.dart';
 import '../../theme/pace_colors.dart';
@@ -69,8 +70,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
 
   Future<void> _next() async {
     if (!_validateStep(_step)) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Trag bitte einen gültigen Wert ein.')),
+        SnackBar(content: Text(l10n.onboardingInvalidValue)),
       );
       return;
     }
@@ -153,6 +155,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Scaffold(
@@ -199,7 +202,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                         : Column(
                             children: [
                               const SizedBox(height: 4),
-                              Text('Kein Stopp-Datum. Nur dein Tempo.',
+                              Text(l10n.onboardingTagline,
                                   style: TextStyle(
                                       color: PaceColors.textMuted, fontSize: 14)),
                               // The staging tree is the launch ritual — show it
@@ -223,42 +226,42 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                       children: [
                         _WelcomePage(onNext: _next),
                         _QuestionPage(
-                          eyebrow: 'BOXEN-CHECK · 1/3',
-                          headline: 'Was kostet dich eine Schachtel?',
-                          sub: 'Damit zählen wir jeden Euro, den du zurückholst.',
+                          eyebrow: l10n.onboardingPitCheck1of3,
+                          headline: l10n.onboardingPackPriceHeadline,
+                          sub: l10n.onboardingPackPriceSub,
                           field: _BigField(
                               controller: _price,
                               suffix: '€',
                               keyboardType:
                                   const TextInputType.numberWithOptions(decimal: true),
                               onSubmit: _next),
-                          buttonLabel: 'WEITER',
+                          buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
                           launching: false,
                         ),
                         _QuestionPage(
-                          eyebrow: 'BOXEN-CHECK · 2/3',
-                          headline: 'Wie viele Kippen sind drin?',
-                          sub: 'Standard sind 20 — pass es an deine Marke an.',
+                          eyebrow: l10n.onboardingPitCheck2of3,
+                          headline: l10n.onboardingPerPackHeadline,
+                          sub: l10n.onboardingPerPackSub,
                           field: _BigField(
                               controller: _perPack,
                               keyboardType: TextInputType.number,
                               onSubmit: _next),
-                          buttonLabel: 'WEITER',
+                          buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
                           launching: false,
                         ),
                         _QuestionPage(
-                          eyebrow: 'BOXEN-CHECK · 3/3',
-                          headline: 'Wie viele am Tag — ehrlich?',
-                          sub: 'Keine Wertung. Das ist nur deine Startlinie.',
+                          eyebrow: l10n.onboardingPitCheck3of3,
+                          headline: l10n.onboardingPerDayHeadline,
+                          sub: l10n.onboardingPerDaySub,
                           field: _BigField(
                               controller: _perDay,
                               keyboardType: TextInputType.number,
                               onSubmit: _next),
-                          buttonLabel: 'WEITER',
+                          buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
                           launching: false,
@@ -312,6 +315,7 @@ class _QuestionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
       child: Column(
@@ -342,7 +346,7 @@ class _QuestionPage extends StatelessWidget {
               ],
               Expanded(
                 child: _PrimaryButton(
-                    label: launching ? '3 · 2 · 1 …' : buttonLabel,
+                    label: launching ? l10n.onboardingCountdown : buttonLabel,
                     onTap: launching ? null : onNext),
               ),
             ],
@@ -364,6 +368,7 @@ class _WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 2, 28, 14),
       child: Column(
@@ -374,56 +379,50 @@ class _WelcomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('WILLKOMMEN BEI PACE',
-                      style: TextStyle(
+                  Text(l10n.onboardingWelcomeEyebrow,
+                      style: const TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
                           fontWeight: FontWeight.w800)),
                   const SizedBox(height: 10),
-                  Text('Dein Rennen, dein Tempo',
+                  Text(l10n.onboardingWelcomeHeadline,
                       style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
                           .copyWith(height: 1.05)),
                   const SizedBox(height: 8),
                   Text(
-                    'Pace bringt dich rauchfrei — Schritt für Schritt, ohne '
-                    'kalten Entzug. Lass dich drauf ein, und das Programm trägt '
-                    'dich in deinem Tempo.',
+                    l10n.onboardingWelcomeBody,
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 14, height: 1.4),
                   ),
                   const SizedBox(height: 22),
-                  const _FeatureRow(
+                  _FeatureRow(
                     icon: Icons.insights,
                     color: PaceColors.neonCyan,
-                    title: 'Erst beobachten',
-                    detail:
-                        'Einen Tag fährst du wie immer — wir lernen still dein Tempo.',
+                    title: l10n.onboardingFeatureObserveTitle,
+                    detail: l10n.onboardingFeatureObserveDetail,
                   ),
-                  const _FeatureRow(
+                  _FeatureRow(
                     icon: Icons.trending_up,
                     color: PaceColors.neonMagenta,
-                    title: 'Dann dehnen',
-                    detail:
-                        'Woche für Woche etwas mehr Zeit zwischen zwei Zigaretten — immer nur, wenn du bereit bist.',
+                    title: l10n.onboardingFeatureStretchTitle,
+                    detail: l10n.onboardingFeatureStretchDetail,
                   ),
-                  const _FeatureRow(
+                  _FeatureRow(
                     icon: Icons.emoji_events,
                     color: PaceColors.neonLime,
-                    title: 'Unterwegs feiern',
-                    detail:
-                        'Schalte Erfolge frei und fahr dir vom gesparten Geld bessere Autos frei.',
+                    title: l10n.onboardingFeatureCelebrateTitle,
+                    detail: l10n.onboardingFeatureCelebrateDetail,
                   ),
-                  const _FeatureRow(
+                  _FeatureRow(
                     icon: Icons.air,
                     color: PaceColors.neonOrange,
-                    title: 'Für den Notfall',
-                    detail:
-                        'Akutes Verlangen? Die bewährte Atemübung holt dich da durch.',
+                    title: l10n.onboardingFeatureEmergencyTitle,
+                    detail: l10n.onboardingFeatureEmergencyDetail,
                     last: true,
                   ),
                   const SizedBox(height: 18),
-                  Text('Jeder schafft das. In seinem Tempo.',
+                  Text(l10n.onboardingWelcomeClosing,
                       style: const TextStyle(
                           color: PaceColors.textPrimary,
                           fontSize: 15,
@@ -434,7 +433,7 @@ class _WelcomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          _PrimaryButton(label: "LOS GEHT'S", onTap: onNext),
+          _PrimaryButton(label: l10n.onboardingLetsGo, onTap: onNext),
         ],
       ).animate(key: const ValueKey('welcome')).fadeIn(duration: 320.ms).slideX(
             begin: 0.15,
@@ -525,6 +524,7 @@ class _SleepPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
       child: Column(
@@ -535,21 +535,19 @@ class _SleepPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('DEIN SCHLAF',
-                      style: TextStyle(
+                  Text(l10n.onboardingSleepEyebrow,
+                      style: const TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
                           fontWeight: FontWeight.w800)),
                   const SizedBox(height: 10),
-                  Text('Wann schläfst du ungefähr?',
+                  Text(l10n.onboardingSleepHeadline,
                       style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
                           .copyWith(height: 1.05)),
                   const SizedBox(height: 8),
                   Text(
-                    'Schlaf zählt nicht für Stints und Bestzeiten — sonst wäre '
-                    'die Nacht immer deine längste Strecke. Später in den '
-                    'Einstellungen änderbar.',
+                    l10n.onboardingSleepBody,
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 14, height: 1.4),
                   ),
@@ -558,13 +556,13 @@ class _SleepPage extends StatelessWidget {
                     children: [
                       Expanded(
                           child: _TimeBox(
-                              label: 'Von',
+                              label: l10n.onboardingSleepFrom,
                               value: _fmt(start),
                               onTap: onPickStart)),
                       const SizedBox(width: 12),
                       Expanded(
                           child: _TimeBox(
-                              label: 'Bis',
+                              label: l10n.onboardingSleepTo,
                               value: _fmt(end),
                               onTap: onPickEnd)),
                     ],
@@ -578,7 +576,9 @@ class _SleepPage extends StatelessWidget {
             children: [
               _BackButton(onTap: onBack),
               const SizedBox(width: 12),
-              Expanded(child: _PrimaryButton(label: 'WEITER', onTap: onNext)),
+              Expanded(
+                  child: _PrimaryButton(
+                      label: l10n.onboardingNext, onTap: onNext)),
             ],
           ),
         ],
@@ -641,6 +641,7 @@ class _MeasureWeekPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
       child: Column(
@@ -651,43 +652,40 @@ class _MeasureWeekPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('SO LÄUFT DEIN START',
-                      style: TextStyle(
+                  Text(l10n.onboardingMeasureEyebrow,
+                      style: const TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 12,
                           letterSpacing: 2,
                           fontWeight: FontWeight.w800)),
                   const SizedBox(height: 10),
-                  Text('Erst messen, dann dehnen',
+                  Text(l10n.onboardingMeasureHeadline,
                       style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
                           .copyWith(height: 1.05)),
                   const SizedBox(height: 8),
                   Text(
-                    'Kein kalter Entzug. Am ersten Tag fährst du ganz normal '
-                    'weiter — wir schauen nur zu und lernen dein Tempo.',
+                    l10n.onboardingMeasureBody,
                     style: TextStyle(
                         color: PaceColors.textMuted, fontSize: 14, height: 1.4),
                   ),
                   const SizedBox(height: 22),
-                  const _StepRow(
+                  _StepRow(
                     number: '1',
                     color: PaceColors.neonCyan,
-                    title: 'Messrunde · 1 Tag',
-                    detail:
-                        'Logg jede Zigarette als Boxenstopp. Kein Ziel, kein Druck.',
+                    title: l10n.onboardingStepMeasureTitle,
+                    detail: l10n.onboardingStepMeasureDetail,
                   ),
-                  const _StepRow(
+                  _StepRow(
                     number: '2',
                     color: PaceColors.neonMagenta,
-                    title: 'Dein erstes Ziel',
-                    detail:
-                        'Wir werten dein Muster aus und schlagen dir dein Stint-Intervall vor.',
+                    title: l10n.onboardingStepTargetTitle,
+                    detail: l10n.onboardingStepTargetDetail,
                   ),
-                  const _StepRow(
+                  _StepRow(
                     number: '3',
                     color: PaceColors.neonLime,
-                    title: 'Das Rennen läuft',
-                    detail: 'Stints dehnen, Streak bauen, Wagen freifahren.',
+                    title: l10n.onboardingStepRaceTitle,
+                    detail: l10n.onboardingStepRaceDetail,
                     last: true,
                   ),
                 ],
@@ -701,7 +699,9 @@ class _MeasureWeekPage extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _PrimaryButton(
-                    label: launching ? '3 · 2 · 1 …' : 'MESSRUNDE STARTEN',
+                    label: launching
+                        ? l10n.onboardingCountdown
+                        : l10n.onboardingStartMeasuringLap,
                     onTap: launching ? null : onNext),
               ),
             ],

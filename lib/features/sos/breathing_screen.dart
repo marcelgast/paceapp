@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 
@@ -71,6 +72,7 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: PaceColors.nightDeep,
       body: SafeArea(
@@ -82,22 +84,22 @@ class _BreathingScreenState extends State<BreathingScreen>
             final scale = _scaleFor(v);
             final secondsLeft = (4 - (v * 12) % 4).ceil().clamp(1, 4);
             final (String label, Color color, IconData icon) = switch (phase) {
-              _Phase.inhale => ('Einatmen', PaceColors.neonCyan, Icons.arrow_upward_rounded),
-              _Phase.hold => ('Halten', PaceColors.neonPurple, Icons.pause_rounded),
-              _Phase.exhale => ('Ausatmen', PaceColors.neonLime, Icons.arrow_downward_rounded),
+              _Phase.inhale => (l10n.sosInhale, PaceColors.neonCyan, Icons.arrow_upward_rounded),
+              _Phase.hold => (l10n.sosHold, PaceColors.neonPurple, Icons.pause_rounded),
+              _Phase.exhale => (l10n.sosExhale, PaceColors.neonLime, Icons.arrow_downward_rounded),
             };
 
             return Column(
               children: [
                 const SizedBox(height: 12),
-                Text('VERLANGEN REITET VORBEI',
+                Text(l10n.sosCravingPassing,
                     style: TextStyle(
                         color: PaceColors.textMuted,
                         fontSize: 12,
                         letterSpacing: 3,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
-                Text('Atme mit. Du musst nichts tun.',
+                Text(l10n.sosBreatheAlong,
                     style: TextStyle(color: PaceColors.textFaint, fontSize: 13)),
                 Expanded(
                   child: Center(
@@ -111,8 +113,8 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ),
                 Text(
                   _breaths == 0
-                      ? 'Noch kein voller Atemzug'
-                      : '$_breaths Atemzüge geschafft',
+                      ? l10n.sosNoBreathYet
+                      : l10n.sosBreathsDone(_breaths.toString()),
                   style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
                 ),
                 const SizedBox(height: 18),
@@ -222,6 +224,7 @@ class _StopButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -233,8 +236,8 @@ class _StopButton extends StatelessWidget {
           border: Border.all(color: PaceColors.neonLime, width: 1.5),
         ),
         alignment: Alignment.center,
-        child: const Text('GEHT WIEDER — STOPP',
-            style: TextStyle(
+        child: Text(l10n.sosStopButton,
+            style: const TextStyle(
                 color: PaceColors.neonLime,
                 fontSize: 16,
                 fontWeight: FontWeight.w800,

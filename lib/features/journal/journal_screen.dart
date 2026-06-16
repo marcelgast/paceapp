@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
 import '../../domain/weekly_report.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -17,6 +18,7 @@ class JournalScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final pitStops = ref.watch(pitStopsProvider).value ?? const [];
     final reports = ref.watch(weeklyReportsProvider);
     final labels = ref.watch(situationLabelsProvider);
@@ -33,7 +35,7 @@ class JournalScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const GraffitiHeadline('Journal', size: 30),
+                    GraffitiHeadline(l10n.journalTitle, size: 30),
                     GestureDetector(
                       onTap: () => showSituationsSheet(context),
                       child: Container(
@@ -43,12 +45,12 @@ class JournalScreen extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: PaceColors.neonCyan),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(Icons.tune, color: PaceColors.neonCyan, size: 16),
-                            SizedBox(width: 6),
-                            Text('Situationen',
-                                style: TextStyle(
+                            const Icon(Icons.tune, color: PaceColors.neonCyan, size: 16),
+                            const SizedBox(width: 6),
+                            Text(l10n.journalSituations,
+                                style: const TextStyle(
                                     color: PaceColors.neonCyan,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600)),
@@ -130,6 +132,7 @@ class _ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final delta = report.cigaretteDelta;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 14),
@@ -157,7 +160,7 @@ class _ReportCard extends StatelessWidget {
             children: [
               const Icon(Icons.flag_circle, color: PaceColors.neonMagenta, size: 20),
               const SizedBox(width: 8),
-              Text('RENNBERICHT · WOCHE ${report.weekNumber}',
+              Text(l10n.journalRaceReportWeek(report.weekNumber.toString()),
                   style: const TextStyle(
                       color: PaceColors.neonMagenta,
                       fontSize: 12,
@@ -173,11 +176,11 @@ class _ReportCard extends StatelessWidget {
               Text(
                 report.medianPace == null
                     ? '—'
-                    : 'alle ${formatHumanDuration(report.medianPace!)}',
+                    : l10n.journalEvery(formatHumanDuration(report.medianPace!)),
                 style: PaceTheme.dash(size: 26, weight: FontWeight.w900, color: Colors.white),
               ),
               const SizedBox(width: 8),
-              Text('Median-Pace',
+              Text(l10n.journalMedianPace,
                   style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
             ],
           ),
@@ -185,14 +188,14 @@ class _ReportCard extends StatelessWidget {
           Row(
             children: [
               _ReportStat(
-                  label: 'Kippen', value: '${report.cigarettes}', color: PaceColors.neonCyan),
+                  label: l10n.journalCigarettes, value: '${report.cigarettes}', color: PaceColors.neonCyan),
               const SizedBox(width: 20),
               _ReportStat(
-                  label: 'Dreher', value: '${report.dreher}', color: PaceColors.neonOrange),
+                  label: l10n.journalSpin, value: '${report.dreher}', color: PaceColors.neonOrange),
               const Spacer(),
               if (delta != null && delta != 0)
                 Text(
-                  delta < 0 ? '${-delta} weniger 🏁' : '+$delta',
+                  delta < 0 ? l10n.journalFewer((-delta).toString()) : '+$delta',
                   style: TextStyle(
                       color: delta < 0 ? PaceColors.neonLime : PaceColors.neonOrange,
                       fontSize: 13,
@@ -256,26 +259,24 @@ class _PitStopCard extends ConsumerWidget {
   final String? situation;
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: PaceColors.panel,
-        title: const Text('Boxenstopp löschen?'),
-        content: const Text(
-          'Versehentlich doppelt erfasst? Löschen verändert deine angezeigten '
-          'Werte (Gespart, Vermieden, Streak).',
-        ),
+        title: Text(l10n.journalDeletePitStopTitle),
+        content: Text(l10n.journalDeletePitStopBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(l10n.journalCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: PaceColors.neonOrange,
                 foregroundColor: Colors.black),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Löschen'),
+            child: Text(l10n.journalDelete),
           ),
         ],
       ),
@@ -287,6 +288,7 @@ class _PitStopCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -324,8 +326,8 @@ class _PitStopCard extends ConsumerWidget {
                     color: PaceColors.neonOrange.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('DREHER',
-                      style: TextStyle(
+                  child: Text(l10n.journalSpinBadge,
+                      style: const TextStyle(
                           color: PaceColors.neonOrange,
                           fontSize: 10,
                           letterSpacing: 1,
@@ -346,12 +348,12 @@ class _PitStopCard extends ConsumerWidget {
           Row(
             children: [
               _MiniLevel(
-                  label: 'Verlangen',
+                  label: l10n.journalCraving,
                   value: pitStop.cravingLevel,
                   color: PaceColors.neonMagenta),
               const SizedBox(width: 16),
               _MiniLevel(
-                  label: 'Stress',
+                  label: l10n.journalStress,
                   value: pitStop.stressLevel,
                   color: PaceColors.neonOrange),
             ],
@@ -407,6 +409,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -416,14 +419,13 @@ class _EmptyState extends StatelessWidget {
             const Icon(Icons.flag_outlined,
                 color: PaceColors.neonLime, size: 56),
             const SizedBox(height: 16),
-            Text('Noch keine Boxenstopps',
+            Text(l10n.journalEmptyTitle,
                 style: PaceTheme.dash(size: 24, italic: true)),
             const SizedBox(height: 8),
-            const Text(
-              'Und das ist gut so. Sobald du einen Boxenstopp einträgst, '
-              'siehst du hier dein Muster.',
+            Text(
+              l10n.journalEmptyBody,
               textAlign: TextAlign.center,
-              style: TextStyle(color: PaceColors.textMuted, fontSize: 14),
+              style: const TextStyle(color: PaceColors.textMuted, fontSize: 14),
             ),
           ],
         ),
