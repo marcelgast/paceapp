@@ -6,7 +6,9 @@ import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../services/entitlements.dart';
+import '../../services/pace_pro_store.dart';
 import '../../services/widget_service.dart';
+import '../pro/paywall_sheet.dart';
 import '../race_engineer/race_engineer_screen.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -178,8 +180,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _openPro(PaceProFeature feature, VoidCallback onOpen) {
-    // Free test phase unlocks everything; later this gates behind the purchase.
-    if (ref.read(entitlementsProvider).can(feature)) onOpen();
+    if (ref.read(entitlementsProvider).can(feature)) {
+      onOpen();
+    } else {
+      showPaceProPaywall(context);
+    }
   }
 
   Future<void> _reset() async {
@@ -218,6 +223,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settings = ref.watch(settingsProvider).value;
     final periods = ref.watch(costPeriodsProvider).value ?? const [];
     final currency = settings?.currencyCode ?? 'EUR';
+    final isPro = ref.watch(entitlementsProvider).isPro;
 
     // Pre-fill once from the current values.
     if (!_prefilled && settings != null) {
@@ -344,6 +350,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             letterSpacing: 2,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 10),
+                    if (isPro) ...[
+                      _ProActiveCard(
+                        title: l10n.settingsProActive,
+                        subtitle: l10n.settingsProActiveSub,
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     _ProRow(
                       icon: Icons.insights,
                       title: l10n.settingsProRaceEngineer,
@@ -413,6 +426,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                       ],
                     ),
+                    if (!isPro) ...[
+                      const SizedBox(height: 14),
+                      Center(
+                        child: TextButton(
+                          onPressed: () =>
+                              ref.read(paceProStoreProvider).restore(),
+                          child: Text(l10n.settingsProRestore,
+                              style: TextStyle(
+                                  color: PaceColors.textMuted,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 40),
                     GestureDetector(
                       onTap: _reset,
@@ -768,6 +795,47 @@ class _ProRow extends StatelessWidget {
             const Icon(Icons.chevron_right, color: PaceColors.textMuted),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProActiveCard extends StatelessWidget {
+  const _ProActiveCard({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: PaceColors.neonLime.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: PaceColors.neonLime.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.verified, color: PaceColors.neonLime, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(subtitle,
+                    style: TextStyle(
+                        color: PaceColors.textMuted, fontSize: 12)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

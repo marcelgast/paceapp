@@ -242,5 +242,23 @@
   "settingsProSkin": "SKIN",
   "settingsProLiveActivity": "Live Activity",
   "settingsProLiveActivitySub": "Stint-Timer in der Dynamic Island & am Lockscreen.",
-  "proBadge": "PRO"
+  "proBadge": "PRO",
+  "settingsProActive": "Pace Pro aktiv",
+  "settingsProActiveSub": "Danke! Alle Pro-Features sind freigeschaltet.",
+  "settingsProRestore": "Käufe wiederherstellen",
+  "paywallSubtitle": "Mehr aus deinem Rennen rausholen.",
+  "paywallThemesTitle": "Neon-Skins",
+  "paywallThemesSub": "10 Skins, die die ganze App umfärben.",
+  "paywallUnlock": "Freischalten · {price}",
+  "@paywallUnlock": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "paywallUnlockNoPrice": "Pace Pro freischalten",
+  "paywallRestore": "Käufe wiederherstellen",
+  "paywallOneTime": "Einmalkauf · kein Abo · keine versteckten Kosten",
+  "paywallError": "Das hat nicht geklappt. Bitte versuch es nochmal.",
+  "paywallUnavailable": "Der App Store ist gerade nicht erreichbar.",
+  "raceEngineerUnlock": "Mit Pace Pro freischalten"
 }

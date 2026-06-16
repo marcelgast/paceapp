@@ -156,24 +156,25 @@ class _Bar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Guard against NaN/Infinity (e.g. a 0/0 division upstream): clamp() lets
+    // them through, and a non-finite height factor crashes layout.
+    final factor = fraction.isFinite ? fraction.clamp(0.02, 1.0) : 0.02;
+    // The bar must size against the Row's fixed height — a Column here would
+    // hand the FractionallySizedBox an unbounded height and crash layout.
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 1.5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FractionallySizedBox(
-              heightFactor: fraction.clamp(0.02, 1.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: highlight
-                      ? PaceColors.neonMagenta
-                      : PaceColors.neonCyan.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
+        child: FractionallySizedBox(
+          alignment: Alignment.bottomCenter,
+          heightFactor: factor,
+          child: Container(
+            decoration: BoxDecoration(
+              color: highlight
+                  ? PaceColors.neonMagenta
+                  : PaceColors.neonCyan.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(3),
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../providers.dart';
 import '../../services/widget_service.dart';
 import '../../theme/pace_colors.dart';
 import '../analysis/analysis_screen.dart';
@@ -11,6 +12,9 @@ import '../cockpit/pit_stop_action.dart';
 import '../journal/journal_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../trophies/trophies_screen.dart';
+
+/// Initial tab, overridden only by the screenshot tooling (SHOTS build flag).
+int kDemoInitialTab = 0;
 
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
@@ -21,7 +25,7 @@ class HomeShell extends ConsumerStatefulWidget {
 
 class _HomeShellState extends ConsumerState<HomeShell>
     with WidgetsBindingObserver {
-  int _index = 0;
+  int _index = kDemoInitialTab;
 
   static const _tabs = [
     CockpitScreen(),
@@ -95,6 +99,12 @@ class _HomeShellState extends ConsumerState<HomeShell>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // Push the Live Activity the instant the stint phase flips (e.g. into
+    // overtime): the .timer text self-updates, but the surrounding colour and
+    // label only re-render on a push.
+    ref.listen(liveStintProvider.select((s) => s?.phase), (_, _) {
+      pushPaceWidget(ref);
+    });
     return Scaffold(
       body: IndexedStack(index: _index, children: _tabs),
       bottomNavigationBar: Container(

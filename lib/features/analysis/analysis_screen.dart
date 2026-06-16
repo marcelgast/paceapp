@@ -11,6 +11,7 @@ import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
+import '../pro/paywall_sheet.dart';
 import '../race_engineer/race_engineer_screen.dart';
 
 class AnalysisScreen extends ConsumerWidget {
@@ -64,6 +65,10 @@ class AnalysisScreen extends ConsumerWidget {
                     _SectionLabel(l10n.analysisLast7Days),
                     const SizedBox(height: 12),
                     _WeekBars(a: a),
+                    if (!isPro) ...[
+                      const SizedBox(height: 28),
+                      const _RaceEngineerTeaser(),
+                    ],
                     if (deep != null) ...[
                       const SizedBox(height: 28),
                       Row(
@@ -91,6 +96,82 @@ class AnalysisScreen extends ConsumerWidget {
                     ],
                   ],
                 ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RaceEngineerTeaser extends StatelessWidget {
+  const _RaceEngineerTeaser();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: () => showPaceProPaywall(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              PaceColors.neonMagenta.withValues(alpha: 0.14),
+              PaceColors.neonPurple.withValues(alpha: 0.08),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(18),
+          border:
+              Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.5)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.insights, color: PaceColors.neonMagenta, size: 22),
+                const SizedBox(width: 8),
+                Text(l10n.raceEngineerTitle,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800)),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: PaceColors.neonMagenta,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(l10n.proBadge,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w900)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(l10n.raceEngineerSubtitle,
+                style: TextStyle(
+                    color: PaceColors.textMuted, fontSize: 13, height: 1.35)),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Icon(Icons.lock_open, color: PaceColors.neonMagenta, size: 16),
+                const SizedBox(width: 6),
+                Text(l10n.raceEngineerUnlock,
+                    style: TextStyle(
+                        color: PaceColors.neonMagenta,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800)),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -299,7 +380,9 @@ class _SituationBars extends StatelessWidget {
                       children: [
                         Container(height: 22, color: PaceColors.night),
                         FractionallySizedBox(
-                          widthFactor: max == 0 ? 0 : s.count / max,
+                          widthFactor: max == 0
+                              ? 0
+                              : (s.count / max).clamp(0.0, 1.0).toDouble(),
                           child: Container(
                             height: 22,
                             decoration: BoxDecoration(
@@ -349,7 +432,7 @@ class _WeekBars extends StatelessWidget {
     ];
     final max = a.last7Days.fold<int>(1, (m, d) => d.count > m ? d.count : m);
     return Container(
-      height: 150,
+      height: 160,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: PaceColors.panel.withValues(alpha: 0.8),

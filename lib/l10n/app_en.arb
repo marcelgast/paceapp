@@ -218,5 +218,23 @@
   "settingsProSkin": "SKIN",
   "settingsProLiveActivity": "Live Activity",
   "settingsProLiveActivitySub": "Stint timer in the Dynamic Island & on the lock screen.",
-  "proBadge": "PRO"
+  "proBadge": "PRO",
+  "settingsProActive": "Pace Pro active",
+  "settingsProActiveSub": "Thanks! All Pro features are unlocked.",
+  "settingsProRestore": "Restore purchases",
+  "paywallSubtitle": "Get more out of your race.",
+  "paywallThemesTitle": "Neon skins",
+  "paywallThemesSub": "10 skins that recolour the whole app.",
+  "paywallUnlock": "Unlock · {price}",
+  "@paywallUnlock": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "paywallUnlockNoPrice": "Unlock Pace Pro",
+  "paywallRestore": "Restore purchases",
+  "paywallOneTime": "One-time purchase · no subscription · no hidden fees",
+  "paywallError": "That didn't work. Please try again.",
+  "paywallUnavailable": "The App Store isn't reachable right now.",
+  "raceEngineerUnlock": "Unlock with Pace Pro"
 }

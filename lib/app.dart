@@ -8,6 +8,7 @@ import 'features/onboarding/onboarding_screen.dart';
 import 'features/proposal/proposal_host.dart';
 import 'features/shell/home_shell.dart';
 import 'providers.dart';
+import 'services/pace_pro_store.dart';
 import 'theme/pace_colors.dart';
 import 'theme/pace_theme.dart';
 
@@ -20,6 +21,9 @@ class PaceApp extends ConsumerWidget {
     // subtree on skin change forces every widget to re-read the new colours.
     final skin = ref.watch(skinProvider);
     PaceColors.applySkin(skin);
+    // Keep the purchase store alive for the app's lifetime so StoreKit
+    // purchases and restores are always caught by its stream listener.
+    ref.watch(paceProStoreProvider);
     SystemChrome.setSystemUIOverlayStyle(PaceTheme.overlay);
     return MaterialApp(
       title: 'Pace',
