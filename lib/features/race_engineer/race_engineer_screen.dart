@@ -69,13 +69,7 @@ class RaceEngineerScreen extends ConsumerWidget {
                               style: TextStyle(
                                   color: PaceColors.textMuted, fontSize: 14)),
                           const SizedBox(height: 20),
-                          _HourCard(analytics: a, l10n: l10n),
-                          const SizedBox(height: 16),
-                          _WeekdayCard(analytics: a, l10n: l10n),
-                          const SizedBox(height: 16),
-                          _TriggersCard(analytics: a, l10n: l10n),
-                          const SizedBox(height: 16),
-                          _TrendCard(analytics: a, l10n: l10n),
+                          RaceEngineerSection(analytics: a),
                         ],
                       ),
               ),
@@ -83,6 +77,31 @@ class RaceEngineerScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The four deep-analytics cards as a reusable column — used both on the
+/// standalone Race Engineer screen and embedded in the Analysis tab when Pro.
+class RaceEngineerSection extends StatelessWidget {
+  const RaceEngineerSection({super.key, required this.analytics});
+
+  final DeepAnalytics analytics;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _HourCard(analytics: analytics, l10n: l10n),
+        const SizedBox(height: 16),
+        _WeekdayCard(analytics: analytics, l10n: l10n),
+        const SizedBox(height: 16),
+        _TriggersCard(analytics: analytics, l10n: l10n),
+        const SizedBox(height: 16),
+        _TrendCard(analytics: analytics, l10n: l10n),
+      ],
     );
   }
 }

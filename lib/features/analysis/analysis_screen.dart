@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/behavior_analysis.dart';
+import '../../domain/deep_analytics.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../services/entitlements.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
+import '../race_engineer/race_engineer_screen.dart';
 
 class AnalysisScreen extends ConsumerWidget {
   const AnalysisScreen({super.key});
@@ -17,6 +20,27 @@ class AnalysisScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final a = ref.watch(behaviorAnalysisProvider);
     final l10n = AppLocalizations.of(context);
+
+    // Race Engineer (Pro) lives right here on the analytics page when unlocked.
+    final isPro = ref.watch(entitlementsProvider).can(PaceProFeature.raceEngineer);
+    final pitStops = ref.watch(pitStopsProvider).value ?? const [];
+    final labels = ref.watch(situationLabelsProvider);
+    final deep = (isPro && a.total > 0)
+        ? DeepAnalytics.from(
+            pitStops
+                .map((p) => PitSample(
+                      occurredAt: p.occurredAt,
+                      craving: p.cravingLevel,
+                      stress: p.stressLevel,
+                      situationId: p.situationId,
+                      wasEarly: p.wasEarlyPit,
+                    ))
+                .toList(),
+            labels: labels,
+            now: DateTime.now(),
+            noSituationLabel: l10n.analysisNoSituation,
+          )
+        : null;
 
     return Scaffold(
       body: RacetrackBackground(
@@ -40,6 +64,31 @@ class AnalysisScreen extends ConsumerWidget {
                     _SectionLabel(l10n.analysisLast7Days),
                     const SizedBox(height: 12),
                     _WeekBars(a: a),
+                    if (deep != null) ...[
+                      const SizedBox(height: 28),
+                      Row(
+                        children: [
+                          _SectionLabel(l10n.raceEngineerTitle),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: PaceColors.neonMagenta,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(l10n.proBadge,
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    letterSpacing: 1,
+                                    fontWeight: FontWeight.w900)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      RaceEngineerSection(analytics: deep),
+                    ],
                   ],
                 ),
         ),
