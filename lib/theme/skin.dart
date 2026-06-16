@@ -97,6 +97,24 @@ class Skin {
       orange: Color(0xFFFF2A1A), // deep red
       lime: Color(0xFFFFD23B), // flame yellow
     ),
+    Skin(
+      id: 'podium',
+      name: 'Podium',
+      magenta: Color(0xFFFFC93C), // champagne gold
+      cyan: Color(0xFF2BD9C0), // teal pop
+      purple: Color(0xFFFFD24B),
+      orange: Color(0xFFFF9E2C),
+      lime: Color(0xFFFFE45C),
+    ),
+    Skin(
+      id: 'chrome',
+      name: 'Chrome',
+      magenta: Color(0xFFE8ECF5), // chrome white
+      cyan: Color(0xFF9FD8FF), // icy
+      purple: Color(0xFFC4B5FD), // soft lilac
+      orange: Color(0xFFFF5C7A), // warm pop
+      lime: Color(0xFFA0FFC8), // mint
+    ),
   ];
 
   static Skin byId(String? id) =>
