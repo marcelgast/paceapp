@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/quit_plan.dart';
 import '../../domain/stint_calculator.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
@@ -42,6 +43,13 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     ref.listen<StintState?>(liveStintProvider, (prev, next) {
       if (prev?.phase != StintPhase.overtime &&
           next?.phase == StintPhase.overtime) {
+        _win.play();
+        HapticFeedback.heavyImpact();
+      }
+    });
+    // Reward every new smoke-free day (and the quit-day start itself).
+    ref.listen(quitPlanProvider.select((p) => p.dayNumber), (prev, next) {
+      if ((prev ?? 0) < next && next >= 1) {
         _win.play();
         HapticFeedback.heavyImpact();
       }
@@ -98,33 +106,33 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                   _QuitCountdownBanner(daysUntil: quitPlan.daysUntil),
                 ],
                 const Spacer(),
-                if (quitPlan.isSmokeFree)
-                  _SmokeFreeHero(day: quitPlan.dayNumber)
-                else
-                  Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
+                Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    if (quitPlan.isSmokeFree)
+                      _SmokeFreeHero(plan: quitPlan)
+                    else
                       _Gauge(
                           stint: stint,
                           target: ref.watch(targetIntervalProvider),
                           baselineSub: baselineSub),
-                      ConfettiWidget(
-                        confettiController: _win,
-                        blastDirectionality: BlastDirectionality.explosive,
-                        numberOfParticles: 18,
-                        maxBlastForce: 18,
-                        minBlastForce: 6,
-                        gravity: 0.3,
-                        emissionFrequency: 0.05,
-                        colors: [
-                          PaceColors.neonLime,
-                          PaceColors.neonCyan,
-                          PaceColors.neonMagenta,
-                          PaceColors.neonOrange,
-                        ],
-                      ),
-                    ],
-                  ),
+                    ConfettiWidget(
+                      confettiController: _win,
+                      blastDirectionality: BlastDirectionality.explosive,
+                      numberOfParticles: 22,
+                      maxBlastForce: 20,
+                      minBlastForce: 6,
+                      gravity: 0.3,
+                      emissionFrequency: 0.05,
+                      colors: [
+                        PaceColors.neonLime,
+                        PaceColors.neonCyan,
+                        PaceColors.neonMagenta,
+                        PaceColors.neonOrange,
+                      ],
+                    ),
+                  ],
+                ),
                 const Spacer(),
                 if (quitPlan.isSmokeFree) ...[
                   _BreathingPrimaryButton(
@@ -465,35 +473,56 @@ class _QuitCountdownBanner extends StatelessWidget {
 }
 
 class _SmokeFreeHero extends StatelessWidget {
-  const _SmokeFreeHero({required this.day});
+  const _SmokeFreeHero({required this.plan});
 
-  final int day;
+  final QuitPlan plan;
+
+  static String _hms(Duration d) {
+    final h = d.inHours.toString().padLeft(2, '0');
+    final m = (d.inMinutes % 60).toString().padLeft(2, '0');
+    final s = (d.inSeconds % 60).toString().padLeft(2, '0');
+    return '$h:$m:$s';
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final day = plan.dayNumber;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.emoji_events, color: PaceColors.neonLime, size: 64)
+        Icon(Icons.sports_score, color: PaceColors.neonLime, size: 58)
             .animate(onPlay: (c) => c.repeat(reverse: true))
-            .scaleXY(begin: 1.0, end: 1.08, duration: 1400.ms, curve: Curves.easeInOut),
-        const SizedBox(height: 14),
-        Text(l10n.smokeFreeDayLabel,
+            .scaleXY(begin: 1.0, end: 1.1, duration: 1100.ms, curve: Curves.easeInOut),
+        const SizedBox(height: 12),
+        Text(l10n.smokeFreeRaceKicker,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 color: PaceColors.neonLime,
                 fontSize: 13,
-                letterSpacing: 4,
+                letterSpacing: 3,
                 fontWeight: FontWeight.w800)),
         const SizedBox(height: 6),
-        GraffitiHeadline(day.toString(), size: 84, color: Colors.white),
-        const SizedBox(height: 6),
-        Text(l10n.smokeFreeDaysWord(day),
+        GraffitiHeadline(day.toString(), size: 82, color: Colors.white)
+            .animate(key: ValueKey(day))
+            .scaleXY(begin: 0.8, end: 1.0, curve: Curves.easeOutBack, duration: 520.ms),
+        Text('${l10n.smokeFreeDaysWord(day)} ${l10n.smokeFreeFreeWord}',
             style: TextStyle(
                 color: PaceColors.neonLime,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 2)),
+                letterSpacing: 1.5)),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          decoration: BoxDecoration(
+            color: PaceColors.panel.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.4)),
+          ),
+          child: Text(_hms(plan.intraDay),
+              style: PaceTheme.dash(size: 24, color: PaceColors.neonCyan)),
+        ),
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),

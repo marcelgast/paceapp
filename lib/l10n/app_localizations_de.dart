@@ -840,7 +840,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get smokeFreeDayLabel => 'RAUCHFREI SEIT';
+  String get smokeFreeRaceKicker => 'DAS EIGENTLICHE RENNEN LÄUFT';
+
+  @override
+  String get smokeFreeFreeWord => 'rauchfrei';
 
   @override
   String smokeFreeDaysWord(int count) {
@@ -855,7 +858,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get smokeFreeEncouragement =>
-      'Stark. Halt den Kurs — dein Körper erholt sich gerade mit jeder Stunde.';
+      'Vollgas. Jede Stunde ist gewonnene Strecke — dein Körper zieht mit.';
 
   @override
   String get cockpitBreathePrimaryTitle => 'Durchatmen';

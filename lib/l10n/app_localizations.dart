@@ -1574,11 +1574,17 @@ abstract class AppLocalizations {
   /// **'Noch {days} Tage'**
   String quitCountdownDays(Object days);
 
-  /// No description provided for @smokeFreeDayLabel.
+  /// No description provided for @smokeFreeRaceKicker.
   ///
   /// In de, this message translates to:
-  /// **'RAUCHFREI SEIT'**
-  String get smokeFreeDayLabel;
+  /// **'DAS EIGENTLICHE RENNEN LÄUFT'**
+  String get smokeFreeRaceKicker;
+
+  /// No description provided for @smokeFreeFreeWord.
+  ///
+  /// In de, this message translates to:
+  /// **'rauchfrei'**
+  String get smokeFreeFreeWord;
 
   /// No description provided for @smokeFreeDaysWord.
   ///
@@ -1589,7 +1595,7 @@ abstract class AppLocalizations {
   /// No description provided for @smokeFreeEncouragement.
   ///
   /// In de, this message translates to:
-  /// **'Stark. Halt den Kurs — dein Körper erholt sich gerade mit jeder Stunde.'**
+  /// **'Vollgas. Jede Stunde ist gewonnene Strecke — dein Körper zieht mit.'**
   String get smokeFreeEncouragement;
 
   /// No description provided for @cockpitBreathePrimaryTitle.

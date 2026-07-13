@@ -267,7 +267,8 @@
       "days": {}
     }
   },
-  "smokeFreeDayLabel": "SMOKE-FREE FOR",
+  "smokeFreeRaceKicker": "THE REAL RACE IS ON",
+  "smokeFreeFreeWord": "smoke-free",
   "smokeFreeDaysWord": "{count, plural, =1{day} other{days}}",
   "@smokeFreeDaysWord": {
     "placeholders": {
@@ -276,7 +277,7 @@
       }
     }
   },
-  "smokeFreeEncouragement": "Strong. Hold the line — your body is recovering with every hour.",
+  "smokeFreeEncouragement": "Full throttle. Every hour is ground gained — your body's coming with you.",
   "cockpitBreathePrimaryTitle": "Take a breath",
   "cockpitBreathePrimarySub": "Cravings come in waves — breathe through it.",
   "cockpitRelapse": "Slipped up? No drama — log it.",

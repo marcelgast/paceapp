@@ -18,6 +18,7 @@ class QuitPlan {
     required this.phase,
     required this.daysUntil,
     required this.dayNumber,
+    this.elapsed = Duration.zero,
     this.quitDate,
   });
 
@@ -29,7 +30,14 @@ class QuitPlan {
   /// Smoke-free: 1-based day count (quit day = 1). Otherwise 0.
   final int dayNumber;
 
+  /// Smoke-free: live time since the quit day began (midnight). Otherwise zero.
+  final Duration elapsed;
+
   final DateTime? quitDate;
+
+  /// The hours/minutes/seconds within the current day (0 ≤ h < 24), for the
+  /// live ticker shown under the day count.
+  Duration get intraDay => elapsed - Duration(days: elapsed.inDays);
 
   bool get isActive => phase != QuitPhase.none;
   bool get isSmokeFree => phase == QuitPhase.smokeFree;
@@ -54,6 +62,7 @@ class QuitPlan {
       phase: QuitPhase.smokeFree,
       daysUntil: 0,
       dayNumber: -diff + 1,
+      elapsed: now.difference(_day(quitDate)),
       quitDate: quitDate,
     );
   }
