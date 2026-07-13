@@ -11,6 +11,7 @@ import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
 import '../../theme/racetrack_background.dart';
 import '../../util/format.dart';
+import '../../widgets/graffiti_headline.dart';
 import '../../widgets/pace_wordmark.dart';
 import '../settings/settings_screen.dart';
 import '../sos/breathing_screen.dart';
@@ -52,6 +53,7 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     final stats = ref.watch(statsProvider);
     final currency = settings?.currencyCode ?? 'EUR';
     final now = ref.watch(clockProvider).value ?? DateTime.now();
+    final quitPlan = ref.watch(quitPlanProvider);
 
     // Days left in the measuring round (shown under the baseline gauge).
     var baselineSub = l10n.cockpitBaselineMeasuring;
@@ -91,35 +93,49 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                 ),
                 const SizedBox(height: 8),
                 _StatsRow(stats: stats, currency: currency),
+                if (quitPlan.isCountdown) ...[
+                  const SizedBox(height: 12),
+                  _QuitCountdownBanner(daysUntil: quitPlan.daysUntil),
+                ],
                 const Spacer(),
-                Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    _Gauge(
-                        stint: stint,
-                        target: ref.watch(targetIntervalProvider),
-                        baselineSub: baselineSub),
-                    ConfettiWidget(
-                      confettiController: _win,
-                      blastDirectionality: BlastDirectionality.explosive,
-                      numberOfParticles: 18,
-                      maxBlastForce: 18,
-                      minBlastForce: 6,
-                      gravity: 0.3,
-                      emissionFrequency: 0.05,
-                      colors: [
-                        PaceColors.neonLime,
-                        PaceColors.neonCyan,
-                        PaceColors.neonMagenta,
-                        PaceColors.neonOrange,
-                      ],
-                    ),
-                  ],
-                ),
+                if (quitPlan.isSmokeFree)
+                  _SmokeFreeHero(day: quitPlan.dayNumber)
+                else
+                  Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      _Gauge(
+                          stint: stint,
+                          target: ref.watch(targetIntervalProvider),
+                          baselineSub: baselineSub),
+                      ConfettiWidget(
+                        confettiController: _win,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        numberOfParticles: 18,
+                        maxBlastForce: 18,
+                        minBlastForce: 6,
+                        gravity: 0.3,
+                        emissionFrequency: 0.05,
+                        colors: [
+                          PaceColors.neonLime,
+                          PaceColors.neonCyan,
+                          PaceColors.neonMagenta,
+                          PaceColors.neonOrange,
+                        ],
+                      ),
+                    ],
+                  ),
                 const Spacer(),
-                _SosButton(onTap: () => BreathingScreen.open(context)),
-                const SizedBox(height: 12),
-                _PitButton(onTap: _pitStop),
+                if (quitPlan.isSmokeFree) ...[
+                  _BreathingPrimaryButton(
+                      onTap: () => BreathingScreen.open(context)),
+                  const SizedBox(height: 12),
+                  _RelapsePitButton(onTap: _pitStop),
+                ] else ...[
+                  _SosButton(onTap: () => BreathingScreen.open(context)),
+                  const SizedBox(height: 12),
+                  _PitButton(onTap: _pitStop),
+                ],
                 const SizedBox(height: 20),
               ],
             ),
@@ -393,6 +409,192 @@ class _SettingsButton extends StatelessWidget {
         ),
         child: const Icon(Icons.settings_outlined,
             color: PaceColors.textMuted, size: 19),
+      ),
+    );
+  }
+}
+
+class _QuitCountdownBanner extends StatelessWidget {
+  const _QuitCountdownBanner({required this.daysUntil});
+
+  final int daysUntil;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final text = daysUntil == 1
+        ? l10n.quitCountdownTomorrow
+        : l10n.quitCountdownDays(daysUntil.toString());
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          PaceColors.neonCyan.withValues(alpha: 0.14),
+          PaceColors.neonLime.withValues(alpha: 0.08),
+        ]),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.flag_rounded, color: PaceColors.neonCyan, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.quitCountdownLabel,
+                    style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 11,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 1),
+                Text(text,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SmokeFreeHero extends StatelessWidget {
+  const _SmokeFreeHero({required this.day});
+
+  final int day;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.emoji_events, color: PaceColors.neonLime, size: 64)
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scaleXY(begin: 1.0, end: 1.08, duration: 1400.ms, curve: Curves.easeInOut),
+        const SizedBox(height: 14),
+        Text(l10n.smokeFreeDayLabel,
+            style: TextStyle(
+                color: PaceColors.neonLime,
+                fontSize: 13,
+                letterSpacing: 4,
+                fontWeight: FontWeight.w800)),
+        const SizedBox(height: 6),
+        GraffitiHeadline(day.toString(), size: 84, color: Colors.white),
+        const SizedBox(height: 6),
+        Text(l10n.smokeFreeDaysWord(day),
+            style: TextStyle(
+                color: PaceColors.neonLime,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2)),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(l10n.smokeFreeEncouragement,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: PaceColors.textMuted, fontSize: 14, height: 1.45)),
+        ),
+      ],
+    ).animate().fadeIn(duration: 400.ms);
+  }
+}
+
+class _BreathingPrimaryButton extends StatelessWidget {
+  const _BreathingPrimaryButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 72,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            PaceColors.neonCyan,
+            PaceColors.neonLime,
+          ]),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: PaceColors.neonCyan.withValues(alpha: 0.45),
+              blurRadius: 28,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.air, color: Colors.white, size: 28),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.cockpitBreathePrimaryTitle,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5)),
+                Text(l10n.cockpitBreathePrimarySub,
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 12)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    )
+        .animate(onPlay: (c) => c.repeat())
+        .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.2));
+  }
+}
+
+class _RelapsePitButton extends StatelessWidget {
+  const _RelapsePitButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 13),
+        decoration: BoxDecoration(
+          color: PaceColors.panel.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: PaceColors.chrome.withValues(alpha: 0.6)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.local_fire_department,
+                color: PaceColors.textMuted, size: 18),
+            const SizedBox(width: 8),
+            Text(l10n.cockpitRelapse,
+                style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
+          ],
+        ),
       ),
     );
   }

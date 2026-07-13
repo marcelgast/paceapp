@@ -9,6 +9,7 @@ import '../../theme/pace_colors.dart';
 import '../analysis/analysis_screen.dart';
 import '../cockpit/cockpit_screen.dart';
 import '../cockpit/pit_stop_action.dart';
+import '../goals/goals_screen.dart';
 import '../journal/journal_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../trophies/trophies_screen.dart';
@@ -32,6 +33,7 @@ class _HomeShellState extends ConsumerState<HomeShell>
     AnalysisScreen(),
     RecoveryScreen(),
     TrophiesScreen(),
+    GoalsScreen(),
     JournalScreen(),
   ];
 
@@ -150,6 +152,12 @@ class _HomeShellState extends ConsumerState<HomeShell>
                 selectedIcon: Icon(Icons.emoji_events,
                     color: PaceColors.neonMagenta),
                 label: l10n.tabTrophies,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.savings_outlined),
+                selectedIcon:
+                    Icon(Icons.savings, color: PaceColors.neonMagenta),
+                label: l10n.tabGoals,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.menu_book_outlined),

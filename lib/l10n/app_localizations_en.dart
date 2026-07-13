@@ -767,4 +767,159 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get raceEngineerUnlock => 'Unlock with Pace Pro';
+
+  @override
+  String get quitTitle => 'Quit date';
+
+  @override
+  String get quitPickDate => 'Pick your quit day';
+
+  @override
+  String get quitHonestTitle => 'Stretching is the path — not the finish';
+
+  @override
+  String get quitHonestBody =>
+      'Stretching your stints gets you far. But at some point comes the honest step: stopping entirely. A fixed date makes that moment real — and Pace walks you there.';
+
+  @override
+  String get quitTriggersTitle => 'Arm yourself against your triggers';
+
+  @override
+  String quitTriggersBody(Object triggers) {
+    return 'Your most common triggers: $triggers. Have a plan ready for each one — so cravings don\'t catch you off guard.';
+  }
+
+  @override
+  String get quitTriggersBodyGeneric =>
+      'Think about the moments you\'re most likely to reach for a cigarette — and have a plan ready for each.';
+
+  @override
+  String get quitTriggersTip =>
+      'E.g. a breathing exercise, a glass of water, a short walk, or calling someone.';
+
+  @override
+  String get quitCompanionTitle => 'Pace has your back';
+
+  @override
+  String get quitCompanionBody =>
+      'From that day, Pace counts your smoke-free days, brings the breathing exercise front and centre, and celebrates every step with you.';
+
+  @override
+  String get quitSetButton => 'Set the date';
+
+  @override
+  String get quitChangeDate => 'Change date';
+
+  @override
+  String get quitRemoveDate => 'Remove date';
+
+  @override
+  String get quitYourDate => 'Your quit day';
+
+  @override
+  String get proposalSetQuitDate => 'Ready for a quit date?';
+
+  @override
+  String get settingsQuitRowTitle => 'Set a quit date';
+
+  @override
+  String get settingsQuitRowSub =>
+      'Optional — Pace walks you through the stop.';
+
+  @override
+  String get quitCountdownLabel => 'YOUR QUIT DAY';
+
+  @override
+  String get quitCountdownTomorrow => 'Tomorrow\'s the day!';
+
+  @override
+  String quitCountdownDays(Object days) {
+    return '$days days to go';
+  }
+
+  @override
+  String get smokeFreeDayLabel => 'SMOKE-FREE FOR';
+
+  @override
+  String smokeFreeDaysWord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'days',
+      one: 'day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smokeFreeEncouragement =>
+      'Strong. Hold the line — your body is recovering with every hour.';
+
+  @override
+  String get cockpitBreathePrimaryTitle => 'Take a breath';
+
+  @override
+  String get cockpitBreathePrimarySub =>
+      'Cravings come in waves — breathe through it.';
+
+  @override
+  String get cockpitRelapse => 'Slipped up? No drama — log it.';
+
+  @override
+  String get tabGoals => 'Goals';
+
+  @override
+  String get goalsTitle => 'Goals';
+
+  @override
+  String goalsSavedPool(Object amount) {
+    return 'Saved so far: $amount';
+  }
+
+  @override
+  String get goalsReachedBadge => 'Reached';
+
+  @override
+  String get goalsAdd => 'Add goal';
+
+  @override
+  String get goalsNameLabel => 'Name';
+
+  @override
+  String get goalsNameHint => 'e.g. New headphones';
+
+  @override
+  String get goalsPriceLabel => 'Price';
+
+  @override
+  String get goalsSave => 'Save';
+
+  @override
+  String get goalsEmptyTitle => 'No goals yet';
+
+  @override
+  String get goalsEmptyBody =>
+      'Set a goal — e.g. headphones for €79. Your saved money fills it up bit by bit.';
+
+  @override
+  String get notifGoalTitle => 'Goal reached! 🎉';
+
+  @override
+  String notifGoalBody(Object name) {
+    return '\"$name\" is yours — your saved money made it happen.';
+  }
+
+  @override
+  String get notifQuitBeforeTitle => 'Tomorrow is your quit day 🏁';
+
+  @override
+  String get notifQuitBeforeBody =>
+      'Get your trigger plan ready today — so you start prepared.';
+
+  @override
+  String get notifQuitDayTitle => 'Today\'s the day 🏁';
+
+  @override
+  String get notifQuitDayBody =>
+      'Your quit day. You prepared for this — now go for it. Pace is with you.';
 }

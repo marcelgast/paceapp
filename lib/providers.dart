@@ -9,6 +9,7 @@ import 'domain/sleep_window.dart';
 import 'theme/skin.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
+import 'domain/quit_plan.dart';
 import 'domain/stint_calculator.dart';
 import 'domain/streak_calculator.dart';
 import 'domain/weekly_proposal.dart';
@@ -352,4 +353,27 @@ final statsProvider = Provider<PaceStats?>((ref) {
     currentPerCig: perCigAt(now),
     stints: stints,
   );
+});
+
+/// Current quit-plan phase (none / countdown / smoke-free) derived from the
+/// optional quit date. Recomputes each clock tick, but only changes at day
+/// boundaries.
+final quitPlanProvider = Provider<QuitPlan>((ref) {
+  final quitDate = ref.watch(settingsProvider).value?.quitDate;
+  final now = ref.watch(clockProvider).value ?? DateTime.now();
+  return QuitPlan.from(quitDate: quitDate, now: now);
+});
+
+final savingsGoalsProvider = StreamProvider<List<SavingsGoal>>((ref) {
+  return ref.watch(databaseProvider).watchSavingsGoals();
+});
+
+/// Goals whose target has been reached by the saved money but which haven't
+/// been marked yet. The GoalWatcher marks them and fires the celebration once.
+final unmarkedReachedGoalsProvider = Provider<List<SavingsGoal>>((ref) {
+  final goals = ref.watch(savingsGoalsProvider).value ?? const [];
+  final saved = ref.watch(statsProvider)?.savedMoneyCents ?? 0;
+  return goals
+      .where((g) => g.reachedAt == null && saved >= g.priceCents)
+      .toList();
 });

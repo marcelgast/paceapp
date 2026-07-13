@@ -44,6 +44,11 @@ class AppSettingsRows extends Table {
   BoolColumn get proPurchased =>
       boolean().withDefault(const Constant(false))();
 
+  /// Optional quit-smoking target date. Null = no date set (the app stays in
+  /// the open-ended "stretch the stint" mode). When set, Pace switches into the
+  /// countdown, then the smoke-free companion mode on/after this day.
+  DateTimeColumn get quitDate => dateTime().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -100,6 +105,20 @@ class PitStops extends Table {
   IntColumn get targetIntervalSeconds => integer().nullable()();
 
   TextColumn get note => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// A savings goal: a named reward with a price. It counts as reached once the
+/// cumulative saved money passes [priceCents]; [reachedAt] pins that moment so
+/// the celebration fires exactly once.
+class SavingsGoals extends Table {
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+  IntColumn get priceCents => integer()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get reachedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

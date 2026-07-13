@@ -69,4 +69,77 @@ abstract final class NotificationService {
   }
 
   static Future<void> cancelStint() => _plugin.cancel(id: _stintId);
+
+  static const int _quitDayId = 2;
+  static const int _quitDayBeforeId = 3;
+  static const int _goalId = 100;
+
+  static const NotificationDetails _details = NotificationDetails(
+    iOS: DarwinNotificationDetails(presentAlert: true, presentSound: true),
+    android: AndroidNotificationDetails(
+      'quit',
+      'Rauchstopp & Ziele',
+      channelDescription: 'Erinnert an deinen Rauchstopp-Tag und erreichte Ziele.',
+      importance: Importance.high,
+      priority: Priority.high,
+    ),
+  );
+
+  /// (Re)schedules the quit-day reminders: an evening nudge the day before and
+  /// a morning kick-off on the day itself. Past times are skipped.
+  static Future<void> scheduleQuitDay({
+    required DateTime quitDay,
+    required String dayBeforeTitle,
+    required String dayBeforeBody,
+    required String dayTitle,
+    required String dayBody,
+  }) async {
+    await cancelQuitDay();
+    final morning = DateTime(quitDay.year, quitDay.month, quitDay.day, 9);
+    final eveBefore = morning.subtract(const Duration(hours: 15)); // 18:00 prev day
+    try {
+      if (eveBefore.isAfter(DateTime.now())) {
+        await _plugin.zonedSchedule(
+          id: _quitDayBeforeId,
+          title: dayBeforeTitle,
+          body: dayBeforeBody,
+          scheduledDate: tz.TZDateTime.from(eveBefore, tz.local),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          notificationDetails: _details,
+        );
+      }
+      if (morning.isAfter(DateTime.now())) {
+        await _plugin.zonedSchedule(
+          id: _quitDayId,
+          title: dayTitle,
+          body: dayBody,
+          scheduledDate: tz.TZDateTime.from(morning, tz.local),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          notificationDetails: _details,
+        );
+      }
+    } catch (_) {}
+  }
+
+  static Future<void> cancelQuitDay() async {
+    try {
+      await _plugin.cancel(id: _quitDayId);
+      await _plugin.cancel(id: _quitDayBeforeId);
+    } catch (_) {}
+  }
+
+  /// Fires immediately when a savings goal is reached.
+  static Future<void> showGoalReached({
+    required String title,
+    required String body,
+  }) async {
+    try {
+      await _plugin.show(
+        id: _goalId,
+        title: title,
+        body: body,
+        notificationDetails: _details,
+      );
+    } catch (_) {}
+  }
 }

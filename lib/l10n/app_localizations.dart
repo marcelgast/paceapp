@@ -1453,6 +1453,264 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mit Pace Pro freischalten'**
   String get raceEngineerUnlock;
+
+  /// No description provided for @quitTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Rauchstopp-Datum'**
+  String get quitTitle;
+
+  /// No description provided for @quitPickDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Rauchstopp-Tag wählen'**
+  String get quitPickDate;
+
+  /// No description provided for @quitHonestTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlängern ist der Weg — nicht das Ziel'**
+  String get quitHonestTitle;
+
+  /// No description provided for @quitHonestBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Stints zu dehnen bringt dich weit. Aber irgendwann kommt der ehrlichste Schritt: ganz aufzuhören. Ein festes Datum macht diesen Moment greifbar — und Pace begleitet dich hin.'**
+  String get quitHonestBody;
+
+  /// No description provided for @quitTriggersTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Wappne dich gegen deine Auslöser'**
+  String get quitTriggersTitle;
+
+  /// No description provided for @quitTriggersBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Deine häufigsten Auslöser: {triggers}. Leg dir für jeden vorher eine Lösung bereit — dann überrumpelt dich das Verlangen nicht.'**
+  String quitTriggersBody(Object triggers);
+
+  /// No description provided for @quitTriggersBodyGeneric.
+  ///
+  /// In de, this message translates to:
+  /// **'Überleg dir, in welchen Momenten du am ehesten zur Zigarette greifst — und leg dir für jeden vorher eine Lösung bereit.'**
+  String get quitTriggersBodyGeneric;
+
+  /// No description provided for @quitTriggersTip.
+  ///
+  /// In de, this message translates to:
+  /// **'Z. B. Atemübung, ein Glas Wasser, ein kurzer Gang oder jemanden anrufen.'**
+  String get quitTriggersTip;
+
+  /// No description provided for @quitCompanionTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Pace begleitet dich'**
+  String get quitCompanionTitle;
+
+  /// No description provided for @quitCompanionBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Ab dem Tag zählt Pace deine rauchfreien Tage, rückt die Atemübung nach vorn und feiert jeden Schritt mit dir.'**
+  String get quitCompanionBody;
+
+  /// No description provided for @quitSetButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum festlegen'**
+  String get quitSetButton;
+
+  /// No description provided for @quitChangeDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum ändern'**
+  String get quitChangeDate;
+
+  /// No description provided for @quitRemoveDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum entfernen'**
+  String get quitRemoveDate;
+
+  /// No description provided for @quitYourDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Rauchstopp-Tag'**
+  String get quitYourDate;
+
+  /// No description provided for @proposalSetQuitDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Bereit für ein Rauchstopp-Datum?'**
+  String get proposalSetQuitDate;
+
+  /// No description provided for @settingsQuitRowTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Rauchstopp-Datum setzen'**
+  String get settingsQuitRowTitle;
+
+  /// No description provided for @settingsQuitRowSub.
+  ///
+  /// In de, this message translates to:
+  /// **'Optional — Pace begleitet dich durch den Stopp.'**
+  String get settingsQuitRowSub;
+
+  /// No description provided for @quitCountdownLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'DEIN RAUCHSTOPP'**
+  String get quitCountdownLabel;
+
+  /// No description provided for @quitCountdownTomorrow.
+  ///
+  /// In de, this message translates to:
+  /// **'Morgen ist es soweit!'**
+  String get quitCountdownTomorrow;
+
+  /// No description provided for @quitCountdownDays.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch {days} Tage'**
+  String quitCountdownDays(Object days);
+
+  /// No description provided for @smokeFreeDayLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'RAUCHFREI SEIT'**
+  String get smokeFreeDayLabel;
+
+  /// No description provided for @smokeFreeDaysWord.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{Tag} other{Tagen}}'**
+  String smokeFreeDaysWord(int count);
+
+  /// No description provided for @smokeFreeEncouragement.
+  ///
+  /// In de, this message translates to:
+  /// **'Stark. Halt den Kurs — dein Körper erholt sich gerade mit jeder Stunde.'**
+  String get smokeFreeEncouragement;
+
+  /// No description provided for @cockpitBreathePrimaryTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Durchatmen'**
+  String get cockpitBreathePrimaryTitle;
+
+  /// No description provided for @cockpitBreathePrimarySub.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlangen kommt in Wellen — atme es weg.'**
+  String get cockpitBreathePrimarySub;
+
+  /// No description provided for @cockpitRelapse.
+  ///
+  /// In de, this message translates to:
+  /// **'Doch geraucht? Kein Drama — eintragen.'**
+  String get cockpitRelapse;
+
+  /// No description provided for @tabGoals.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziele'**
+  String get tabGoals;
+
+  /// No description provided for @goalsTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziele'**
+  String get goalsTitle;
+
+  /// No description provided for @goalsSavedPool.
+  ///
+  /// In de, this message translates to:
+  /// **'Gespart bisher: {amount}'**
+  String goalsSavedPool(Object amount);
+
+  /// No description provided for @goalsReachedBadge.
+  ///
+  /// In de, this message translates to:
+  /// **'Erreicht'**
+  String get goalsReachedBadge;
+
+  /// No description provided for @goalsAdd.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel hinzufügen'**
+  String get goalsAdd;
+
+  /// No description provided for @goalsNameLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get goalsNameLabel;
+
+  /// No description provided for @goalsNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Neue Kopfhörer'**
+  String get goalsNameHint;
+
+  /// No description provided for @goalsPriceLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Preis'**
+  String get goalsPriceLabel;
+
+  /// No description provided for @goalsSave.
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern'**
+  String get goalsSave;
+
+  /// No description provided for @goalsEmptyTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Ziele'**
+  String get goalsEmptyTitle;
+
+  /// No description provided for @goalsEmptyBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Setz dir ein Ziel — z. B. Kopfhörer für 79 €. Dein gespartes Geld füllt es Stück für Stück.'**
+  String get goalsEmptyBody;
+
+  /// No description provided for @notifGoalTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel erreicht! 🎉'**
+  String get notifGoalTitle;
+
+  /// No description provided for @notifGoalBody.
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ ist drin — dein gespartes Geld hat\'s möglich gemacht.'**
+  String notifGoalBody(Object name);
+
+  /// No description provided for @notifQuitBeforeTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Morgen ist dein Rauchstopp-Tag 🏁'**
+  String get notifQuitBeforeTitle;
+
+  /// No description provided for @notifQuitBeforeBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Leg dir heute deine Trigger-Lösungen bereit — dann startest du vorbereitet.'**
+  String get notifQuitBeforeBody;
+
+  /// No description provided for @notifQuitDayTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Heute geht\'s los 🏁'**
+  String get notifQuitDayTitle;
+
+  /// No description provided for @notifQuitDayBody.
+  ///
+  /// In de, this message translates to:
+  /// **'Dein Rauchstopp-Tag. Du hast das vorbereitet — jetzt zieh\'s durch. Pace ist dabei.'**
+  String get notifQuitDayBody;
 }
 
 class _AppLocalizationsDelegate

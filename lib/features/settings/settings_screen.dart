@@ -9,6 +9,7 @@ import '../../services/entitlements.dart';
 import '../../services/pace_pro_store.dart';
 import '../../services/widget_service.dart';
 import '../pro/paywall_sheet.dart';
+import '../quit/quit_date_screen.dart';
 import '../race_engineer/race_engineer_screen.dart';
 import '../../theme/pace_colors.dart';
 import '../../theme/pace_theme.dart';
@@ -330,6 +331,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     const SizedBox(height: 24),
                     _SaveButton(saving: _saving, onTap: _saving ? null : _save),
+                    const SizedBox(height: 26),
+                    Text(l10n.quitTitle.toUpperCase(),
+                        style: TextStyle(
+                            color: PaceColors.textMuted,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 10),
+                    _QuitDateRow(
+                      date: settings?.quitDate,
+                      onTap: () => QuitDateScreen.open(context),
+                    ),
                     if (periods.length > 1) ...[
                       const SizedBox(height: 32),
                       Text(l10n.settingsHistory,
@@ -836,6 +849,54 @@ class _ProActiveCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _QuitDateRow extends StatelessWidget {
+  const _QuitDateRow({required this.date, required this.onTap});
+
+  final DateTime? date;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isSet = date != null;
+    final accent = isSet ? PaceColors.neonLime : PaceColors.neonCyan;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: PaceColors.panel,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: accent.withValues(alpha: isSet ? 0.5 : 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.event_available, color: accent, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(isSet ? l10n.quitYourDate : l10n.settingsQuitRowTitle,
+                      style: const TextStyle(
+                          color: PaceColors.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 2),
+                  Text(isSet ? formatDate(date!) : l10n.settingsQuitRowSub,
+                      style: TextStyle(
+                          color: PaceColors.textMuted, fontSize: 12)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: PaceColors.textMuted),
+          ],
+        ),
       ),
     );
   }

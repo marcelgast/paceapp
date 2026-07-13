@@ -10,6 +10,7 @@ import '../../providers.dart';
 import '../../theme/pace_colors.dart';
 import '../../util/format.dart';
 import '../../widgets/graffiti_headline.dart';
+import '../quit/quit_date_screen.dart';
 
 /// Shows the weekly "stretch your target" proposal as a celebrated overlay
 /// whenever one is due. Accepting sets the new target; declining keeps it.
@@ -201,6 +202,24 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
           onPressed: _decline,
           child: Text(l10n.proposalKeepIt,
               style: TextStyle(color: PaceColors.textMuted, fontSize: 15)),
+        ),
+        const SizedBox(height: 8),
+        Container(height: 0.5, color: PaceColors.chrome),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          onPressed: () async {
+            final nav = Navigator.of(context);
+            await ref.read(databaseProvider).declineProposal(DateTime.now());
+            await nav.push(MaterialPageRoute<void>(
+                builder: (_) => const QuitDateScreen()));
+          },
+          icon: Icon(Icons.event_available,
+              color: PaceColors.neonCyan, size: 18),
+          label: Text(l10n.proposalSetQuitDate,
+              style: TextStyle(
+                  color: PaceColors.neonCyan,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700)),
         ),
       ],
     ).animate().fadeIn(duration: 260.ms).scaleXY(

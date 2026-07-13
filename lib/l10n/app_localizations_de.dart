@@ -769,4 +769,159 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get raceEngineerUnlock => 'Mit Pace Pro freischalten';
+
+  @override
+  String get quitTitle => 'Rauchstopp-Datum';
+
+  @override
+  String get quitPickDate => 'Rauchstopp-Tag wählen';
+
+  @override
+  String get quitHonestTitle => 'Verlängern ist der Weg — nicht das Ziel';
+
+  @override
+  String get quitHonestBody =>
+      'Die Stints zu dehnen bringt dich weit. Aber irgendwann kommt der ehrlichste Schritt: ganz aufzuhören. Ein festes Datum macht diesen Moment greifbar — und Pace begleitet dich hin.';
+
+  @override
+  String get quitTriggersTitle => 'Wappne dich gegen deine Auslöser';
+
+  @override
+  String quitTriggersBody(Object triggers) {
+    return 'Deine häufigsten Auslöser: $triggers. Leg dir für jeden vorher eine Lösung bereit — dann überrumpelt dich das Verlangen nicht.';
+  }
+
+  @override
+  String get quitTriggersBodyGeneric =>
+      'Überleg dir, in welchen Momenten du am ehesten zur Zigarette greifst — und leg dir für jeden vorher eine Lösung bereit.';
+
+  @override
+  String get quitTriggersTip =>
+      'Z. B. Atemübung, ein Glas Wasser, ein kurzer Gang oder jemanden anrufen.';
+
+  @override
+  String get quitCompanionTitle => 'Pace begleitet dich';
+
+  @override
+  String get quitCompanionBody =>
+      'Ab dem Tag zählt Pace deine rauchfreien Tage, rückt die Atemübung nach vorn und feiert jeden Schritt mit dir.';
+
+  @override
+  String get quitSetButton => 'Datum festlegen';
+
+  @override
+  String get quitChangeDate => 'Datum ändern';
+
+  @override
+  String get quitRemoveDate => 'Datum entfernen';
+
+  @override
+  String get quitYourDate => 'Dein Rauchstopp-Tag';
+
+  @override
+  String get proposalSetQuitDate => 'Bereit für ein Rauchstopp-Datum?';
+
+  @override
+  String get settingsQuitRowTitle => 'Rauchstopp-Datum setzen';
+
+  @override
+  String get settingsQuitRowSub =>
+      'Optional — Pace begleitet dich durch den Stopp.';
+
+  @override
+  String get quitCountdownLabel => 'DEIN RAUCHSTOPP';
+
+  @override
+  String get quitCountdownTomorrow => 'Morgen ist es soweit!';
+
+  @override
+  String quitCountdownDays(Object days) {
+    return 'Noch $days Tage';
+  }
+
+  @override
+  String get smokeFreeDayLabel => 'RAUCHFREI SEIT';
+
+  @override
+  String smokeFreeDaysWord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tagen',
+      one: 'Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smokeFreeEncouragement =>
+      'Stark. Halt den Kurs — dein Körper erholt sich gerade mit jeder Stunde.';
+
+  @override
+  String get cockpitBreathePrimaryTitle => 'Durchatmen';
+
+  @override
+  String get cockpitBreathePrimarySub =>
+      'Verlangen kommt in Wellen — atme es weg.';
+
+  @override
+  String get cockpitRelapse => 'Doch geraucht? Kein Drama — eintragen.';
+
+  @override
+  String get tabGoals => 'Ziele';
+
+  @override
+  String get goalsTitle => 'Ziele';
+
+  @override
+  String goalsSavedPool(Object amount) {
+    return 'Gespart bisher: $amount';
+  }
+
+  @override
+  String get goalsReachedBadge => 'Erreicht';
+
+  @override
+  String get goalsAdd => 'Ziel hinzufügen';
+
+  @override
+  String get goalsNameLabel => 'Name';
+
+  @override
+  String get goalsNameHint => 'z. B. Neue Kopfhörer';
+
+  @override
+  String get goalsPriceLabel => 'Preis';
+
+  @override
+  String get goalsSave => 'Speichern';
+
+  @override
+  String get goalsEmptyTitle => 'Noch keine Ziele';
+
+  @override
+  String get goalsEmptyBody =>
+      'Setz dir ein Ziel — z. B. Kopfhörer für 79 €. Dein gespartes Geld füllt es Stück für Stück.';
+
+  @override
+  String get notifGoalTitle => 'Ziel erreicht! 🎉';
+
+  @override
+  String notifGoalBody(Object name) {
+    return '„$name“ ist drin — dein gespartes Geld hat\'s möglich gemacht.';
+  }
+
+  @override
+  String get notifQuitBeforeTitle => 'Morgen ist dein Rauchstopp-Tag 🏁';
+
+  @override
+  String get notifQuitBeforeBody =>
+      'Leg dir heute deine Trigger-Lösungen bereit — dann startest du vorbereitet.';
+
+  @override
+  String get notifQuitDayTitle => 'Heute geht\'s los 🏁';
+
+  @override
+  String get notifQuitDayBody =>
+      'Dein Rauchstopp-Tag. Du hast das vorbereitet — jetzt zieh\'s durch. Pace ist dabei.';
 }

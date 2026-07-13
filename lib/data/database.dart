@@ -20,14 +20,20 @@ const List<String> kDefaultSituations = [
   'Sonstiges',
 ];
 
-@DriftDatabase(
-    tables: [AppSettingsRows, Situations, PitStops, Unlocks, CostPeriods])
+@DriftDatabase(tables: [
+  AppSettingsRows,
+  Situations,
+  PitStops,
+  Unlocks,
+  CostPeriods,
+  SavingsGoals,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -58,6 +64,10 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 8) {
             await m.addColumn(appSettingsRows, appSettingsRows.proPurchased);
+          }
+          if (from < 9) {
+            await m.addColumn(appSettingsRows, appSettingsRows.quitDate);
+            await m.createTable(savingsGoals);
           }
           if (from < 4) {
             await m.createTable(costPeriods);
@@ -120,6 +130,39 @@ class AppDatabase extends _$AppDatabase {
   Future<void> setProPurchased(bool purchased) {
     return (update(appSettingsRows)..where((t) => t.id.equals(1)))
         .write(AppSettingsRowsCompanion(proPurchased: Value(purchased)));
+  }
+
+  /// Sets or clears the quit-smoking target date (`null` clears it).
+  Future<void> setQuitDate(DateTime? date) {
+    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
+        .write(AppSettingsRowsCompanion(quitDate: Value(date)));
+  }
+
+  // ---- Savings goals ------------------------------------------------------
+
+  Stream<List<SavingsGoal>> watchSavingsGoals() => (select(savingsGoals)
+        ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
+      .watch();
+
+  Future<void> addSavingsGoal({required String name, required int priceCents}) {
+    return into(savingsGoals).insert(
+      SavingsGoalsCompanion.insert(
+        id: newId(),
+        name: name.trim(),
+        priceCents: priceCents,
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  Future<void> deleteSavingsGoal(String id) {
+    return (delete(savingsGoals)..where((t) => t.id.equals(id))).go();
+  }
+
+  /// Pins the moment a goal was reached so its celebration fires exactly once.
+  Future<void> markSavingsGoalReached(String id, DateTime at) {
+    return (update(savingsGoals)..where((t) => t.id.equals(id)))
+        .write(SavingsGoalsCompanion(reachedAt: Value(at)));
   }
 
   Future<void> updateSleepWindow({
@@ -312,6 +355,7 @@ class AppDatabase extends _$AppDatabase {
       await delete(unlocks).go();
       await delete(costPeriods).go();
       await delete(situations).go();
+      await delete(savingsGoals).go();
       await delete(appSettingsRows).go();
       await seedDefaultSituations();
     });

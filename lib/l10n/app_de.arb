@@ -260,5 +260,75 @@
   "paywallOneTime": "Einmalkauf · kein Abo · keine versteckten Kosten",
   "paywallError": "Das hat nicht geklappt. Bitte versuch es nochmal.",
   "paywallUnavailable": "Der App Store ist gerade nicht erreichbar.",
-  "raceEngineerUnlock": "Mit Pace Pro freischalten"
+  "raceEngineerUnlock": "Mit Pace Pro freischalten",
+  "quitTitle": "Rauchstopp-Datum",
+  "quitPickDate": "Rauchstopp-Tag wählen",
+  "quitHonestTitle": "Verlängern ist der Weg — nicht das Ziel",
+  "quitHonestBody": "Die Stints zu dehnen bringt dich weit. Aber irgendwann kommt der ehrlichste Schritt: ganz aufzuhören. Ein festes Datum macht diesen Moment greifbar — und Pace begleitet dich hin.",
+  "quitTriggersTitle": "Wappne dich gegen deine Auslöser",
+  "quitTriggersBody": "Deine häufigsten Auslöser: {triggers}. Leg dir für jeden vorher eine Lösung bereit — dann überrumpelt dich das Verlangen nicht.",
+  "@quitTriggersBody": {
+    "placeholders": {
+      "triggers": {}
+    }
+  },
+  "quitTriggersBodyGeneric": "Überleg dir, in welchen Momenten du am ehesten zur Zigarette greifst — und leg dir für jeden vorher eine Lösung bereit.",
+  "quitTriggersTip": "Z. B. Atemübung, ein Glas Wasser, ein kurzer Gang oder jemanden anrufen.",
+  "quitCompanionTitle": "Pace begleitet dich",
+  "quitCompanionBody": "Ab dem Tag zählt Pace deine rauchfreien Tage, rückt die Atemübung nach vorn und feiert jeden Schritt mit dir.",
+  "quitSetButton": "Datum festlegen",
+  "quitChangeDate": "Datum ändern",
+  "quitRemoveDate": "Datum entfernen",
+  "quitYourDate": "Dein Rauchstopp-Tag",
+  "proposalSetQuitDate": "Bereit für ein Rauchstopp-Datum?",
+  "settingsQuitRowTitle": "Rauchstopp-Datum setzen",
+  "settingsQuitRowSub": "Optional — Pace begleitet dich durch den Stopp.",
+  "quitCountdownLabel": "DEIN RAUCHSTOPP",
+  "quitCountdownTomorrow": "Morgen ist es soweit!",
+  "quitCountdownDays": "Noch {days} Tage",
+  "@quitCountdownDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "smokeFreeDayLabel": "RAUCHFREI SEIT",
+  "smokeFreeDaysWord": "{count, plural, =1{Tag} other{Tagen}}",
+  "@smokeFreeDaysWord": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smokeFreeEncouragement": "Stark. Halt den Kurs — dein Körper erholt sich gerade mit jeder Stunde.",
+  "cockpitBreathePrimaryTitle": "Durchatmen",
+  "cockpitBreathePrimarySub": "Verlangen kommt in Wellen — atme es weg.",
+  "cockpitRelapse": "Doch geraucht? Kein Drama — eintragen.",
+  "tabGoals": "Ziele",
+  "goalsTitle": "Ziele",
+  "goalsSavedPool": "Gespart bisher: {amount}",
+  "@goalsSavedPool": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "goalsReachedBadge": "Erreicht",
+  "goalsAdd": "Ziel hinzufügen",
+  "goalsNameLabel": "Name",
+  "goalsNameHint": "z. B. Neue Kopfhörer",
+  "goalsPriceLabel": "Preis",
+  "goalsSave": "Speichern",
+  "goalsEmptyTitle": "Noch keine Ziele",
+  "goalsEmptyBody": "Setz dir ein Ziel — z. B. Kopfhörer für 79 €. Dein gespartes Geld füllt es Stück für Stück.",
+  "notifGoalTitle": "Ziel erreicht! 🎉",
+  "notifGoalBody": "„{name}“ ist drin — dein gespartes Geld hat's möglich gemacht.",
+  "@notifGoalBody": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "notifQuitBeforeTitle": "Morgen ist dein Rauchstopp-Tag 🏁",
+  "notifQuitBeforeBody": "Leg dir heute deine Trigger-Lösungen bereit — dann startest du vorbereitet.",
+  "notifQuitDayTitle": "Heute geht's los 🏁",
+  "notifQuitDayBody": "Dein Rauchstopp-Tag. Du hast das vorbereitet — jetzt zieh's durch. Pace ist dabei."
 }

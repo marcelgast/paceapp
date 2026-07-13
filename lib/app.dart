@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/app_localizations.dart';
 import 'features/gamification/celebration_host.dart';
+import 'features/goals/goal_watcher.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/proposal/proposal_host.dart';
 import 'features/shell/home_shell.dart';
@@ -48,7 +49,9 @@ class _Gate extends ConsumerWidget {
       loading: () => const _Splash(),
       error: (_, _) => const _Splash(),
       data: (row) => (row?.onboardingDone ?? false)
-          ? const ProposalHost(child: CelebrationHost(child: HomeShell()))
+          ? const ProposalHost(
+              child: CelebrationHost(
+                  child: GoalWatcher(child: HomeShell())))
           : const OnboardingScreen(),
     );
   }

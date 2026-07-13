@@ -47,6 +47,9 @@ String formatDayHeader(DateTime day, DateTime now) {
   return '$wd, $dd.$mm.';
 }
 
+/// Locale-neutral numeric date — "07.02.2026".
+String formatDate(DateTime d) => DateFormat('dd.MM.yyyy').format(d);
+
 /// Human, compact — "2 h 14 min", "8 min", "während des Onboardings".
 String formatHumanDuration(Duration d) {
   if (d.inMinutes < 1) return '${d.inSeconds} s';

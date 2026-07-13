@@ -236,5 +236,75 @@
   "paywallOneTime": "One-time purchase · no subscription · no hidden fees",
   "paywallError": "That didn't work. Please try again.",
   "paywallUnavailable": "The App Store isn't reachable right now.",
-  "raceEngineerUnlock": "Unlock with Pace Pro"
+  "raceEngineerUnlock": "Unlock with Pace Pro",
+  "quitTitle": "Quit date",
+  "quitPickDate": "Pick your quit day",
+  "quitHonestTitle": "Stretching is the path — not the finish",
+  "quitHonestBody": "Stretching your stints gets you far. But at some point comes the honest step: stopping entirely. A fixed date makes that moment real — and Pace walks you there.",
+  "quitTriggersTitle": "Arm yourself against your triggers",
+  "quitTriggersBody": "Your most common triggers: {triggers}. Have a plan ready for each one — so cravings don't catch you off guard.",
+  "@quitTriggersBody": {
+    "placeholders": {
+      "triggers": {}
+    }
+  },
+  "quitTriggersBodyGeneric": "Think about the moments you're most likely to reach for a cigarette — and have a plan ready for each.",
+  "quitTriggersTip": "E.g. a breathing exercise, a glass of water, a short walk, or calling someone.",
+  "quitCompanionTitle": "Pace has your back",
+  "quitCompanionBody": "From that day, Pace counts your smoke-free days, brings the breathing exercise front and centre, and celebrates every step with you.",
+  "quitSetButton": "Set the date",
+  "quitChangeDate": "Change date",
+  "quitRemoveDate": "Remove date",
+  "quitYourDate": "Your quit day",
+  "proposalSetQuitDate": "Ready for a quit date?",
+  "settingsQuitRowTitle": "Set a quit date",
+  "settingsQuitRowSub": "Optional — Pace walks you through the stop.",
+  "quitCountdownLabel": "YOUR QUIT DAY",
+  "quitCountdownTomorrow": "Tomorrow's the day!",
+  "quitCountdownDays": "{days} days to go",
+  "@quitCountdownDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "smokeFreeDayLabel": "SMOKE-FREE FOR",
+  "smokeFreeDaysWord": "{count, plural, =1{day} other{days}}",
+  "@smokeFreeDaysWord": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smokeFreeEncouragement": "Strong. Hold the line — your body is recovering with every hour.",
+  "cockpitBreathePrimaryTitle": "Take a breath",
+  "cockpitBreathePrimarySub": "Cravings come in waves — breathe through it.",
+  "cockpitRelapse": "Slipped up? No drama — log it.",
+  "tabGoals": "Goals",
+  "goalsTitle": "Goals",
+  "goalsSavedPool": "Saved so far: {amount}",
+  "@goalsSavedPool": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "goalsReachedBadge": "Reached",
+  "goalsAdd": "Add goal",
+  "goalsNameLabel": "Name",
+  "goalsNameHint": "e.g. New headphones",
+  "goalsPriceLabel": "Price",
+  "goalsSave": "Save",
+  "goalsEmptyTitle": "No goals yet",
+  "goalsEmptyBody": "Set a goal — e.g. headphones for €79. Your saved money fills it up bit by bit.",
+  "notifGoalTitle": "Goal reached! 🎉",
+  "notifGoalBody": "\"{name}\" is yours — your saved money made it happen.",
+  "@notifGoalBody": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "notifQuitBeforeTitle": "Tomorrow is your quit day 🏁",
+  "notifQuitBeforeBody": "Get your trigger plan ready today — so you start prepared.",
+  "notifQuitDayTitle": "Today's the day 🏁",
+  "notifQuitDayBody": "Your quit day. You prepared for this — now go for it. Pace is with you."
 }
