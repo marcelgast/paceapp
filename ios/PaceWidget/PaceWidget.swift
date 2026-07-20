@@ -21,6 +21,8 @@ private let orange = Color(red: 1.0, green: 0.48, blue: 0.12)
 
 struct PaceEntry: TimelineEntry {
     let date: Date
+    let mode: String
+    let freeDay: Int
     let isBaseline: Bool
     let timerRef: Date
     let best: String
@@ -32,7 +34,7 @@ struct PaceEntry: TimelineEntry {
 
 struct PaceProvider: TimelineProvider {
     func placeholder(in context: Context) -> PaceEntry {
-        PaceEntry(date: Date(), isBaseline: false,
+        PaceEntry(date: Date(), mode: "stint", freeDay: 0, isBaseline: false,
                   timerRef: Date().addingTimeInterval(1800),
                   best: "4 h 12 min", savedMoney: "12,40 €", car: "Rostlaube",
                   streak: 3, carImagePath: nil)
@@ -45,8 +47,9 @@ struct PaceProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<PaceEntry>) -> Void) {
         let entry = read()
         var entries = [entry]
-        if !entry.isBaseline && entry.timerRef > Date() {
-            entries.append(PaceEntry(date: entry.timerRef, isBaseline: false,
+        if entry.mode != "free" && !entry.isBaseline && entry.timerRef > Date() {
+            entries.append(PaceEntry(date: entry.timerRef, mode: entry.mode,
+                                     freeDay: entry.freeDay, isBaseline: false,
                                      timerRef: entry.timerRef, best: entry.best,
                                      savedMoney: entry.savedMoney, car: entry.car,
                                      streak: entry.streak,
@@ -61,7 +64,10 @@ struct PaceProvider: TimelineProvider {
         let isBaseline = (d?.string(forKey: "is_baseline") ?? "1") == "1"
         let ms = d?.double(forKey: "timer_ref_ms") ?? 0
         let ref = ms > 0 ? Date(timeIntervalSince1970: ms / 1000.0) : Date()
-        return PaceEntry(date: Date(), isBaseline: isBaseline, timerRef: ref,
+        let mode = d?.string(forKey: "mode") ?? "stint"
+        let freeDay = d?.integer(forKey: "free_day") ?? 0
+        return PaceEntry(date: Date(), mode: mode, freeDay: freeDay,
+                         isBaseline: isBaseline, timerRef: ref,
                          best: d?.string(forKey: "best_label") ?? "—",
                          savedMoney: d?.string(forKey: "saved_money") ?? "—",
                          car: d?.string(forKey: "car_name") ?? "Rostlaube",
@@ -74,10 +80,14 @@ struct PaceWidgetEntryView: View {
     @Environment(\.widgetFamily) private var family
     var entry: PaceEntry
 
+    private var smokeFree: Bool { entry.mode == "free" }
     private var overtime: Bool { !entry.isBaseline && entry.timerRef <= entry.date }
-    private var accent: Color { entry.isBaseline ? cyan : (overtime ? lime : cyan) }
+    private var accent: Color {
+        smokeFree ? lime : (entry.isBaseline ? cyan : (overtime ? lime : cyan))
+    }
     private var label: String {
-        entry.isBaseline ? "AKTUELL" : (overtime ? "OVERTIME" : "NÄCHSTER STINT")
+        if smokeFree { return "TAG \(entry.freeDay) · RAUCHFREI" }
+        return entry.isBaseline ? "AKTUELL" : (overtime ? "OVERTIME" : "NÄCHSTER STINT")
     }
 
     var body: some View {
@@ -232,13 +242,20 @@ private func liveBaseline(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes
 }
 
 @available(iOS 16.1, *)
+private func liveSmokeFree(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Bool {
+    liveStr(ctx, "mode") == "free"
+}
+
+@available(iOS 16.1, *)
 private func liveAccent(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> Color {
+    if liveSmokeFree(ctx) { return lime }
     let overtime = !liveBaseline(ctx) && liveTimerRef(ctx) <= Date()
     return overtime ? lime : cyan
 }
 
 @available(iOS 16.1, *)
 private func liveLabel(_ ctx: ActivityViewContext<LiveActivitiesAppAttributes>) -> String {
+    if liveSmokeFree(ctx) { return "TAG \(liveInt(ctx, "freeDay")) · RAUCHFREI" }
     if liveBaseline(ctx) { return "MESSRUNDE" }
     return liveTimerRef(ctx) <= Date() ? "OVERTIME" : "NÄCHSTER STINT"
 }

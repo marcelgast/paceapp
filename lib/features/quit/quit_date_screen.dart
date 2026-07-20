@@ -25,18 +25,28 @@ class QuitDateScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final picked = await showDatePicker(
+    final pickedDate = await showDatePicker(
       context: context,
       initialDate: current ?? today.add(const Duration(days: 7)),
       firstDate: today,
       lastDate: today.add(const Duration(days: 365)),
       helpText: l10n.quitPickDate,
     );
-    if (picked == null) return;
-    await ref.read(databaseProvider).setQuitDate(picked);
+    if (pickedDate == null || !context.mounted) return;
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: current != null
+          ? TimeOfDay.fromDateTime(current)
+          : const TimeOfDay(hour: 8, minute: 0),
+      helpText: l10n.quitPickTime,
+    );
+    if (pickedTime == null) return;
+    final quit = DateTime(pickedDate.year, pickedDate.month, pickedDate.day,
+        pickedTime.hour, pickedTime.minute);
+    await ref.read(databaseProvider).setQuitDate(quit);
     await NotificationService.requestPermission();
     await NotificationService.scheduleQuitDay(
-      quitDay: picked,
+      quitMoment: quit,
       dayBeforeTitle: l10n.notifQuitBeforeTitle,
       dayBeforeBody: l10n.notifQuitBeforeBody,
       dayTitle: l10n.notifQuitDayTitle,
@@ -234,7 +244,7 @@ class _CurrentDateCard extends StatelessWidget {
                         letterSpacing: 1,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
-                Text(formatDate(date),
+                Text('${formatDate(date)} · ${formatClock(date)}',
                     style: const TextStyle(
                         color: PaceColors.textPrimary,
                         fontSize: 19,

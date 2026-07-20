@@ -775,6 +775,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quitPickDate => 'Pick your quit day';
 
   @override
+  String get quitPickTime => 'Pick a time';
+
+  @override
   String get quitHonestTitle => 'Stretching is the path — not the finish';
 
   @override
@@ -828,6 +831,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quitCountdownLabel => 'YOUR QUIT DAY';
+
+  @override
+  String get quitCountdownToday => 'It\'s happening today!';
 
   @override
   String get quitCountdownTomorrow => 'Tomorrow\'s the day!';

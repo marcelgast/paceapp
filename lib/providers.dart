@@ -99,6 +99,11 @@ final liveStintProvider = Provider<StintState?>((ref) {
   final target = ref.watch(targetIntervalProvider);
   if (settings == null || now == null) return null;
 
+  // After the quit moment the stint mechanic ends — the smoke-free run takes
+  // over the cockpit and widgets.
+  final quitDate = settings.quitDate;
+  if (quitDate != null && !now.isBefore(quitDate)) return null;
+
   final lastPit = (pitStops != null && pitStops.isNotEmpty)
       ? pitStops.first.occurredAt
       : settings.startedAt;
@@ -155,6 +160,9 @@ final proposalProvider = Provider<ProposalState?>((ref) {
   final last = settings.lastProposalAt;
   final dueAgain =
       last == null || now.difference(last) >= ProposalCalculator.window;
+  // No more stint-stretch proposals once the quit moment has arrived.
+  final quitDate = settings.quitDate;
+  final smokeFree = quitDate != null && !now.isBefore(quitDate);
 
   final measured = ProposalCalculator.measuredMedian(
     pitTimes: (pitStops ?? const []).map((p) => p.occurredAt).toList(),
@@ -171,7 +179,7 @@ final proposalProvider = Provider<ProposalState?>((ref) {
   );
 
   return ProposalState(
-    isDue: measuringDone && dueAgain,
+    isDue: measuringDone && dueAgain && !smokeFree,
     base: base,
     measured: measured,
     currentTarget: currentTarget,
@@ -361,7 +369,11 @@ final statsProvider = Provider<PaceStats?>((ref) {
 final quitPlanProvider = Provider<QuitPlan>((ref) {
   final quitDate = ref.watch(settingsProvider).value?.quitDate;
   final now = ref.watch(clockProvider).value ?? DateTime.now();
-  return QuitPlan.from(quitDate: quitDate, now: now);
+  final pitStops = ref.watch(pitStopsProvider).value;
+  final lastPit = (pitStops != null && pitStops.isNotEmpty)
+      ? pitStops.first.occurredAt
+      : null;
+  return QuitPlan.from(quitDate: quitDate, now: now, lastPitStop: lastPit);
 });
 
 final savingsGoalsProvider = StreamProvider<List<SavingsGoal>>((ref) {

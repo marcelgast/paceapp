@@ -777,6 +777,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get quitPickDate => 'Rauchstopp-Tag wählen';
 
   @override
+  String get quitPickTime => 'Uhrzeit wählen';
+
+  @override
   String get quitHonestTitle => 'Verlängern ist der Weg — nicht das Ziel';
 
   @override
@@ -830,6 +833,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get quitCountdownLabel => 'DEIN RAUCHSTOPP';
+
+  @override
+  String get quitCountdownToday => 'Heute ist es soweit!';
 
   @override
   String get quitCountdownTomorrow => 'Morgen ist es soweit!';

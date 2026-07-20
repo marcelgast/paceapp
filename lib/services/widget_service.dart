@@ -23,16 +23,20 @@ abstract final class WidgetService {
   }
 
   static Future<void> write({
+    required String mode,
     required bool isBaseline,
     required DateTime timerRef,
+    required int freeDay,
     required String bestLabel,
     required String savedMoney,
     required String carName,
     required int streak,
   }) async {
+    await HomeWidget.saveWidgetData<String>('mode', mode);
     await HomeWidget.saveWidgetData<String>('is_baseline', isBaseline ? '1' : '0');
     await HomeWidget.saveWidgetData<int>(
         'timer_ref_ms', timerRef.millisecondsSinceEpoch);
+    await HomeWidget.saveWidgetData<int>('free_day', freeDay);
     await HomeWidget.saveWidgetData<String>('best_label', bestLabel);
     await HomeWidget.saveWidgetData<String>('saved_money', savedMoney);
     await HomeWidget.saveWidgetData<String>('car_name', carName);
@@ -74,9 +78,16 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
       .where((t) => !t.isBefore(today) && t.isBefore(today.add(const Duration(days: 1))))
       .length;
 
-  final isBaseline = (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
-  final timerRef =
-      isBaseline ? lastPit : lastPit.add(target ?? Duration.zero);
+  final quitPlan = ref.read(quitPlanProvider);
+  final smokeFree = quitPlan.isSmokeFree;
+  final isBaseline =
+      !smokeFree && (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
+  final mode = smokeFree ? 'free' : 'stint';
+  final freeDay = quitPlan.dayNumber;
+  // Smoke-free: count up from the run start; otherwise the stint reference.
+  final timerRef = smokeFree
+      ? (quitPlan.smokeFreeStart ?? now)
+      : (isBaseline ? lastPit : lastPit.add(target ?? Duration.zero));
 
   try {
     await WidgetService.init();
@@ -86,8 +97,10 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
       AssetImage('assets/cars/car_${kCarTiers.indexOf(car).clamp(0, 6)}.png'),
     );
     await WidgetService.write(
+      mode: mode,
       isBaseline: isBaseline,
       timerRef: timerRef,
+      freeDay: freeDay,
       bestLabel: formatHumanDuration(best),
       savedMoney: stats == null
           ? '—'
@@ -109,6 +122,8 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
       ref.read(entitlementsProvider).can(PaceProFeature.liveActivity);
   if (liveOn) {
     await LiveActivityService.push({
+      'mode': mode,
+      'freeDay': freeDay.toString(),
       'timerRefMs': timerRef.millisecondsSinceEpoch.toString(),
       'isBaseline': isBaseline ? 'true' : 'false',
       'best': formatHumanDuration(best),

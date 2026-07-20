@@ -1466,6 +1466,12 @@ abstract class AppLocalizations {
   /// **'Rauchstopp-Tag wählen'**
   String get quitPickDate;
 
+  /// No description provided for @quitPickTime.
+  ///
+  /// In de, this message translates to:
+  /// **'Uhrzeit wählen'**
+  String get quitPickTime;
+
   /// No description provided for @quitHonestTitle.
   ///
   /// In de, this message translates to:
@@ -1561,6 +1567,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'DEIN RAUCHSTOPP'**
   String get quitCountdownLabel;
+
+  /// No description provided for @quitCountdownToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Heute ist es soweit!'**
+  String get quitCountdownToday;
 
   /// No description provided for @quitCountdownTomorrow.
   ///

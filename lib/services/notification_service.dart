@@ -85,20 +85,21 @@ abstract final class NotificationService {
     ),
   );
 
-  /// (Re)schedules the quit-day reminders: an evening nudge the day before and
-  /// a morning kick-off on the day itself. Past times are skipped.
+  /// (Re)schedules the quit reminders: an evening nudge the day before and a
+  /// kick-off at the exact quit moment. Past times are skipped.
   static Future<void> scheduleQuitDay({
-    required DateTime quitDay,
+    required DateTime quitMoment,
     required String dayBeforeTitle,
     required String dayBeforeBody,
     required String dayTitle,
     required String dayBody,
   }) async {
     await cancelQuitDay();
-    final morning = DateTime(quitDay.year, quitDay.month, quitDay.day, 9);
-    final eveBefore = morning.subtract(const Duration(hours: 15)); // 18:00 prev day
+    final now = DateTime.now();
+    final eveBefore = DateTime(
+        quitMoment.year, quitMoment.month, quitMoment.day - 1, 18);
     try {
-      if (eveBefore.isAfter(DateTime.now())) {
+      if (eveBefore.isAfter(now) && eveBefore.isBefore(quitMoment)) {
         await _plugin.zonedSchedule(
           id: _quitDayBeforeId,
           title: dayBeforeTitle,
@@ -108,12 +109,12 @@ abstract final class NotificationService {
           notificationDetails: _details,
         );
       }
-      if (morning.isAfter(DateTime.now())) {
+      if (quitMoment.isAfter(now)) {
         await _plugin.zonedSchedule(
           id: _quitDayId,
           title: dayTitle,
           body: dayBody,
-          scheduledDate: tz.TZDateTime.from(morning, tz.local),
+          scheduledDate: tz.TZDateTime.from(quitMoment, tz.local),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           notificationDetails: _details,
         );

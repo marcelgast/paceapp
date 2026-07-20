@@ -239,6 +239,7 @@
   "raceEngineerUnlock": "Unlock with Pace Pro",
   "quitTitle": "Quit date",
   "quitPickDate": "Pick your quit day",
+  "quitPickTime": "Pick a time",
   "quitHonestTitle": "Stretching is the path — not the finish",
   "quitHonestBody": "Stretching your stints gets you far. But at some point comes the honest step: stopping entirely. A fixed date makes that moment real — and Pace walks you there.",
   "quitTriggersTitle": "Arm yourself against your triggers",
@@ -260,6 +261,7 @@
   "settingsQuitRowTitle": "Set a quit date",
   "settingsQuitRowSub": "Optional — Pace walks you through the stop.",
   "quitCountdownLabel": "YOUR QUIT DAY",
+  "quitCountdownToday": "It's happening today!",
   "quitCountdownTomorrow": "Tomorrow's the day!",
   "quitCountdownDays": "{days} days to go",
   "@quitCountdownDays": {

@@ -107,6 +107,11 @@ class _HomeShellState extends ConsumerState<HomeShell>
     ref.listen(liveStintProvider.select((s) => s?.phase), (_, _) {
       pushPaceWidget(ref);
     });
+    // Push when the quit phase / smoke-free day flips, so widgets switch to (and
+    // advance) the smoke-free timer.
+    ref.listen(quitPlanProvider.select((p) => (p.phase, p.dayNumber)), (_, _) {
+      pushPaceWidget(ref);
+    });
     return Scaffold(
       body: IndexedStack(index: _index, children: _tabs),
       bottomNavigationBar: Container(

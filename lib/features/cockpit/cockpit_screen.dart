@@ -430,9 +430,11 @@ class _QuitCountdownBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final text = daysUntil == 1
-        ? l10n.quitCountdownTomorrow
-        : l10n.quitCountdownDays(daysUntil.toString());
+    final text = daysUntil <= 0
+        ? l10n.quitCountdownToday
+        : daysUntil == 1
+            ? l10n.quitCountdownTomorrow
+            : l10n.quitCountdownDays(daysUntil.toString());
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(

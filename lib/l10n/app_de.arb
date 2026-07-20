@@ -263,6 +263,7 @@
   "raceEngineerUnlock": "Mit Pace Pro freischalten",
   "quitTitle": "Rauchstopp-Datum",
   "quitPickDate": "Rauchstopp-Tag wählen",
+  "quitPickTime": "Uhrzeit wählen",
   "quitHonestTitle": "Verlängern ist der Weg — nicht das Ziel",
   "quitHonestBody": "Die Stints zu dehnen bringt dich weit. Aber irgendwann kommt der ehrlichste Schritt: ganz aufzuhören. Ein festes Datum macht diesen Moment greifbar — und Pace begleitet dich hin.",
   "quitTriggersTitle": "Wappne dich gegen deine Auslöser",
@@ -284,6 +285,7 @@
   "settingsQuitRowTitle": "Rauchstopp-Datum setzen",
   "settingsQuitRowSub": "Optional — Pace begleitet dich durch den Stopp.",
   "quitCountdownLabel": "DEIN RAUCHSTOPP",
+  "quitCountdownToday": "Heute ist es soweit!",
   "quitCountdownTomorrow": "Morgen ist es soweit!",
   "quitCountdownDays": "Noch {days} Tage",
   "@quitCountdownDays": {
