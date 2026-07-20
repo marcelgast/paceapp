@@ -1601,7 +1601,7 @@ abstract class AppLocalizations {
   /// No description provided for @smokeFreeDaysWord.
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, =1{Tag} other{Tagen}}'**
+  /// **'{count, plural, =1{Tag} other{Tage}}'**
   String smokeFreeDaysWord(int count);
 
   /// No description provided for @smokeFreeEncouragement.

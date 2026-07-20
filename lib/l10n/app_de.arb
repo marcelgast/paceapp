@@ -295,7 +295,7 @@
   },
   "smokeFreeRaceKicker": "DAS EIGENTLICHE RENNEN LÄUFT",
   "smokeFreeFreeWord": "rauchfrei",
-  "smokeFreeDaysWord": "{count, plural, =1{Tag} other{Tagen}}",
+  "smokeFreeDaysWord": "{count, plural, =1{Tag} other{Tage}}",
   "@smokeFreeDaysWord": {
     "placeholders": {
       "count": {

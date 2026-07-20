@@ -856,7 +856,7 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Tagen',
+      other: 'Tage',
       one: 'Tag',
     );
     return '$_temp0';
