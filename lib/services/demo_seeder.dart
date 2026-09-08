@@ -1,8 +1,10 @@
 import '../data/database.dart';
 import '../domain/milestones.dart';
 
-/// Fills the database with realistic demo data for App Store screenshots.
-/// Only ever runs behind `--dart-define=SEED_DEMO=true`; never in production.
+/// Fills the database with a realistic demo dataset — a month of history, a
+/// running stint, and a few savings goals — so the app can be explored (or
+/// screenshotted) without a real onboarding. Only ever runs behind
+/// `--dart-define=SEED_DEMO=true`; never in production.
 Future<void> seedDemoData(AppDatabase db) async {
   final now = DateTime.now();
 
@@ -46,6 +48,11 @@ Future<void> seedDemoData(AppDatabase db) async {
       k++;
     }
   }
+
+  // A few savings goals to chase with the banked money.
+  await db.addSavingsGoal(name: 'Neue Kopfhörer', priceCents: 12900);
+  await db.addSavingsGoal(name: 'Wochenendtrip', priceCents: 25000);
+  await db.addSavingsGoal(name: 'Rennsimulator-Setup', priceCents: 89900);
 
   // Pre-mark every milestone as celebrated so no congratulation overlay pops
   // over the screenshots.
