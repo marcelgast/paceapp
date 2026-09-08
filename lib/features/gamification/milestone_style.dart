@@ -13,12 +13,21 @@ class MilestoneStyle {
 
   static MilestoneStyle of(MilestoneKind kind) {
     return switch (kind) {
-      MilestoneKind.time =>
-        MilestoneStyle(Icons.timer_outlined, PaceColors.neonCyan, 'ZEIT'),
-      MilestoneKind.money =>
-        MilestoneStyle(Icons.savings_outlined, PaceColors.neonLime, 'BUDGET'),
+      MilestoneKind.time => MilestoneStyle(
+        Icons.timer_outlined,
+        PaceColors.neonCyan,
+        'ZEIT',
+      ),
+      MilestoneKind.money => MilestoneStyle(
+        Icons.savings_outlined,
+        PaceColors.neonLime,
+        'BUDGET',
+      ),
       MilestoneKind.avoided => MilestoneStyle(
-          Icons.smoke_free, PaceColors.neonMagenta, 'VERMIEDEN'),
+        Icons.smoke_free,
+        PaceColors.neonMagenta,
+        'VERMIEDEN',
+      ),
     };
   }
 }

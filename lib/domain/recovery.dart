@@ -119,11 +119,13 @@ const List<RecoveryMarker> kLongTermRecovery = [
   RecoveryMarker(
     timeLabel: '5 – 10 Jahre',
     title: 'Krebs & Schlaganfall',
-    detail: 'Risiko für Mund-/Rachen-/Kehlkopfkrebs halbiert sich, '
+    detail:
+        'Risiko für Mund-/Rachen-/Kehlkopfkrebs halbiert sich, '
         'Schlaganfall-Risiko sinkt.',
     timeLabelEn: '5 – 10 yrs',
     titleEn: 'Cancer & Stroke',
-    detailEn: 'risk of mouth/throat/larynx cancer halves, '
+    detailEn:
+        'risk of mouth/throat/larynx cancer halves, '
         'stroke risk drops.',
   ),
   RecoveryMarker(

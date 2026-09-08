@@ -92,19 +92,28 @@ class BehaviorAnalysis {
       counts[key] = (counts[key] ?? 0) + 1;
     }
 
-    final bySituation = counts.entries
-        .map((e) => SituationCount(
-              e.key.isEmpty ? noSituationLabel : (labels[e.key] ?? noSituationLabel),
-              e.value,
-            ))
-        .toList()
-      ..sort((a, b) => b.count.compareTo(a.count));
+    final bySituation =
+        counts.entries
+            .map(
+              (e) => SituationCount(
+                e.key.isEmpty
+                    ? noSituationLabel
+                    : (labels[e.key] ?? noSituationLabel),
+                e.value,
+              ),
+            )
+            .toList()
+          ..sort((a, b) => b.count.compareTo(a.count));
 
     // Fill the last-7-days buckets.
     final buckets = _last7DaysScaffold(now);
     final byDay = {for (var i = 0; i < buckets.length; i++) buckets[i].day: 0};
     for (final s in samples) {
-      final d = DateTime(s.occurredAt.year, s.occurredAt.month, s.occurredAt.day);
+      final d = DateTime(
+        s.occurredAt.year,
+        s.occurredAt.month,
+        s.occurredAt.day,
+      );
       if (byDay.containsKey(d)) byDay[d] = byDay[d]! + 1;
     }
     final last7 = byDay.entries.map((e) => DayCount(e.key, e.value)).toList();
@@ -118,21 +127,30 @@ class BehaviorAnalysis {
       bySituation: bySituation,
       last7Days: last7,
       medianPace: _medianPaceBetween(
-          samples, now.subtract(const Duration(days: 7)), now),
-      previousMedianPace: _medianPaceBetween(samples,
-          now.subtract(const Duration(days: 14)),
-          now.subtract(const Duration(days: 7))),
+        samples,
+        now.subtract(const Duration(days: 7)),
+        now,
+      ),
+      previousMedianPace: _medianPaceBetween(
+        samples,
+        now.subtract(const Duration(days: 14)),
+        now.subtract(const Duration(days: 7)),
+      ),
     );
   }
 
   /// Median gap between consecutive cigarettes in the window [from, to).
   static Duration? _medianPaceBetween(
-      List<PitSample> samples, DateTime from, DateTime to) {
-    final times = samples
-        .map((s) => s.occurredAt)
-        .where((t) => !t.isBefore(from) && t.isBefore(to))
-        .toList()
-      ..sort();
+    List<PitSample> samples,
+    DateTime from,
+    DateTime to,
+  ) {
+    final times =
+        samples
+            .map((s) => s.occurredAt)
+            .where((t) => !t.isBefore(from) && t.isBefore(to))
+            .toList()
+          ..sort();
     if (times.length < 2) return null;
 
     final gaps = <int>[

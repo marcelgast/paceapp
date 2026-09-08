@@ -16,8 +16,10 @@ void main() {
       );
       // 60 * 1.1^2 = 72.6 min = 4356 s
       expect(
-        StintCalculator.targetInterval(baseInterval: base, weeksSinceStart: 2)
-            .inSeconds,
+        StintCalculator.targetInterval(
+          baseInterval: base,
+          weeksSinceStart: 2,
+        ).inSeconds,
         4356,
       );
     });
@@ -34,7 +36,9 @@ void main() {
     test('negative weeks clamp to base', () {
       expect(
         StintCalculator.targetInterval(
-            baseInterval: const Duration(minutes: 30), weeksSinceStart: -3),
+          baseInterval: const Duration(minutes: 30),
+          weeksSinceStart: -3,
+        ),
         const Duration(minutes: 30),
       );
     });
@@ -50,7 +54,10 @@ void main() {
     });
 
     test('falls back to one hour for zero/negative', () {
-      expect(StintCalculator.intervalFromDailyRate(0), const Duration(hours: 1));
+      expect(
+        StintCalculator.intervalFromDailyRate(0),
+        const Duration(hours: 1),
+      );
     });
   });
 
@@ -95,17 +102,17 @@ void main() {
       List<({int awakeSeconds, int targetSeconds, int perCig})> stints, {
       int actual = 0,
       int perCig = 40,
-    }) =>
-        PaceStats.compute(
-          sinceStart: const Duration(hours: 1),
-          actualCigarettes: actual,
-          currentPerCig: perCig,
-          stints: stints,
-        );
+    }) => PaceStats.compute(
+      sinceStart: const Duration(hours: 1),
+      actualCigarettes: actual,
+      currentPerCig: perCig,
+      stints: stints,
+    );
 
     test('no target earns nothing', () {
-      final s = forStints(
-          const [(awakeSeconds: 5 * 3600, targetSeconds: 0, perCig: 40)]);
+      final s = forStints(const [
+        (awakeSeconds: 5 * 3600, targetSeconds: 0, perCig: 40),
+      ]);
       expect(s.savedCigarettes, 0);
       expect(s.savedMoneyCents, 0);
     });
@@ -129,15 +136,12 @@ void main() {
     });
 
     test('laps accumulate across stints, each priced for its stint', () {
-      final s = forStints(
-        const [
-          // 3 h stint, target 1 h → 2 h overtime → 2 laps × 40
-          (awakeSeconds: 3 * 3600, targetSeconds: 3600, perCig: 40),
-          // 2 h stint, target 1 h → 1 h overtime → 1 lap × 60
-          (awakeSeconds: 2 * 3600, targetSeconds: 3600, perCig: 60),
-        ],
-        actual: 2,
-      );
+      final s = forStints(const [
+        // 3 h stint, target 1 h → 2 h overtime → 2 laps × 40
+        (awakeSeconds: 3 * 3600, targetSeconds: 3600, perCig: 40),
+        // 2 h stint, target 1 h → 1 h overtime → 1 lap × 60
+        (awakeSeconds: 2 * 3600, targetSeconds: 3600, perCig: 60),
+      ], actual: 2);
       expect(s.savedCigarettes, 3);
       expect(s.savedMoneyCents, 2 * 40 + 1 * 60);
     });

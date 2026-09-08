@@ -23,7 +23,8 @@ import 'race_card.dart';
   String carName,
   String carTagline,
   int carIndex,
-}) _commonBits(WidgetRef ref, String lang) {
+})
+_commonBits(WidgetRef ref, String lang) {
   final stats = ref.read(statsProvider);
   final streak = ref.read(streakProvider);
   final car = ref.read(currentCarProvider);
@@ -60,7 +61,11 @@ RaceCardData currentLapCard(WidgetRef ref, AppLocalizations l10n, String lang) {
 
 /// Card for an unlocked milestone.
 RaceCardData milestoneCard(
-    WidgetRef ref, Milestone milestone, AppLocalizations l10n, String lang) {
+  WidgetRef ref,
+  Milestone milestone,
+  AppLocalizations l10n,
+  String lang,
+) {
   final b = _commonBits(ref, lang);
   return RaceCardData(
     heroLabel: l10n.shareMilestone,
@@ -121,8 +126,9 @@ class _ShareCardSheetState extends State<_ShareCardSheet> {
         ShareParams(
           files: [XFile(file.path, mimeType: 'image/png')],
           text: widget.data.shareText,
-          sharePositionOrigin:
-              box == null ? null : box.localToGlobal(Offset.zero) & box.size,
+          sharePositionOrigin: box == null
+              ? null
+              : box.localToGlobal(Offset.zero) & box.size,
         ),
       );
     } finally {
@@ -187,8 +193,9 @@ class _ShareButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-                color: PaceColors.neonMagenta.withValues(alpha: 0.4),
-                blurRadius: 18),
+              color: PaceColors.neonMagenta.withValues(alpha: 0.4),
+              blurRadius: 18,
+            ),
           ],
         ),
         child: Center(
@@ -197,19 +204,24 @@ class _ShareButton extends StatelessWidget {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.ios_share, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
-                    Text(l10n.shareButton,
-                        style: PaceTheme.dash(
-                            size: 18,
-                            weight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 2)),
+                    Text(
+                      l10n.shareButton,
+                      style: PaceTheme.dash(
+                        size: 18,
+                        weight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 2,
+                      ),
+                    ),
                   ],
                 ),
         ),

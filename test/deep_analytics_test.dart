@@ -3,18 +3,22 @@ import 'package:pace/domain/behavior_analysis.dart';
 import 'package:pace/domain/deep_analytics.dart';
 
 PitSample sample(DateTime t, {int craving = 3, String? situation}) => PitSample(
-      occurredAt: t,
-      craving: craving,
-      stress: 3,
-      situationId: situation,
-      wasEarly: false,
-    );
+  occurredAt: t,
+  craving: craving,
+  stress: 3,
+  situationId: situation,
+  wasEarly: false,
+);
 
 void main() {
   group('DeepAnalytics', () {
     test('empty input yields no peaks', () {
-      final a = DeepAnalytics.from(const [],
-          labels: const {}, now: DateTime(2026, 6, 1), noSituationLabel: '—');
+      final a = DeepAnalytics.from(
+        const [],
+        labels: const {},
+        now: DateTime(2026, 6, 1),
+        noSituationLabel: '—',
+      );
       expect(a.total, 0);
       expect(a.peakHour, -1);
       expect(a.peakWeekday, -1);
@@ -30,8 +34,12 @@ void main() {
         sample(monday.add(const Duration(minutes: 10))),
         sample(DateTime(2026, 6, 2, 9)), // Tuesday 09:00
       ];
-      final a = DeepAnalytics.from(samples,
-          labels: const {}, now: DateTime(2026, 6, 3), noSituationLabel: '—');
+      final a = DeepAnalytics.from(
+        samples,
+        labels: const {},
+        now: DateTime(2026, 6, 3),
+        noSituationLabel: '—',
+      );
       expect(a.peakHour, 19);
       expect(a.byHour[19], 3);
       expect(a.peakWeekday, 0); // Monday

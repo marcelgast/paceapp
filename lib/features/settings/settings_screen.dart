@@ -21,9 +21,9 @@ class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   static Future<void> open(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-    );
+    return Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
   }
 
   @override
@@ -70,7 +70,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _sleepBox(String label, TimeOfDay time, VoidCallback onTap) {
-    final value = '${time.hour.toString().padLeft(2, '0')}:'
+    final value =
+        '${time.hour.toString().padLeft(2, '0')}:'
         '${time.minute.toString().padLeft(2, '0')}';
     return GestureDetector(
       onTap: onTap,
@@ -84,14 +85,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            Text(
+              label,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+            ),
             const SizedBox(height: 4),
-            Text(value,
-                style: PaceTheme.dash(
-                    size: 30,
-                    weight: FontWeight.w800,
-                    color: PaceColors.neonCyan)),
+            Text(
+              value,
+              style: PaceTheme.dash(
+                size: 30,
+                weight: FontWeight.w800,
+                color: PaceColors.neonCyan,
+              ),
+            ),
           ],
         ),
       ),
@@ -116,10 +122,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     final sleepStartMin = _sleepStart.hour * 60 + _sleepStart.minute;
     final sleepEndMin = _sleepEnd.hour * 60 + _sleepEnd.minute;
-    final priceChanged = cents != settings.packPriceCents ||
+    final priceChanged =
+        cents != settings.packPriceCents ||
         perPack != settings.cigarettesPerPack;
     final baselineChanged = perDay != settings.baselineCigsPerDay;
-    final sleepChanged = sleepStartMin != settings.sleepStartMinutes ||
+    final sleepChanged =
+        sleepStartMin != settings.sleepStartMinutes ||
         sleepEndMin != settings.sleepEndMinutes;
     if (!priceChanged && !baselineChanged && !sleepChanged) {
       navigator.pop();
@@ -141,8 +149,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: PaceColors.neonMagenta,
-                  foregroundColor: Colors.white),
+                backgroundColor: PaceColors.neonMagenta,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(l10n.settingsSave),
             ),
@@ -167,14 +176,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (sleepChanged) {
       await db.updateSleepWindow(
-          startMinutes: sleepStartMin, endMinutes: sleepEndMin);
+        startMinutes: sleepStartMin,
+        endMinutes: sleepEndMin,
+      );
     }
     await pushPaceWidget(ref);
     if (!mounted) return;
     navigator.pop();
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.settingsSaved)),
-    );
+    messenger.showSnackBar(SnackBar(content: Text(l10n.settingsSaved)));
   }
 
   Future<void> _reset() async {
@@ -192,8 +201,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: PaceColors.neonOrange,
-                foregroundColor: Colors.black),
+              backgroundColor: PaceColors.neonOrange,
+              foregroundColor: Colors.black,
+            ),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.settingsResetConfirm),
           ),
@@ -222,11 +232,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _perPack.text = settings.cigarettesPerPack.toString();
       _perDay.text = settings.baselineCigsPerDay.toString();
       _sleepStart = TimeOfDay(
-          hour: settings.sleepStartMinutes ~/ 60,
-          minute: settings.sleepStartMinutes % 60);
+        hour: settings.sleepStartMinutes ~/ 60,
+        minute: settings.sleepStartMinutes % 60,
+      );
       _sleepEnd = TimeOfDay(
-          hour: settings.sleepEndMinutes ~/ 60,
-          minute: settings.sleepEndMinutes % 60);
+        hour: settings.sleepEndMinutes ~/ 60,
+        minute: settings.sleepEndMinutes % 60,
+      );
       _prefilled = true;
     }
 
@@ -242,8 +254,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).maybePop(),
-                      icon: const Icon(Icons.arrow_back,
-                          color: PaceColors.textMuted),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: PaceColors.textMuted,
+                      ),
                     ),
                     GraffitiHeadline(l10n.settingsTitle, size: 28),
                   ],
@@ -256,9 +270,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       l10n.settingsPriceIntro,
                       style: TextStyle(
-                          color: PaceColors.textMuted,
-                          fontSize: 14,
-                          height: 1.4),
+                        color: PaceColors.textMuted,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
                     ),
                     const SizedBox(height: 22),
                     _Field(
@@ -269,8 +284,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         'GBP' => '£',
                         _ => '€',
                       },
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _Field(
@@ -288,44 +304,62 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(
                       l10n.settingsBaselineHint,
                       style: TextStyle(
-                          color: PaceColors.textFaint,
-                          fontSize: 12,
-                          height: 1.35),
+                        color: PaceColors.textFaint,
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
                     ),
                     const SizedBox(height: 26),
-                    Text(l10n.settingsSleepTime,
-                        style: TextStyle(
-                            color: PaceColors.textMuted,
-                            fontSize: 12,
-                            letterSpacing: 2,
-                            fontWeight: FontWeight.w700)),
+                    Text(
+                      l10n.settingsSleepTime,
+                      style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(l10n.settingsSleepHint,
-                        style: TextStyle(
-                            color: PaceColors.textFaint,
-                            fontSize: 12,
-                            height: 1.35)),
+                    Text(
+                      l10n.settingsSleepHint,
+                      style: TextStyle(
+                        color: PaceColors.textFaint,
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         Expanded(
-                            child: _sleepBox(l10n.settingsFrom, _sleepStart,
-                                () => _pickSleep(isStart: true))),
+                          child: _sleepBox(
+                            l10n.settingsFrom,
+                            _sleepStart,
+                            () => _pickSleep(isStart: true),
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
-                            child: _sleepBox(l10n.settingsTo, _sleepEnd,
-                                () => _pickSleep(isStart: false))),
+                          child: _sleepBox(
+                            l10n.settingsTo,
+                            _sleepEnd,
+                            () => _pickSleep(isStart: false),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
                     _SaveButton(saving: _saving, onTap: _saving ? null : _save),
                     const SizedBox(height: 26),
-                    Text(l10n.quitTitle.toUpperCase(),
-                        style: TextStyle(
-                            color: PaceColors.textMuted,
-                            fontSize: 12,
-                            letterSpacing: 2,
-                            fontWeight: FontWeight.w700)),
+                    Text(
+                      l10n.quitTitle.toUpperCase(),
+                      style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     _QuitDateRow(
                       date: settings?.quitDate,
@@ -333,23 +367,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     if (periods.length > 1) ...[
                       const SizedBox(height: 32),
-                      Text(l10n.settingsHistory,
-                          style: TextStyle(
-                              color: PaceColors.textMuted,
-                              fontSize: 12,
-                              letterSpacing: 2,
-                              fontWeight: FontWeight.w700)),
+                      Text(
+                        l10n.settingsHistory,
+                        style: TextStyle(
+                          color: PaceColors.textMuted,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       for (final p in periods.reversed)
                         _HistoryRow(period: p, currency: currency),
                     ],
                     const SizedBox(height: 32),
-                    Text(l10n.settingsExtrasSection,
-                        style: TextStyle(
-                            color: PaceColors.textMuted,
-                            fontSize: 12,
-                            letterSpacing: 2,
-                            fontWeight: FontWeight.w700)),
+                    Text(
+                      l10n.settingsExtrasSection,
+                      style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 10),
                     _ExtraRow(
                       icon: Icons.insights,
@@ -370,12 +410,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    Text(l10n.settingsExtrasSkin,
-                        style: TextStyle(
-                            color: PaceColors.textMuted,
-                            fontSize: 12,
-                            letterSpacing: 2,
-                            fontWeight: FontWeight.w700)),
+                    Text(
+                      l10n.settingsExtrasSkin,
+                      style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -384,7 +427,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         for (final s in Skin.all)
                           _SkinSwatch(
                             skin: s,
-                            selected: s.id ==
+                            selected:
+                                s.id ==
                                 (settings?.skinId ?? Skin.underground.id),
                             onTap: () =>
                                 ref.read(databaseProvider).updateSkin(s.id),
@@ -400,21 +444,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                              color:
-                                  PaceColors.neonOrange.withValues(alpha: 0.7)),
+                            color: PaceColors.neonOrange.withValues(alpha: 0.7),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.restart_alt,
-                                color: PaceColors.neonOrange, size: 20),
+                            Icon(
+                              Icons.restart_alt,
+                              color: PaceColors.neonOrange,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
-                            Text(l10n.settingsResetEverything,
-                                style: TextStyle(
-                                    color: PaceColors.neonOrange,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1)),
+                            Text(
+                              l10n.settingsResetEverything,
+                              style: TextStyle(
+                                color: PaceColors.neonOrange,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -448,8 +498,10 @@ class _Field extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+        Text(
+          label,
+          style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+        ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -460,12 +512,15 @@ class _Field extends StatelessWidget {
             fillColor: PaceColors.panel.withValues(alpha: 0.85),
             suffixText: suffix,
             suffixStyle: PaceTheme.dash(size: 24, color: PaceColors.neonCyan),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 16,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  BorderSide(color: PaceColors.chrome.withValues(alpha: 0.6)),
+              borderSide: BorderSide(
+                color: PaceColors.chrome.withValues(alpha: 0.6),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -496,8 +551,9 @@ class _SaveButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-                color: PaceColors.neonMagenta.withValues(alpha: 0.45),
-                blurRadius: 22),
+              color: PaceColors.neonMagenta.withValues(alpha: 0.45),
+              blurRadius: 22,
+            ),
           ],
         ),
         alignment: Alignment.center,
@@ -506,13 +562,19 @@ class _SaveButton extends StatelessWidget {
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white))
-            : Text(l10n.settingsSaveButton,
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Text(
+                l10n.settingsSaveButton,
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2)),
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
+              ),
       ),
     );
   }
@@ -554,8 +616,9 @@ class _SkinSwatch extends StatelessWidget {
               boxShadow: selected
                   ? [
                       BoxShadow(
-                          color: skin.magenta.withValues(alpha: 0.6),
-                          blurRadius: 14),
+                        color: skin.magenta.withValues(alpha: 0.6),
+                        blurRadius: 14,
+                      ),
                     ]
                   : null,
             ),
@@ -572,11 +635,10 @@ class _SkinSwatch extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  color: selected
-                      ? PaceColors.textPrimary
-                      : PaceColors.textMuted,
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500),
+                color: selected ? PaceColors.textPrimary : PaceColors.textMuted,
+                fontSize: 11,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -615,7 +677,9 @@ class _ExtraToggleRow extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: PaceColors.neonMagenta.withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -625,15 +689,19 @@ class _ExtraToggleRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(subtitle,
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 12)),
+                Text(
+                  subtitle,
+                  style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -678,8 +746,9 @@ class _ExtraRow extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(14),
-          border:
-              Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.5)),
+          border: Border.all(
+            color: PaceColors.neonMagenta.withValues(alpha: 0.5),
+          ),
         ),
         child: Row(
           children: [
@@ -689,15 +758,19 @@ class _ExtraRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(
-                          color: PaceColors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: PaceColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text(subtitle,
-                      style: TextStyle(
-                          color: PaceColors.textMuted, fontSize: 12)),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+                  ),
                 ],
               ),
             ),
@@ -727,7 +800,9 @@ class _QuitDateRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: PaceColors.panel,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: accent.withValues(alpha: isSet ? 0.5 : 0.3)),
+          border: Border.all(
+            color: accent.withValues(alpha: isSet ? 0.5 : 0.3),
+          ),
         ),
         child: Row(
           children: [
@@ -737,15 +812,19 @@ class _QuitDateRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(isSet ? l10n.quitYourDate : l10n.settingsQuitRowTitle,
-                      style: const TextStyle(
-                          color: PaceColors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700)),
+                  Text(
+                    isSet ? l10n.quitYourDate : l10n.settingsQuitRowTitle,
+                    style: const TextStyle(
+                      color: PaceColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text(isSet ? formatDate(date!) : l10n.settingsQuitRowSub,
-                      style: TextStyle(
-                          color: PaceColors.textMuted, fontSize: 12)),
+                  Text(
+                    isSet ? formatDate(date!) : l10n.settingsQuitRowSub,
+                    style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+                  ),
                 ],
               ),
             ),
@@ -767,7 +846,8 @@ class _HistoryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final d = period.effectiveFrom;
-    final date = '${d.day.toString().padLeft(2, '0')}.'
+    final date =
+        '${d.day.toString().padLeft(2, '0')}.'
         '${d.month.toString().padLeft(2, '0')}.${d.year}';
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -780,17 +860,20 @@ class _HistoryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(l10n.settingsHistorySince(date),
-              style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+          Text(
+            l10n.settingsHistorySince(date),
+            style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+          ),
           Text(
             l10n.settingsHistoryPriceLine(
               formatMoneyCents(period.packPriceCents, currencyCode: currency),
               period.cigarettesPerPack.toString(),
             ),
             style: const TextStyle(
-                color: PaceColors.textPrimary,
-                fontSize: 13,
-                fontWeight: FontWeight.w600),
+              color: PaceColors.textPrimary,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

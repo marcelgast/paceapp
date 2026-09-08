@@ -31,8 +31,7 @@ class GoalsScreen extends ConsumerWidget {
     final goals = ref.watch(savingsGoalsProvider).value ?? const [];
     final stats = ref.watch(statsProvider);
     final savedCents = stats?.savedMoneyCents ?? 0;
-    final currency =
-        ref.watch(settingsProvider).value?.currencyCode ?? 'EUR';
+    final currency = ref.watch(settingsProvider).value?.currencyCode ?? 'EUR';
 
     return Scaffold(
       body: RacetrackBackground(
@@ -44,22 +43,31 @@ class GoalsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
                 child: Row(
                   children: [
-                    Expanded(child: GraffitiHeadline(l10n.goalsTitle, size: 26)),
+                    Expanded(
+                      child: GraffitiHeadline(l10n.goalsTitle, size: 26),
+                    ),
                     _AddButton(onTap: () => _addGoal(context, ref)),
                   ],
                 ),
               ),
               if (goals.isEmpty)
-                Expanded(child: _EmptyState(onAdd: () => _addGoal(context, ref)))
+                Expanded(
+                  child: _EmptyState(onAdd: () => _addGoal(context, ref)),
+                )
               else
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                     children: [
-                      Text(l10n.goalsSavedPool(
-                          formatMoneyCents(savedCents, currencyCode: currency)),
-                          style: TextStyle(
-                              color: PaceColors.textMuted, fontSize: 13)),
+                      Text(
+                        l10n.goalsSavedPool(
+                          formatMoneyCents(savedCents, currencyCode: currency),
+                        ),
+                        style: TextStyle(
+                          color: PaceColors.textMuted,
+                          fontSize: 13,
+                        ),
+                      ),
                       const SizedBox(height: 14),
                       for (final g in goals)
                         _GoalCard(
@@ -98,8 +106,9 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final reached = savedCents >= goal.priceCents;
-    final progress =
-        goal.priceCents <= 0 ? 1.0 : (savedCents / goal.priceCents).clamp(0.0, 1.0);
+    final progress = goal.priceCents <= 0
+        ? 1.0
+        : (savedCents / goal.priceCents).clamp(0.0, 1.0);
     final pct = (progress * 100).round();
     final accent = reached ? PaceColors.neonLime : PaceColors.neonCyan;
 
@@ -109,7 +118,9 @@ class _GoalCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: PaceColors.panel.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: accent.withValues(alpha: reached ? 0.6 : 0.4)),
+        border: Border.all(
+          color: accent.withValues(alpha: reached ? 0.6 : 0.4),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,35 +128,46 @@ class _GoalCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(goal.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800)),
+                child: Text(
+                  goal.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               if (reached)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: PaceColors.neonLime,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(l10n.goalsReachedBadge,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900)),
+                  child: Text(
+                    l10n.goalsReachedBadge,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                 ),
               GestureDetector(
                 onTap: onDelete,
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.close,
-                      color: PaceColors.textFaint, size: 18),
+                  child: Icon(
+                    Icons.close,
+                    color: PaceColors.textFaint,
+                    size: 18,
+                  ),
                 ),
               ),
             ],
@@ -161,10 +183,9 @@ class _GoalCard extends StatelessWidget {
                   child: Container(
                     height: 12,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                        PaceColors.neonCyan,
-                        accent,
-                      ]),
+                      gradient: LinearGradient(
+                        colors: [PaceColors.neonCyan, accent],
+                      ),
                     ),
                   ),
                 ),
@@ -179,8 +200,7 @@ class _GoalCard extends StatelessWidget {
                 '${formatMoneyCents(savedCents.clamp(0, goal.priceCents), currencyCode: currency)} / ${formatMoneyCents(goal.priceCents, currencyCode: currency)}',
                 style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
               ),
-              Text('$pct %',
-                  style: PaceTheme.dash(size: 15, color: accent)),
+              Text('$pct %', style: PaceTheme.dash(size: 15, color: accent)),
             ],
           ),
         ],
@@ -218,7 +238,9 @@ class _AddGoalSheetState extends ConsumerState<_AddGoalSheet> {
     final name = _name.text.trim();
     final cents = _priceCents();
     if (name.isEmpty || cents == null) return;
-    await ref.read(databaseProvider).addSavingsGoal(name: name, priceCents: cents);
+    await ref
+        .read(databaseProvider)
+        .addSavingsGoal(name: name, priceCents: cents);
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -247,11 +269,14 @@ class _AddGoalSheetState extends ConsumerState<_AddGoalSheet> {
             ),
           ),
           const SizedBox(height: 18),
-          Text(l10n.goalsAdd,
-              style: const TextStyle(
-                  color: PaceColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900)),
+          Text(
+            l10n.goalsAdd,
+            style: const TextStyle(
+              color: PaceColors.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           const SizedBox(height: 16),
           _Field(
             controller: _name,
@@ -276,12 +301,15 @@ class _AddGoalSheetState extends ConsumerState<_AddGoalSheet> {
                 gradient: LinearGradient(colors: PaceColors.underglow),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Text(l10n.goalsSave,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1)),
+              child: Text(
+                l10n.goalsSave,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
             ),
           ),
         ],
@@ -308,12 +336,15 @@ class _Field extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: TextStyle(
-                color: PaceColors.textMuted,
-                fontSize: 12,
-                letterSpacing: 1,
-                fontWeight: FontWeight.w700)),
+        Text(
+          label,
+          style: TextStyle(
+            color: PaceColors.textMuted,
+            fontSize: 12,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           controller: controller,
@@ -322,24 +353,28 @@ class _Field extends StatelessWidget {
               ? null
               : [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
           style: const TextStyle(
-              color: PaceColors.textPrimary,
-              fontSize: 17,
-              fontWeight: FontWeight.w700),
+            color: PaceColors.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: PaceColors.textFaint),
             filled: true,
             fillColor: PaceColors.panel,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(color: PaceColors.chrome),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  BorderSide(color: PaceColors.chrome.withValues(alpha: 0.6)),
+              borderSide: BorderSide(
+                color: PaceColors.chrome.withValues(alpha: 0.6),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -390,29 +425,41 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.savings_outlined, color: PaceColors.neonLime, size: 56),
             const SizedBox(height: 16),
-            Text(l10n.goalsEmptyTitle,
-                textAlign: TextAlign.center,
-                style: PaceTheme.dash(size: 22, italic: true)),
+            Text(
+              l10n.goalsEmptyTitle,
+              textAlign: TextAlign.center,
+              style: PaceTheme.dash(size: 22, italic: true),
+            ),
             const SizedBox(height: 8),
-            Text(l10n.goalsEmptyBody,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: PaceColors.textMuted, fontSize: 14, height: 1.4)),
+            Text(
+              l10n.goalsEmptyBody,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: PaceColors.textMuted,
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
             const SizedBox(height: 20),
             GestureDetector(
               onTap: onAdd,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: PaceColors.underglow),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Text(l10n.goalsAdd,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900)),
+                child: Text(
+                  l10n.goalsAdd,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
             ),
           ],

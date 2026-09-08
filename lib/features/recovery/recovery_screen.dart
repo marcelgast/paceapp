@@ -27,16 +27,21 @@ class RecoveryScreen extends ConsumerWidget {
             children: [
               GraffitiHeadline(l10n.recoveryTitle, size: 30),
               const SizedBox(height: 6),
-              Text(l10n.recoverySubtitle,
-                  style: TextStyle(color: PaceColors.textMuted, fontSize: 14)),
+              Text(
+                l10n.recoverySubtitle,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 14),
+              ),
               const SizedBox(height: 22),
               _SectionLabel(l10n.recoveryEveryStintHeals),
               const SizedBox(height: 4),
-              Text(l10n.recoveryCurrentStint(formatHumanDuration(clean)),
-                  style: TextStyle(
-                      color: PaceColors.neonCyan,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700)),
+              Text(
+                l10n.recoveryCurrentStint(formatHumanDuration(clean)),
+                style: TextStyle(
+                  color: PaceColors.neonCyan,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 12),
               for (final m in kStintRecovery)
                 _StintRow(marker: m, clean: clean),
@@ -63,12 +68,15 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text.toUpperCase(),
-        style: const TextStyle(
-            color: PaceColors.textMuted,
-            fontSize: 12,
-            letterSpacing: 2,
-            fontWeight: FontWeight.w700));
+    return Text(
+      text.toUpperCase(),
+      style: const TextStyle(
+        color: PaceColors.textMuted,
+        fontSize: 12,
+        letterSpacing: 2,
+        fontWeight: FontWeight.w700,
+      ),
+    );
   }
 }
 
@@ -83,8 +91,9 @@ class _StintRow extends StatelessWidget {
     final lang = Localizations.localeOf(context).languageCode;
     final target = marker.stintTime!;
     final reached = clean >= target;
-    final progress =
-        (clean.inSeconds / target.inSeconds).clamp(0.0, 1.0).toDouble();
+    final progress = (clean.inSeconds / target.inSeconds)
+        .clamp(0.0, 1.0)
+        .toDouble();
     final color = reached ? PaceColors.neonLime : PaceColors.neonCyan;
 
     return Container(
@@ -94,9 +103,10 @@ class _StintRow extends StatelessWidget {
         color: PaceColors.panel.withValues(alpha: reached ? 0.9 : 0.6),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: reached
-                ? PaceColors.neonLime.withValues(alpha: 0.5)
-                : PaceColors.chrome.withValues(alpha: 0.4)),
+          color: reached
+              ? PaceColors.neonLime.withValues(alpha: 0.5)
+              : PaceColors.chrome.withValues(alpha: 0.4),
+        ),
       ),
       child: Row(
         children: [
@@ -124,20 +134,34 @@ class _StintRow extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(marker.localizedTitle(lang),
-                        style: const TextStyle(
-                            color: PaceColors.textPrimary,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700)),
+                    Text(
+                      marker.localizedTitle(lang),
+                      style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Text(marker.localizedTimeLabel(lang),
-                        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+                    Text(
+                      marker.localizedTimeLabel(lang),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(marker.localizedDetail(lang),
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 13, height: 1.3)),
+                Text(
+                  marker.localizedDetail(lang),
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 13,
+                    height: 1.3,
+                  ),
+                ),
               ],
             ),
           ),
@@ -172,26 +196,37 @@ class _LongTermRow extends StatelessWidget {
               color: PaceColors.neonPurple.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(marker.localizedTimeLabel(lang),
-                style: TextStyle(
-                    color: PaceColors.neonPurple,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800)),
+            child: Text(
+              marker.localizedTimeLabel(lang),
+              style: TextStyle(
+                color: PaceColors.neonPurple,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(marker.localizedTitle(lang),
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  marker.localizedTitle(lang),
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(marker.localizedDetail(lang),
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 13, height: 1.3)),
+                Text(
+                  marker.localizedDetail(lang),
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 13,
+                    height: 1.3,
+                  ),
+                ),
               ],
             ),
           ),

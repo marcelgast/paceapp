@@ -15,11 +15,7 @@ Future<void> seedDemoData(AppDatabase db) async {
   );
   // A live target so the cockpit shows a running stint, not the measuring phase.
   // [at] = now so no weekly proposal overlay is due during screenshots.
-  await db.acceptProposal(
-    targetSeconds: 90 * 60,
-    growthPermille: 100,
-    at: now,
-  );
+  await db.acceptProposal(targetSeconds: 90 * 60, growthPermille: 100, at: now);
 
   final situations = await db.watchActiveSituations().first;
   String situationAt(int i) => situations[i % situations.length].id;

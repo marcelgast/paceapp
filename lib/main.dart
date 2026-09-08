@@ -21,23 +21,26 @@ void main() {
   // Those failures are non-fatal: the timeline widget simply won't update, and
   // the app, database and UI must still come up. We guard the zone so such an
   // error can never take the whole app down, and surface it in debug logs.
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    if (_seedDemo) {
-      final db = AppDatabase();
-      try {
-        await seedDemoData(db);
-      } catch (e) {
-        debugPrint('Demo seed failed: $e');
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      if (_seedDemo) {
+        final db = AppDatabase();
+        try {
+          await seedDemoData(db);
+        } catch (e) {
+          debugPrint('Demo seed failed: $e');
+        }
+        await db.close();
       }
-      await db.close();
-    }
-    runApp(const ProviderScope(child: PaceApp()));
-    unawaited(_bootstrapPlugins());
-  }, (error, stack) {
-    debugPrint('Uncaught async error (non-fatal, ignored): $error');
-  });
+      runApp(const ProviderScope(child: PaceApp()));
+      unawaited(_bootstrapPlugins());
+    },
+    (error, stack) {
+      debugPrint('Uncaught async error (non-fatal, ignored): $error');
+    },
+  );
 }
 
 Future<void> _bootstrapPlugins() async {

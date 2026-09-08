@@ -32,7 +32,11 @@ abstract final class StreakCalculator {
 
     var longest = 0;
     var run = 0;
-    for (var d = startDay; !d.isAfter(today); d = d.add(const Duration(days: 1))) {
+    for (
+      var d = startDay;
+      !d.isAfter(today);
+      d = d.add(const Duration(days: 1))
+    ) {
       if (isWin(d)) {
         run++;
         if (run > longest) longest = run;
@@ -42,7 +46,11 @@ abstract final class StreakCalculator {
     }
 
     var current = 0;
-    for (var d = today; !d.isBefore(startDay); d = d.subtract(const Duration(days: 1))) {
+    for (
+      var d = today;
+      !d.isBefore(startDay);
+      d = d.subtract(const Duration(days: 1))
+    ) {
       if (isWin(d)) {
         current++;
       } else {

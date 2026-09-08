@@ -21,8 +21,7 @@ class AppSettingsRows extends Table {
   DateTimeColumn get lastProposalAt => dateTime().nullable()();
 
   /// Last chosen weekly stretch in per-mille (100 = 10 %). Pre-fills the slider.
-  IntColumn get growthPermille =>
-      integer().withDefault(const Constant(100))();
+  IntColumn get growthPermille => integer().withDefault(const Constant(100))();
 
   /// Sleep window as minutes from midnight. Sleep is excluded from stint/best
   /// timing (default 23:00–07:00).
@@ -32,8 +31,7 @@ class AppSettingsRows extends Table {
       integer().withDefault(const Constant(7 * 60))();
 
   /// Selected neon skin (Pro). Defaults to the original "Underground".
-  TextColumn get skinId =>
-      text().withDefault(const Constant('underground'))();
+  TextColumn get skinId => text().withDefault(const Constant('underground'))();
 
   /// Live Activity / Dynamic Island stint timer (Pro). Off by default.
   BoolColumn get liveActivityEnabled =>
@@ -42,8 +40,7 @@ class AppSettingsRows extends Table {
   /// Legacy flag from the former "Pace Pro" in-app purchase. Unused since the
   /// app became fully free; kept as a nullable-default column to avoid a
   /// destructive schema migration on existing installs.
-  BoolColumn get proPurchased =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get proPurchased => boolean().withDefault(const Constant(false))();
 
   /// Optional quit-smoking target date. Null = no date set (the app stays in
   /// the open-ended "stretch the stint" mode). When set, Pace switches into the
@@ -96,8 +93,7 @@ class PitStops extends Table {
   DateTimeColumn get occurredAt => dateTime()();
   IntColumn get cravingLevel => integer()(); // 1..5
   IntColumn get stressLevel => integer()(); // 1..5
-  TextColumn get situationId =>
-      text().nullable().references(Situations, #id)();
+  TextColumn get situationId => text().nullable().references(Situations, #id)();
 
   /// True when fired while a countdown was still running (an early box stop).
   BoolColumn get wasEarlyPit => boolean().withDefault(const Constant(false))();

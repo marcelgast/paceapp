@@ -75,30 +75,38 @@ class DeepAnalytics {
       cravingSum[key] = (cravingSum[key] ?? 0) + s.craving;
     }
 
-    final triggers = counts.entries
-        .map((e) => TriggerStat(
-              label: e.key.isEmpty
-                  ? noSituationLabel
-                  : (labels[e.key] ?? noSituationLabel),
-              count: e.value,
-              avgCraving: cravingSum[e.key]! / e.value,
-            ))
-        .toList()
-      ..sort((a, b) => b.count.compareTo(a.count));
+    final triggers =
+        counts.entries
+            .map(
+              (e) => TriggerStat(
+                label: e.key.isEmpty
+                    ? noSituationLabel
+                    : (labels[e.key] ?? noSituationLabel),
+                count: e.value,
+                avgCraving: cravingSum[e.key]! / e.value,
+              ),
+            )
+            .toList()
+          ..sort((a, b) => b.count.compareTo(a.count));
 
     // Rolling 7-day windows back from now, only as far as there is data.
     final earliest = samples.isEmpty
         ? now
-        : samples.map((s) => s.occurredAt).reduce((a, b) => a.isBefore(b) ? a : b);
-    final weeksOfData =
-        (now.difference(earliest).inDays / 7).ceil().clamp(1, maxWeeks);
+        : samples
+              .map((s) => s.occurredAt)
+              .reduce((a, b) => a.isBefore(b) ? a : b);
+    final weeksOfData = (now.difference(earliest).inDays / 7).ceil().clamp(
+      1,
+      maxWeeks,
+    );
     final trend = <TrendPoint>[];
     for (var w = weeksOfData - 1; w >= 0; w--) {
       final to = now.subtract(Duration(days: 7 * w));
       final from = now.subtract(Duration(days: 7 * (w + 1)));
       final count = samples
-          .where((s) =>
-              !s.occurredAt.isBefore(from) && s.occurredAt.isBefore(to))
+          .where(
+            (s) => !s.occurredAt.isBefore(from) && s.occurredAt.isBefore(to),
+          )
           .length;
       trend.add(TrendPoint(weeksAgo: w, cigarettesPerDay: count / 7));
     }

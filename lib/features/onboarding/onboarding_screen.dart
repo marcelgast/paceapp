@@ -71,9 +71,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   Future<void> _next() async {
     if (!_validateStep(_step)) {
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.onboardingInvalidValue)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.onboardingInvalidValue)));
       return;
     }
     HapticFeedback.lightImpact();
@@ -92,7 +92,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
         _lights.animateTo(_stepProgress[_step]);
       }
       _pager.nextPage(
-          duration: const Duration(milliseconds: 350), curve: Curves.easeOutCubic);
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
     } else {
       FocusScope.of(context).unfocus();
       await _launch();
@@ -108,8 +110,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     for (var i = 0; i < stops.length; i++) {
       Future<void>.delayed(Duration(milliseconds: 650 + i * 900), () {
         if (!mounted || _step != 5 || _launching) return;
-        _lights.animateTo(stops[i],
-            duration: const Duration(milliseconds: 520), curve: Curves.easeOut);
+        _lights.animateTo(
+          stops[i],
+          duration: const Duration(milliseconds: 520),
+          curve: Curves.easeOut,
+        );
       });
     }
   }
@@ -119,7 +124,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     FocusScope.of(context).unfocus();
     setState(() => _step--);
     _pager.previousPage(
-        duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
   Future<void> _pickSleep({required bool isStart}) async {
@@ -141,7 +148,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     setState(() => _launching = true);
     await _lights.animateTo(0.9, duration: const Duration(milliseconds: 700));
     HapticFeedback.heavyImpact();
-    await ref.read(databaseProvider).saveOnboarding(
+    await ref
+        .read(databaseProvider)
+        .saveOnboarding(
           packPriceCents: _priceCents()!,
           cigarettesPerPack: int.parse(_perPack.text.trim()),
           baselineCigsPerDay: int.parse(_perDay.text.trim()),
@@ -168,21 +177,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
               left: -6,
               bottom: 96,
               child: GraffitiTag(
-                  text: 'NO\nLIMITS',
-                  color: PaceColors.neonCyan,
-                  size: 30,
-                  angle: -0.14,
-                  opacity: 0.3),
+                text: 'NO\nLIMITS',
+                color: PaceColors.neonCyan,
+                size: 30,
+                angle: -0.14,
+                opacity: 0.3,
+              ),
             ),
             Positioned(
               right: -4,
               top: 150,
               child: GraffitiTag(
-                  text: 'FUEL THE\nSTREAK',
-                  color: PaceColors.neonMagenta,
-                  size: 24,
-                  angle: 0.12,
-                  opacity: 0.26),
+                text: 'FUEL THE\nSTREAK',
+                color: PaceColors.neonMagenta,
+                size: 24,
+                angle: 0.12,
+                opacity: 0.26,
+              ),
             ),
             SafeArea(
               child: Column(
@@ -202,9 +213,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                         : Column(
                             children: [
                               const SizedBox(height: 4),
-                              Text(l10n.onboardingTagline,
-                                  style: TextStyle(
-                                      color: PaceColors.textMuted, fontSize: 14)),
+                              Text(
+                                l10n.onboardingTagline,
+                                style: TextStyle(
+                                  color: PaceColors.textMuted,
+                                  fontSize: 14,
+                                ),
+                              ),
                               // The staging tree is the launch ritual — show it
                               // only on the measuring-week page.
                               if (_step == 5) ...[
@@ -230,11 +245,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                           headline: l10n.onboardingPackPriceHeadline,
                           sub: l10n.onboardingPackPriceSub,
                           field: _BigField(
-                              controller: _price,
-                              suffix: '€',
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(decimal: true),
-                              onSubmit: _next),
+                            controller: _price,
+                            suffix: '€',
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            onSubmit: _next,
+                          ),
                           buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
@@ -245,9 +262,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                           headline: l10n.onboardingPerPackHeadline,
                           sub: l10n.onboardingPerPackSub,
                           field: _BigField(
-                              controller: _perPack,
-                              keyboardType: TextInputType.number,
-                              onSubmit: _next),
+                            controller: _perPack,
+                            keyboardType: TextInputType.number,
+                            onSubmit: _next,
+                          ),
                           buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
@@ -258,9 +276,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                           headline: l10n.onboardingPerDayHeadline,
                           sub: l10n.onboardingPerDaySub,
                           field: _BigField(
-                              controller: _perDay,
-                              keyboardType: TextInputType.number,
-                              onSubmit: _next),
+                            controller: _perDay,
+                            keyboardType: TextInputType.number,
+                            onSubmit: _next,
+                          ),
                           buttonLabel: l10n.onboardingNext,
                           onNext: _next,
                           onBack: _back,
@@ -318,45 +337,64 @@ class _QuestionPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(eyebrow,
-              style: TextStyle(
-                  color: PaceColors.neonOrange,
-                  fontSize: 12,
-                  letterSpacing: 2,
-                  fontWeight: FontWeight.w800)),
-          const SizedBox(height: 10),
-          Text(headline,
-              style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
-                  .copyWith(height: 1.05)),
-          const SizedBox(height: 8),
-          Text(sub,
-              style: TextStyle(
-                  color: PaceColors.textMuted, fontSize: 14, height: 1.4)),
-          const SizedBox(height: 22),
-          field,
-          const Spacer(),
-          Row(
-            children: [
-              if (onBack != null) ...[
-                _BackButton(onTap: onBack!),
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: _PrimaryButton(
-                    label: launching ? l10n.onboardingCountdown : buttonLabel,
-                    onTap: launching ? null : onNext),
+      child:
+          Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    eyebrow,
+                    style: TextStyle(
+                      color: PaceColors.neonOrange,
+                      fontSize: 12,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    headline,
+                    style: PaceTheme.dash(
+                      size: 30,
+                      weight: FontWeight.w800,
+                    ).copyWith(height: 1.05),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    sub,
+                    style: TextStyle(
+                      color: PaceColors.textMuted,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  field,
+                  const Spacer(),
+                  Row(
+                    children: [
+                      if (onBack != null) ...[
+                        _BackButton(onTap: onBack!),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child: _PrimaryButton(
+                          label: launching
+                              ? l10n.onboardingCountdown
+                              : buttonLabel,
+                          onTap: launching ? null : onNext,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+              .animate(key: ValueKey(eyebrow))
+              .fadeIn(duration: 320.ms)
+              .slideX(
+                begin: 0.15,
+                curve: Curves.easeOutCubic,
+                duration: 320.ms,
               ),
-            ],
-          ),
-        ],
-      ).animate(key: ValueKey(eyebrow)).fadeIn(duration: 320.ms).slideX(
-            begin: 0.15,
-            curve: Curves.easeOutCubic,
-            duration: 320.ms,
-          ),
     );
   }
 }
@@ -371,75 +409,92 @@ class _WelcomePage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 2, 28, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+      child:
+          Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.onboardingWelcomeEyebrow,
-                      style: TextStyle(
-                          color: PaceColors.neonOrange,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 10),
-                  Text(l10n.onboardingWelcomeHeadline,
-                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
-                          .copyWith(height: 1.05)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.onboardingWelcomeBody,
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.onboardingWelcomeEyebrow,
+                            style: TextStyle(
+                              color: PaceColors.neonOrange,
+                              fontSize: 12,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            l10n.onboardingWelcomeHeadline,
+                            style: PaceTheme.dash(
+                              size: 30,
+                              weight: FontWeight.w800,
+                            ).copyWith(height: 1.05),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.onboardingWelcomeBody,
+                            style: TextStyle(
+                              color: PaceColors.textMuted,
+                              fontSize: 14,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          _FeatureRow(
+                            icon: Icons.insights,
+                            color: PaceColors.neonCyan,
+                            title: l10n.onboardingFeatureObserveTitle,
+                            detail: l10n.onboardingFeatureObserveDetail,
+                          ),
+                          _FeatureRow(
+                            icon: Icons.trending_up,
+                            color: PaceColors.neonMagenta,
+                            title: l10n.onboardingFeatureStretchTitle,
+                            detail: l10n.onboardingFeatureStretchDetail,
+                          ),
+                          _FeatureRow(
+                            icon: Icons.emoji_events,
+                            color: PaceColors.neonLime,
+                            title: l10n.onboardingFeatureCelebrateTitle,
+                            detail: l10n.onboardingFeatureCelebrateDetail,
+                          ),
+                          _FeatureRow(
+                            icon: Icons.air,
+                            color: PaceColors.neonOrange,
+                            title: l10n.onboardingFeatureEmergencyTitle,
+                            detail: l10n.onboardingFeatureEmergencyDetail,
+                            last: true,
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            l10n.onboardingWelcomeClosing,
+                            style: const TextStyle(
+                              color: PaceColors.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 22),
-                  _FeatureRow(
-                    icon: Icons.insights,
-                    color: PaceColors.neonCyan,
-                    title: l10n.onboardingFeatureObserveTitle,
-                    detail: l10n.onboardingFeatureObserveDetail,
-                  ),
-                  _FeatureRow(
-                    icon: Icons.trending_up,
-                    color: PaceColors.neonMagenta,
-                    title: l10n.onboardingFeatureStretchTitle,
-                    detail: l10n.onboardingFeatureStretchDetail,
-                  ),
-                  _FeatureRow(
-                    icon: Icons.emoji_events,
-                    color: PaceColors.neonLime,
-                    title: l10n.onboardingFeatureCelebrateTitle,
-                    detail: l10n.onboardingFeatureCelebrateDetail,
-                  ),
-                  _FeatureRow(
-                    icon: Icons.air,
-                    color: PaceColors.neonOrange,
-                    title: l10n.onboardingFeatureEmergencyTitle,
-                    detail: l10n.onboardingFeatureEmergencyDetail,
-                    last: true,
-                  ),
-                  const SizedBox(height: 18),
-                  Text(l10n.onboardingWelcomeClosing,
-                      style: const TextStyle(
-                          color: PaceColors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.italic)),
+                  const SizedBox(height: 12),
+                  _PrimaryButton(label: l10n.onboardingLetsGo, onTap: onNext),
                 ],
+              )
+              .animate(key: const ValueKey('welcome'))
+              .fadeIn(duration: 320.ms)
+              .slideX(
+                begin: 0.15,
+                curve: Curves.easeOutCubic,
+                duration: 320.ms,
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          _PrimaryButton(label: l10n.onboardingLetsGo, onTap: onNext),
-        ],
-      ).animate(key: const ValueKey('welcome')).fadeIn(duration: 320.ms).slideX(
-            begin: 0.15,
-            curve: Curves.easeOutCubic,
-            duration: 320.ms,
-          ),
     );
   }
 }
@@ -482,17 +537,23 @@ class _FeatureRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(detail,
-                    style: TextStyle(
-                        color: PaceColors.textMuted,
-                        fontSize: 13,
-                        height: 1.35)),
+                Text(
+                  detail,
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 13,
+                    height: 1.35,
+                  ),
+                ),
               ],
             ),
           ),
@@ -527,73 +588,97 @@ class _SleepPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+      child:
+          Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.onboardingSleepEyebrow,
-                      style: TextStyle(
-                          color: PaceColors.neonOrange,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 10),
-                  Text(l10n.onboardingSleepHeadline,
-                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
-                          .copyWith(height: 1.05)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.onboardingSleepBody,
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.onboardingSleepEyebrow,
+                            style: TextStyle(
+                              color: PaceColors.neonOrange,
+                              fontSize: 12,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            l10n.onboardingSleepHeadline,
+                            style: PaceTheme.dash(
+                              size: 30,
+                              weight: FontWeight.w800,
+                            ).copyWith(height: 1.05),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.onboardingSleepBody,
+                            style: TextStyle(
+                              color: PaceColors.textMuted,
+                              fontSize: 14,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _TimeBox(
+                                  label: l10n.onboardingSleepFrom,
+                                  value: _fmt(start),
+                                  onTap: onPickStart,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _TimeBox(
+                                  label: l10n.onboardingSleepTo,
+                                  value: _fmt(end),
+                                  onTap: onPickEnd,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(
-                          child: _TimeBox(
-                              label: l10n.onboardingSleepFrom,
-                              value: _fmt(start),
-                              onTap: onPickStart)),
+                      _BackButton(onTap: onBack),
                       const SizedBox(width: 12),
                       Expanded(
-                          child: _TimeBox(
-                              label: l10n.onboardingSleepTo,
-                              value: _fmt(end),
-                              onTap: onPickEnd)),
+                        child: _PrimaryButton(
+                          label: l10n.onboardingNext,
+                          onTap: onNext,
+                        ),
+                      ),
                     ],
                   ),
                 ],
+              )
+              .animate(key: const ValueKey('sleep'))
+              .fadeIn(duration: 320.ms)
+              .slideX(
+                begin: 0.15,
+                curve: Curves.easeOutCubic,
+                duration: 320.ms,
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _BackButton(onTap: onBack),
-              const SizedBox(width: 12),
-              Expanded(
-                  child: _PrimaryButton(
-                      label: l10n.onboardingNext, onTap: onNext)),
-            ],
-          ),
-        ],
-      ).animate(key: const ValueKey('sleep')).fadeIn(duration: 320.ms).slideX(
-            begin: 0.15,
-            curve: Curves.easeOutCubic,
-            duration: 320.ms,
-          ),
     );
   }
 }
 
 class _TimeBox extends StatelessWidget {
-  const _TimeBox(
-      {required this.label, required this.value, required this.onTap});
+  const _TimeBox({
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
 
   final String label;
   final String value;
@@ -613,14 +698,19 @@ class _TimeBox extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            Text(
+              label,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+            ),
             const SizedBox(height: 6),
-            Text(value,
-                style: PaceTheme.dash(
-                    size: 34,
-                    weight: FontWeight.w800,
-                    color: PaceColors.neonCyan)),
+            Text(
+              value,
+              style: PaceTheme.dash(
+                size: 34,
+                weight: FontWeight.w800,
+                color: PaceColors.neonCyan,
+              ),
+            ),
           ],
         ),
       ),
@@ -644,74 +734,89 @@ class _MeasureWeekPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(28, 6, 28, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+      child:
+          Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.onboardingMeasureEyebrow,
-                      style: TextStyle(
-                          color: PaceColors.neonOrange,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 10),
-                  Text(l10n.onboardingMeasureHeadline,
-                      style: PaceTheme.dash(size: 30, weight: FontWeight.w800)
-                          .copyWith(height: 1.05)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.onboardingMeasureBody,
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 14, height: 1.4),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.onboardingMeasureEyebrow,
+                            style: TextStyle(
+                              color: PaceColors.neonOrange,
+                              fontSize: 12,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            l10n.onboardingMeasureHeadline,
+                            style: PaceTheme.dash(
+                              size: 30,
+                              weight: FontWeight.w800,
+                            ).copyWith(height: 1.05),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.onboardingMeasureBody,
+                            style: TextStyle(
+                              color: PaceColors.textMuted,
+                              fontSize: 14,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          _StepRow(
+                            number: '1',
+                            color: PaceColors.neonCyan,
+                            title: l10n.onboardingStepMeasureTitle,
+                            detail: l10n.onboardingStepMeasureDetail,
+                          ),
+                          _StepRow(
+                            number: '2',
+                            color: PaceColors.neonMagenta,
+                            title: l10n.onboardingStepTargetTitle,
+                            detail: l10n.onboardingStepTargetDetail,
+                          ),
+                          _StepRow(
+                            number: '3',
+                            color: PaceColors.neonLime,
+                            title: l10n.onboardingStepRaceTitle,
+                            detail: l10n.onboardingStepRaceDetail,
+                            last: true,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 22),
-                  _StepRow(
-                    number: '1',
-                    color: PaceColors.neonCyan,
-                    title: l10n.onboardingStepMeasureTitle,
-                    detail: l10n.onboardingStepMeasureDetail,
-                  ),
-                  _StepRow(
-                    number: '2',
-                    color: PaceColors.neonMagenta,
-                    title: l10n.onboardingStepTargetTitle,
-                    detail: l10n.onboardingStepTargetDetail,
-                  ),
-                  _StepRow(
-                    number: '3',
-                    color: PaceColors.neonLime,
-                    title: l10n.onboardingStepRaceTitle,
-                    detail: l10n.onboardingStepRaceDetail,
-                    last: true,
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _BackButton(onTap: onBack),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _PrimaryButton(
+                          label: launching
+                              ? l10n.onboardingCountdown
+                              : l10n.onboardingStartMeasuringLap,
+                          onTap: launching ? null : onNext,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              )
+              .animate(key: const ValueKey('measure-week'))
+              .fadeIn(duration: 320.ms)
+              .slideX(
+                begin: 0.15,
+                curve: Curves.easeOutCubic,
+                duration: 320.ms,
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _BackButton(onTap: onBack),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _PrimaryButton(
-                    label: launching
-                        ? l10n.onboardingCountdown
-                        : l10n.onboardingStartMeasuringLap,
-                    onTap: launching ? null : onNext),
-              ),
-            ],
-          ),
-        ],
-      ).animate(key: const ValueKey('measure-week')).fadeIn(duration: 320.ms).slideX(
-            begin: 0.15,
-            curve: Curves.easeOutCubic,
-            duration: 320.ms,
-          ),
     );
   }
 }
@@ -747,26 +852,37 @@ class _StepRow extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: color.withValues(alpha: 0.7)),
             ),
-            child: Text(number,
-                style: PaceTheme.dash(
-                    size: 18, weight: FontWeight.w800, color: color)),
+            child: Text(
+              number,
+              style: PaceTheme.dash(
+                size: 18,
+                weight: FontWeight.w800,
+                color: color,
+              ),
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(detail,
-                    style: TextStyle(
-                        color: PaceColors.textMuted,
-                        fontSize: 13,
-                        height: 1.35)),
+                Text(
+                  detail,
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 13,
+                    height: 1.35,
+                  ),
+                ),
               ],
             ),
           ),
@@ -803,11 +919,15 @@ class _BigField extends StatelessWidget {
         fillColor: PaceColors.panel.withValues(alpha: 0.85),
         suffixText: suffix,
         suffixStyle: PaceTheme.dash(size: 34, color: PaceColors.neonCyan),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: PaceColors.chrome.withValues(alpha: 0.6)),
+          borderSide: BorderSide(
+            color: PaceColors.chrome.withValues(alpha: 0.6),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -827,28 +947,34 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: PaceColors.underglow),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: PaceColors.neonMagenta.withValues(alpha: 0.45),
-                blurRadius: 24,
-                offset: const Offset(0, 6)),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(label,
-            style: const TextStyle(
+          onTap: onTap,
+          child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: PaceColors.underglow),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: PaceColors.neonMagenta.withValues(alpha: 0.45),
+                  blurRadius: 24,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
-                color: Colors.white)),
-      ),
-    ).animate(onPlay: (c) => c.repeat()).shimmer(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        )
+        .animate(onPlay: (c) => c.repeat())
+        .shimmer(
           duration: 2400.ms,
           color: Colors.white.withValues(alpha: 0.16),
         );

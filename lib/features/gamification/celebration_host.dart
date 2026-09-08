@@ -29,8 +29,9 @@ class _CelebrationHostState extends ConsumerState<CelebrationHost> {
   final Set<String> _handled = {};
   final List<Milestone> _queue = [];
   Milestone? _current;
-  late final ConfettiController _confetti =
-      ConfettiController(duration: const Duration(seconds: 2));
+  late final ConfettiController _confetti = ConfettiController(
+    duration: const Duration(seconds: 2),
+  );
 
   @override
   void dispose() {
@@ -90,9 +91,14 @@ class _CelebrationHostState extends ConsumerState<CelebrationHost> {
             confetti: _confetti,
             onDismiss: _dismiss,
             onShare: () => showRaceCardSheet(
-                context,
-                milestoneCard(ref, _current!, AppLocalizations.of(context),
-                    Localizations.localeOf(context).languageCode)),
+              context,
+              milestoneCard(
+                ref,
+                _current!,
+                AppLocalizations.of(context),
+                Localizations.localeOf(context).languageCode,
+              ),
+            ),
           ),
       ],
     );
@@ -143,81 +149,101 @@ class _CelebrationOverlay extends StatelessWidget {
               ),
             ),
             Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _Badge(icon: style.icon, color: style.color),
-                    const SizedBox(height: 24),
-                    Text(
-                      l10n.celebrationMilestone,
-                      style: TextStyle(
-                        color: style.color,
-                        fontSize: 14,
-                        letterSpacing: 4,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    GraffitiHeadline(milestone.localizedTitle(lang), size: 38, color: style.color)
-                        .animate()
-                        .shimmer(
-                          duration: 1400.ms,
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                    const SizedBox(height: 14),
-                    Text(
-                      milestone.localizedDetail(lang),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    GestureDetector(
-                      onTap: onDismiss,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: PaceColors.underglow),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: style.color.withValues(alpha: 0.5),
-                              blurRadius: 24,
+              child:
+                  Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _Badge(icon: style.icon, color: style.color),
+                            const SizedBox(height: 24),
+                            Text(
+                              l10n.celebrationMilestone,
+                              style: TextStyle(
+                                color: style.color,
+                                fontSize: 14,
+                                letterSpacing: 4,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            GraffitiHeadline(
+                              milestone.localizedTitle(lang),
+                              size: 38,
+                              color: style.color,
+                            ).animate().shimmer(
+                              duration: 1400.ms,
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              milestone.localizedDetail(lang),
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: PaceColors.textPrimary,
+                                fontSize: 15,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            GestureDetector(
+                              onTap: onDismiss,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 36,
+                                  vertical: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: PaceColors.underglow,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: style.color.withValues(alpha: 0.5),
+                                      blurRadius: 24,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  l10n.celebrationLetsGo,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 2,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            TextButton.icon(
+                              onPressed: onShare,
+                              icon: Icon(
+                                Icons.ios_share,
+                                color: style.color,
+                                size: 18,
+                              ),
+                              label: Text(
+                                l10n.celebrationShareAsCard,
+                                style: TextStyle(
+                                  color: style.color,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        child: Text(
-                          l10n.celebrationLetsGo,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                            fontSize: 16,
-                          ),
-                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 260.ms)
+                      .scaleXY(
+                        begin: 0.7,
+                        end: 1.0,
+                        curve: Curves.elasticOut,
+                        duration: 700.ms,
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    TextButton.icon(
-                      onPressed: onShare,
-                      icon: Icon(Icons.ios_share, color: style.color, size: 18),
-                      label: Text(l10n.celebrationShareAsCard,
-                          style: TextStyle(
-                              color: style.color,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14)),
-                    ),
-                  ],
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 260.ms)
-                  .scaleXY(begin: 0.7, end: 1.0, curve: Curves.elasticOut, duration: 700.ms),
             ),
           ],
         ),
@@ -235,19 +261,28 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 110,
-      height: 110,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: PaceColors.panel,
-        border: Border.all(color: color, width: 3),
-        boxShadow: [
-          BoxShadow(color: color.withValues(alpha: 0.6), blurRadius: 36, spreadRadius: 4),
-        ],
-      ),
-      child: Icon(icon, color: color, size: 54),
-    )
+          width: 110,
+          height: 110,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: PaceColors.panel,
+            border: Border.all(color: color, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.6),
+                blurRadius: 36,
+                spreadRadius: 4,
+              ),
+            ],
+          ),
+          child: Icon(icon, color: color, size: 54),
+        )
         .animate(onPlay: (c) => c.repeat(reverse: true))
-        .scaleXY(begin: 1.0, end: 1.08, duration: 1100.ms, curve: Curves.easeInOut);
+        .scaleXY(
+          begin: 1.0,
+          end: 1.08,
+          duration: 1100.ms,
+          curve: Curves.easeInOut,
+        );
   }
 }

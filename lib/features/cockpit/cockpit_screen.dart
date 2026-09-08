@@ -27,8 +27,9 @@ class CockpitScreen extends ConsumerStatefulWidget {
 }
 
 class _CockpitScreenState extends ConsumerState<CockpitScreen> {
-  late final ConfettiController _win =
-      ConfettiController(duration: const Duration(milliseconds: 1500));
+  late final ConfettiController _win = ConfettiController(
+    duration: const Duration(milliseconds: 1500),
+  );
 
   @override
   void dispose() {
@@ -67,14 +68,16 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
     var baselineSub = l10n.cockpitBaselineMeasuring;
     if (settings != null) {
       final end = settings.startedAt.add(StintCalculator.baselineDuration);
-      final daysLeft = DateTime(end.year, end.month, end.day)
-          .difference(DateTime(now.year, now.month, now.day))
-          .inDays;
+      final daysLeft = DateTime(
+        end.year,
+        end.month,
+        end.day,
+      ).difference(DateTime(now.year, now.month, now.day)).inDays;
       baselineSub = daysLeft <= 0
           ? l10n.cockpitBaselineEndsToday
           : daysLeft == 1
-              ? l10n.cockpitBaselineEndsTomorrow
-              : l10n.cockpitBaselineDaysLeft(daysLeft.toString());
+          ? l10n.cockpitBaselineEndsTomorrow
+          : l10n.cockpitBaselineDaysLeft(daysLeft.toString());
     }
 
     return Scaffold(
@@ -92,7 +95,8 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                     Row(
                       children: [
                         _SettingsButton(
-                            onTap: () => SettingsScreen.open(context)),
+                          onTap: () => SettingsScreen.open(context),
+                        ),
                         const SizedBox(width: 8),
                         _StreakChip(days: ref.watch(streakProvider).current),
                       ],
@@ -113,9 +117,10 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                       _SmokeFreeHero(plan: quitPlan)
                     else
                       _Gauge(
-                          stint: stint,
-                          target: ref.watch(targetIntervalProvider),
-                          baselineSub: baselineSub),
+                        stint: stint,
+                        target: ref.watch(targetIntervalProvider),
+                        baselineSub: baselineSub,
+                      ),
                     ConfettiWidget(
                       confettiController: _win,
                       blastDirectionality: BlastDirectionality.explosive,
@@ -136,7 +141,8 @@ class _CockpitScreenState extends ConsumerState<CockpitScreen> {
                 const Spacer(),
                 if (quitPlan.isSmokeFree) ...[
                   _BreathingPrimaryButton(
-                      onTap: () => BreathingScreen.open(context)),
+                    onTap: () => BreathingScreen.open(context),
+                  ),
                   const SizedBox(height: 12),
                   _RelapsePitButton(onTap: _pitStop),
                 ] else ...[
@@ -166,18 +172,30 @@ class _StatsRow extends StatelessWidget {
     final saved = stats == null
         ? '—'
         : formatMoneyCents(stats.savedMoneyCents, currencyCode: currency);
-    final avoided =
-        stats == null ? '—' : stats.savedCigarettes.floor().toString();
-    final clean =
-        stats == null ? '—' : formatHumanDuration(stats.sinceStart);
+    final avoided = stats == null
+        ? '—'
+        : stats.savedCigarettes.floor().toString();
+    final clean = stats == null ? '—' : formatHumanDuration(stats.sinceStart);
 
     return Row(
       children: [
-        _Kpi(label: l10n.cockpitStatSaved, value: saved, color: PaceColors.neonLime),
+        _Kpi(
+          label: l10n.cockpitStatSaved,
+          value: saved,
+          color: PaceColors.neonLime,
+        ),
         const SizedBox(width: 12),
-        _Kpi(label: l10n.cockpitStatAvoided, value: avoided, color: PaceColors.neonCyan),
+        _Kpi(
+          label: l10n.cockpitStatAvoided,
+          value: avoided,
+          color: PaceColors.neonCyan,
+        ),
         const SizedBox(width: 12),
-        _Kpi(label: l10n.cockpitStatInRace, value: clean, color: PaceColors.neonOrange),
+        _Kpi(
+          label: l10n.cockpitStatInRace,
+          value: clean,
+          color: PaceColors.neonOrange,
+        ),
       ],
     );
   }
@@ -209,8 +227,10 @@ class _Kpi extends StatelessWidget {
               style: PaceTheme.dash(size: 22, color: color),
             ),
             const SizedBox(height: 2),
-            Text(label,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 11)),
+            Text(
+              label,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 11),
+            ),
           ],
         ),
       ),
@@ -219,8 +239,11 @@ class _Kpi extends StatelessWidget {
 }
 
 class _Gauge extends StatelessWidget {
-  const _Gauge(
-      {required this.stint, required this.target, required this.baselineSub});
+  const _Gauge({
+    required this.stint,
+    required this.target,
+    required this.baselineSub,
+  });
 
   final StintState? stint;
   final Duration? target;
@@ -244,28 +267,34 @@ class _Gauge extends StatelessWidget {
       overtimeProgress = (ot % tgt) / tgt;
     }
 
-    final (String label, String time, String sub, Color color) =
-        switch (phase) {
+    final (
+      String label,
+      String time,
+      String sub,
+      Color color,
+    ) = switch (phase) {
       StintPhase.baseline => (
-          l10n.cockpitGaugeMeasuringLap,
-          formatStintDuration(stint?.elapsed ?? Duration.zero),
-          baselineSub,
-          PaceColors.textMuted,
-        ),
+        l10n.cockpitGaugeMeasuringLap,
+        formatStintDuration(stint?.elapsed ?? Duration.zero),
+        baselineSub,
+        PaceColors.textMuted,
+      ),
       StintPhase.countdown => (
-          l10n.cockpitGaugeNextStint,
-          formatStintDuration(stint?.remaining ?? Duration.zero),
-          target == null ? '' : l10n.cockpitGaugeTarget(formatHumanDuration(target!)),
-          PaceColors.neonCyan,
-        ),
+        l10n.cockpitGaugeNextStint,
+        formatStintDuration(stint?.remaining ?? Duration.zero),
+        target == null
+            ? ''
+            : l10n.cockpitGaugeTarget(formatHumanDuration(target!)),
+        PaceColors.neonCyan,
+      ),
       StintPhase.overtime => (
-          l10n.cockpitGaugeOvertime,
-          formatStintDuration(stint?.overtime ?? Duration.zero),
-          bonusLap >= 1
-              ? l10n.cockpitGaugeBonusLap((bonusLap + 1).toString())
-              : l10n.cockpitGaugeBonusTime,
-          PaceColors.neonLime,
-        ),
+        l10n.cockpitGaugeOvertime,
+        formatStintDuration(stint?.overtime ?? Duration.zero),
+        bonusLap >= 1
+            ? l10n.cockpitGaugeBonusLap((bonusLap + 1).toString())
+            : l10n.cockpitGaugeBonusTime,
+        PaceColors.neonLime,
+      ),
     };
 
     Widget gauge = Tachometer(
@@ -276,24 +305,32 @@ class _Gauge extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: color,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+            ),
+          ),
           const SizedBox(height: 8),
           Text(
             time,
-            style: PaceTheme.dash(size: 56, weight: FontWeight.w800, color: color)
-                .copyWith(shadows: PaceTheme.neonGlow(color, blur: 14)),
+            style: PaceTheme.dash(
+              size: 56,
+              weight: FontWeight.w800,
+              color: color,
+            ).copyWith(shadows: PaceTheme.neonGlow(color, blur: 14)),
           ),
           const SizedBox(height: 8),
           SizedBox(
             width: 170,
-            child: Text(sub,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+            child: Text(
+              sub,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -302,7 +339,12 @@ class _Gauge extends StatelessWidget {
     if (phase == StintPhase.overtime) {
       gauge = gauge
           .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scaleXY(begin: 1.0, end: 1.03, duration: 900.ms, curve: Curves.easeInOut);
+          .scaleXY(
+            begin: 1.0,
+            end: 1.03,
+            duration: 900.ms,
+            curve: Curves.easeInOut,
+          );
     }
     return gauge;
   }
@@ -317,48 +359,61 @@ class _PitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 72,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: PaceColors.underglow),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: PaceColors.neonMagenta.withValues(alpha: 0.5),
-              blurRadius: 28,
-              offset: const Offset(0, 8),
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            height: 72,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: PaceColors.underglow),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: PaceColors.neonMagenta.withValues(alpha: 0.5),
+                  blurRadius: 28,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.local_fire_department, color: Colors.white, size: 28),
-            const SizedBox(width: 12),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(l10n.cockpitPitButtonTitle,
-                    style: const TextStyle(
+                const Icon(
+                  Icons.local_fire_department,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.cockpitPitButtonTitle,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5)),
-                Text(l10n.cockpitPitButtonSubtitle,
-                    style: TextStyle(
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      l10n.cockpitPitButtonSubtitle,
+                      style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.85),
-                        fontSize: 12)),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate(onPlay: (c) => c.repeat())
-        .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.18));
+        .shimmer(
+          duration: 2600.ms,
+          color: Colors.white.withValues(alpha: 0.18),
+        );
   }
 }
 
@@ -385,12 +440,15 @@ class _SosButton extends StatelessWidget {
           children: [
             Icon(Icons.air, color: PaceColors.neonCyan, size: 22),
             const SizedBox(width: 10),
-            Text(l10n.cockpitSosButton,
-                style: TextStyle(
-                    color: PaceColors.neonCyan,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1)),
+            Text(
+              l10n.cockpitSosButton,
+              style: TextStyle(
+                color: PaceColors.neonCyan,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
+              ),
+            ),
           ],
         ),
       ),
@@ -415,8 +473,11 @@ class _SettingsButton extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: PaceColors.chrome.withValues(alpha: 0.6)),
         ),
-        child: const Icon(Icons.settings_outlined,
-            color: PaceColors.textMuted, size: 19),
+        child: const Icon(
+          Icons.settings_outlined,
+          color: PaceColors.textMuted,
+          size: 19,
+        ),
       ),
     );
   }
@@ -433,15 +494,17 @@ class _QuitCountdownBanner extends StatelessWidget {
     final text = daysUntil <= 0
         ? l10n.quitCountdownToday
         : daysUntil == 1
-            ? l10n.quitCountdownTomorrow
-            : l10n.quitCountdownDays(daysUntil.toString());
+        ? l10n.quitCountdownTomorrow
+        : l10n.quitCountdownDays(daysUntil.toString());
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          PaceColors.neonCyan.withValues(alpha: 0.14),
-          PaceColors.neonLime.withValues(alpha: 0.08),
-        ]),
+        gradient: LinearGradient(
+          colors: [
+            PaceColors.neonCyan.withValues(alpha: 0.14),
+            PaceColors.neonLime.withValues(alpha: 0.08),
+          ],
+        ),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.5)),
       ),
@@ -453,18 +516,24 @@ class _QuitCountdownBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.quitCountdownLabel,
-                    style: TextStyle(
-                        color: PaceColors.textMuted,
-                        fontSize: 11,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  l10n.quitCountdownLabel,
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 1),
-                Text(text,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800)),
+                Text(
+                  text,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ],
             ),
           ),
@@ -495,43 +564,68 @@ class _SmokeFreeHero extends StatelessWidget {
       children: [
         Icon(Icons.sports_score, color: PaceColors.neonLime, size: 58)
             .animate(onPlay: (c) => c.repeat(reverse: true))
-            .scaleXY(begin: 1.0, end: 1.1, duration: 1100.ms, curve: Curves.easeInOut),
+            .scaleXY(
+              begin: 1.0,
+              end: 1.1,
+              duration: 1100.ms,
+              curve: Curves.easeInOut,
+            ),
         const SizedBox(height: 12),
-        Text(l10n.smokeFreeRaceKicker,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: PaceColors.neonLime,
-                fontSize: 13,
-                letterSpacing: 3,
-                fontWeight: FontWeight.w800)),
+        Text(
+          l10n.smokeFreeRaceKicker,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: PaceColors.neonLime,
+            fontSize: 13,
+            letterSpacing: 3,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
         const SizedBox(height: 6),
         GraffitiHeadline(day.toString(), size: 82, color: Colors.white)
             .animate(key: ValueKey(day))
-            .scaleXY(begin: 0.8, end: 1.0, curve: Curves.easeOutBack, duration: 520.ms),
-        Text('${l10n.smokeFreeDaysWord(day)} ${l10n.smokeFreeFreeWord}',
-            style: TextStyle(
-                color: PaceColors.neonLime,
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.5)),
+            .scaleXY(
+              begin: 0.8,
+              end: 1.0,
+              curve: Curves.easeOutBack,
+              duration: 520.ms,
+            ),
+        Text(
+          '${l10n.smokeFreeDaysWord(day)} ${l10n.smokeFreeFreeWord}',
+          style: TextStyle(
+            color: PaceColors.neonLime,
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
+          ),
+        ),
         const SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
           decoration: BoxDecoration(
             color: PaceColors.panel.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.4)),
+            border: Border.all(
+              color: PaceColors.neonCyan.withValues(alpha: 0.4),
+            ),
           ),
-          child: Text(_hms(plan.intraDay),
-              style: PaceTheme.dash(size: 24, color: PaceColors.neonCyan)),
+          child: Text(
+            _hms(plan.intraDay),
+            style: PaceTheme.dash(size: 24, color: PaceColors.neonCyan),
+          ),
         ),
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Text(l10n.smokeFreeEncouragement,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: PaceColors.textMuted, fontSize: 14, height: 1.45)),
+          child: Text(
+            l10n.smokeFreeEncouragement,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: PaceColors.textMuted,
+              fontSize: 14,
+              height: 1.45,
+            ),
+          ),
         ),
       ],
     ).animate().fadeIn(duration: 400.ms);
@@ -547,49 +641,54 @@ class _BreathingPrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 72,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-            PaceColors.neonCyan,
-            PaceColors.neonLime,
-          ]),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: PaceColors.neonCyan.withValues(alpha: 0.45),
-              blurRadius: 28,
-              offset: const Offset(0, 8),
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            height: 72,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [PaceColors.neonCyan, PaceColors.neonLime],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: PaceColors.neonCyan.withValues(alpha: 0.45),
+                  blurRadius: 28,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.air, color: Colors.white, size: 28),
-            const SizedBox(width: 12),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(l10n.cockpitBreathePrimaryTitle,
-                    style: const TextStyle(
+                const Icon(Icons.air, color: Colors.white, size: 28),
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.cockpitBreathePrimaryTitle,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5)),
-                Text(l10n.cockpitBreathePrimarySub,
-                    style: TextStyle(
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      l10n.cockpitBreathePrimarySub,
+                      style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 12)),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate(onPlay: (c) => c.repeat())
         .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.2));
   }
@@ -616,14 +715,20 @@ class _RelapsePitButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.local_fire_department,
-                color: PaceColors.textMuted, size: 18),
+            Icon(
+              Icons.local_fire_department,
+              color: PaceColors.textMuted,
+              size: 18,
+            ),
             const SizedBox(width: 8),
-            Text(l10n.cockpitRelapse,
-                style: TextStyle(
-                    color: PaceColors.textMuted,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
+            Text(
+              l10n.cockpitRelapse,
+              style: TextStyle(
+                color: PaceColors.textMuted,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),
@@ -654,12 +759,13 @@ class _StreakChip extends StatelessWidget {
           Icon(Icons.local_fire_department, color: color, size: 16),
           const SizedBox(width: 4),
           Text(
-              active
-                  ? (days == 1
+            active
+                ? (days == 1
                       ? l10n.cockpitStreakDay(days.toString())
                       : l10n.cockpitStreakDays(days.toString()))
-                  : l10n.cockpitStreakLabel,
-              style: PaceTheme.dash(size: 16, color: color)),
+                : l10n.cockpitStreakLabel,
+            style: PaceTheme.dash(size: 16, color: color),
+          ),
         ],
       ),
     );

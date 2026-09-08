@@ -4,14 +4,19 @@ import 'package:pace/domain/behavior_analysis.dart';
 void main() {
   final now = DateTime(2026, 6, 3, 12);
 
-  PitSample sample(DateTime at,
-          {int craving = 3, int stress = 3, String? sit, bool early = false}) =>
-      PitSample(
-          occurredAt: at,
-          craving: craving,
-          stress: stress,
-          situationId: sit,
-          wasEarly: early);
+  PitSample sample(
+    DateTime at, {
+    int craving = 3,
+    int stress = 3,
+    String? sit,
+    bool early = false,
+  }) => PitSample(
+    occurredAt: at,
+    craving: craving,
+    stress: stress,
+    situationId: sit,
+    wasEarly: early,
+  );
 
   test('empty input yields zeroes and a 7-day scaffold', () {
     final a = BehaviorAnalysis.from([], labels: {}, now: now);
@@ -42,7 +47,10 @@ void main() {
     expect(a.bySituation.first.label, 'Arbeit');
     expect(a.bySituation.first.count, 2);
     // Null situation is labelled.
-    expect(a.bySituation.map((s) => s.label), contains(BehaviorAnalysis.noSituationLabel));
+    expect(
+      a.bySituation.map((s) => s.label),
+      contains(BehaviorAnalysis.noSituationLabel),
+    );
   });
 
   group('medianPace', () {

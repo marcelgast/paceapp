@@ -43,21 +43,27 @@ abstract final class WeeklyReportBuilder {
       final end = start.add(week);
       if (now.isBefore(end)) break; // week not finished yet
 
-      final inWeek = samples
-          .where((s) => !s.occurredAt.isBefore(start) && s.occurredAt.isBefore(end))
-          .toList()
-        ..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
+      final inWeek =
+          samples
+              .where(
+                (s) =>
+                    !s.occurredAt.isBefore(start) && s.occurredAt.isBefore(end),
+              )
+              .toList()
+            ..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
 
       counts.add(inWeek.length);
-      reports.add(WeeklyReport(
-        weekNumber: weekIndex + 1,
-        weekStart: start,
-        weekEnd: end,
-        cigarettes: inWeek.length,
-        cigarettesPrevWeek: weekIndex > 0 ? counts[weekIndex - 1] : null,
-        medianPace: _median(inWeek),
-        dreher: inWeek.where((s) => s.wasEarly).length,
-      ));
+      reports.add(
+        WeeklyReport(
+          weekNumber: weekIndex + 1,
+          weekStart: start,
+          weekEnd: end,
+          cigarettes: inWeek.length,
+          cigarettesPrevWeek: weekIndex > 0 ? counts[weekIndex - 1] : null,
+          medianPace: _median(inWeek),
+          dreher: inWeek.where((s) => s.wasEarly).length,
+        ),
+      );
       weekIndex++;
     }
 

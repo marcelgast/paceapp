@@ -40,9 +40,10 @@ class GraffitiHeadline extends StatelessWidget {
               color: color,
               shadows: [
                 Shadow(
-                    color: Colors.black.withValues(alpha: 0.55),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2)),
+                  color: Colors.black.withValues(alpha: 0.55),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
           ),

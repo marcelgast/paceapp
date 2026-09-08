@@ -35,7 +35,8 @@ abstract final class NotificationService {
     try {
       await _plugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(alert: true, badge: true, sound: true);
     } catch (_) {}
   }
@@ -46,24 +47,25 @@ abstract final class NotificationService {
     try {
       await _plugin.cancel(id: _stintId);
       await _plugin.zonedSchedule(
-      id: _stintId,
-      title: 'Stint geschafft! 🏁',
-      body: 'Du bist in der Overtime — ab jetzt ist jede Sekunde geschenkte Zeit.',
-      scheduledDate: tz.TZDateTime.from(at, tz.local),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      notificationDetails: const NotificationDetails(
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentSound: true,
+        id: _stintId,
+        title: 'Stint geschafft! 🏁',
+        body:
+            'Du bist in der Overtime — ab jetzt ist jede Sekunde geschenkte Zeit.',
+        scheduledDate: tz.TZDateTime.from(at, tz.local),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        notificationDetails: const NotificationDetails(
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentSound: true,
+          ),
+          android: AndroidNotificationDetails(
+            'stint',
+            'Stint-Ende',
+            channelDescription: 'Meldet, wenn dein Ziel-Stint erreicht ist.',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
         ),
-        android: AndroidNotificationDetails(
-          'stint',
-          'Stint-Ende',
-          channelDescription: 'Meldet, wenn dein Ziel-Stint erreicht ist.',
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-      ),
       );
     } catch (_) {}
   }
@@ -79,7 +81,8 @@ abstract final class NotificationService {
     android: AndroidNotificationDetails(
       'quit',
       'Rauchstopp & Ziele',
-      channelDescription: 'Erinnert an deinen Rauchstopp-Tag und erreichte Ziele.',
+      channelDescription:
+          'Erinnert an deinen Rauchstopp-Tag und erreichte Ziele.',
       importance: Importance.high,
       priority: Priority.high,
     ),
@@ -97,7 +100,11 @@ abstract final class NotificationService {
     await cancelQuitDay();
     final now = DateTime.now();
     final eveBefore = DateTime(
-        quitMoment.year, quitMoment.month, quitMoment.day - 1, 18);
+      quitMoment.year,
+      quitMoment.month,
+      quitMoment.day - 1,
+      18,
+    );
     try {
       if (eveBefore.isAfter(now) && eveBefore.isBefore(quitMoment)) {
         await _plugin.zonedSchedule(

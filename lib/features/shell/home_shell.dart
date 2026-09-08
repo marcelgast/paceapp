@@ -133,38 +133,47 @@ class _HomeShellState extends ConsumerState<HomeShell>
             destinations: [
               NavigationDestination(
                 icon: const Icon(Icons.speed_outlined),
-                selectedIcon:
-                    Icon(Icons.speed, color: PaceColors.neonMagenta),
+                selectedIcon: Icon(Icons.speed, color: PaceColors.neonMagenta),
                 label: l10n.tabCockpit,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.insights_outlined),
-                selectedIcon:
-                    Icon(Icons.insights, color: PaceColors.neonMagenta),
+                selectedIcon: Icon(
+                  Icons.insights,
+                  color: PaceColors.neonMagenta,
+                ),
                 label: l10n.tabAnalysis,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.monitor_heart_outlined),
-                selectedIcon: Icon(Icons.monitor_heart,
-                    color: PaceColors.neonMagenta),
+                selectedIcon: Icon(
+                  Icons.monitor_heart,
+                  color: PaceColors.neonMagenta,
+                ),
                 label: l10n.tabBody,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.emoji_events_outlined),
-                selectedIcon: Icon(Icons.emoji_events,
-                    color: PaceColors.neonMagenta),
+                selectedIcon: Icon(
+                  Icons.emoji_events,
+                  color: PaceColors.neonMagenta,
+                ),
                 label: l10n.tabTrophies,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.savings_outlined),
-                selectedIcon:
-                    Icon(Icons.savings, color: PaceColors.neonMagenta),
+                selectedIcon: Icon(
+                  Icons.savings,
+                  color: PaceColors.neonMagenta,
+                ),
                 label: l10n.tabGoals,
               ),
               NavigationDestination(
                 icon: const Icon(Icons.menu_book_outlined),
-                selectedIcon:
-                    Icon(Icons.menu_book, color: PaceColors.neonMagenta),
+                selectedIcon: Icon(
+                  Icons.menu_book,
+                  color: PaceColors.neonMagenta,
+                ),
                 label: l10n.tabJournal,
               ),
             ],

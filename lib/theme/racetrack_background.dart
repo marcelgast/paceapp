@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Wet-asphalt photo backdrop with a dark scrim so neon UI and text stay legible.
 class RacetrackBackground extends StatelessWidget {
-  const RacetrackBackground({
-    super.key,
-    this.child,
-    this.vignette = true,
-  });
+  const RacetrackBackground({super.key, this.child, this.vignette = true});
 
   final Widget? child;
   final bool vignette;
@@ -28,11 +24,7 @@ class RacetrackBackground extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xCC0A0A0E),
-                Color(0x8A0A0A0E),
-                Color(0xB00A0A0E),
-              ],
+              colors: [Color(0xCC0A0A0E), Color(0x8A0A0A0E), Color(0xB00A0A0E)],
               stops: [0.0, 0.45, 1.0],
             ),
           ),

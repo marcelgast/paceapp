@@ -42,67 +42,75 @@ class TrophiesScreen extends ConsumerWidget {
                     children: [
                       GraffitiHeadline(l10n.trophiesTitle, size: 30),
                       _ShareChip(
-                          onTap: () => showRaceCardSheet(
-                              context, currentLapCard(ref, l10n, lang))),
+                        onTap: () => showRaceCardSheet(
+                          context,
+                          currentLapCard(ref, l10n, lang),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
               SliverToBoxAdapter(
                 child: _GarageCard(
-                    car: car,
-                    carIndex: kCarTiers.indexOf(car),
-                    nextCar: nextCar,
-                    savedCents: savedCents),
+                  car: car,
+                  carIndex: kCarTiers.indexOf(car),
+                  nextCar: nextCar,
+                  savedCents: savedCents,
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-                  child: Text(l10n.trophiesGarageSection,
-                      style: TextStyle(
-                          color: PaceColors.textMuted,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w700)),
+                  child: Text(
+                    l10n.trophiesGarageSection,
+                    style: TextStyle(
+                      color: PaceColors.textMuted,
+                      fontSize: 12,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
               SliverToBoxAdapter(child: _GarageRow(savedCents: savedCents)),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
-                  child: Text(l10n.trophiesMilestonesSection,
-                      style: TextStyle(
-                          color: PaceColors.textMuted,
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          fontWeight: FontWeight.w700)),
+                  child: Text(
+                    l10n.trophiesMilestonesSection,
+                    style: TextStyle(
+                      color: PaceColors.textMuted,
+                      fontSize: 12,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 sliver: SliverGrid(
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
                     childAspectRatio: 1.55,
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, i) {
-                      final m = kMilestones[i];
-                      final unlocked = achieved.contains(m.key);
-                      return _MilestoneTile(
-                        milestone: m,
-                        unlocked: unlocked,
-                        onShare: unlocked
-                            ? () => showRaceCardSheet(
-                                context, milestoneCard(ref, m, l10n, lang))
-                            : null,
-                      );
-                    },
-                    childCount: kMilestones.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((context, i) {
+                    final m = kMilestones[i];
+                    final unlocked = achieved.contains(m.key);
+                    return _MilestoneTile(
+                      milestone: m,
+                      unlocked: unlocked,
+                      onShare: unlocked
+                          ? () => showRaceCardSheet(
+                              context,
+                              milestoneCard(ref, m, l10n, lang),
+                            )
+                          : null,
+                    );
+                  }, childCount: kMilestones.length),
                 ),
               ),
             ],
@@ -134,11 +142,14 @@ class _ShareChip extends StatelessWidget {
           children: [
             Icon(Icons.ios_share, color: PaceColors.neonMagenta, size: 16),
             const SizedBox(width: 6),
-            Text(l10n.shareLabel,
-                style: TextStyle(
-                    color: PaceColors.neonMagenta,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700)),
+            Text(
+              l10n.shareLabel,
+              style: TextStyle(
+                color: PaceColors.neonMagenta,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
       ),
@@ -182,19 +193,27 @@ class _GarageRow extends StatelessWidget {
               children: [
                 CarArt(tierIndex: i, width: 134, unlocked: unlocked),
                 const Spacer(),
-                Text(tier.localizedName(lang),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: unlocked
-                            ? PaceColors.textPrimary
-                            : PaceColors.textMuted,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700)),
-                Text(unlocked ? l10n.trophiesUnlocked : formatMoneyCents(tier.unlockCents),
-                    style: TextStyle(
-                        color: unlocked ? accent : PaceColors.textFaint,
-                        fontSize: 11)),
+                Text(
+                  tier.localizedName(lang),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: unlocked
+                        ? PaceColors.textPrimary
+                        : PaceColors.textMuted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  unlocked
+                      ? l10n.trophiesUnlocked
+                      : formatMoneyCents(tier.unlockCents),
+                  style: TextStyle(
+                    color: unlocked ? accent : PaceColors.textFaint,
+                    fontSize: 11,
+                  ),
+                ),
               ],
             ),
           );
@@ -233,7 +252,9 @@ class _GarageCard extends StatelessWidget {
           : ((savedCents - car.unlockCents) / span).clamp(0.0, 1.0);
       final remaining = nextCar!.unlockCents - savedCents;
       hint = l10n.trophiesGarageRemaining(
-          formatMoneyCents(remaining), nextCar!.localizedName(lang));
+        formatMoneyCents(remaining),
+        nextCar!.localizedName(lang),
+      );
     }
 
     return Container(
@@ -246,7 +267,9 @@ class _GarageCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: PaceColors.neonMagenta.withValues(alpha: 0.4),
+        ),
         boxShadow: [
           BoxShadow(
             color: PaceColors.neonMagenta.withValues(alpha: 0.15),
@@ -260,33 +283,46 @@ class _GarageCard extends StatelessWidget {
           Center(
             child: CarArt(tierIndex: carIndex, width: 230)
                 .animate(onPlay: (c) => c.repeat())
-                .shimmer(duration: 2600.ms, color: Colors.white.withValues(alpha: 0.18)),
+                .shimmer(
+                  duration: 2600.ms,
+                  color: Colors.white.withValues(alpha: 0.18),
+                ),
           ),
           const SizedBox(height: 14),
           Row(
             children: [
-              Icon(Icons.directions_car_filled,
-                  color: PaceColors.neonMagenta, size: 30),
+              Icon(
+                Icons.directions_car_filled,
+                color: PaceColors.neonMagenta,
+                size: 30,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.trophiesYourRide,
-                        style: TextStyle(
-                            color: PaceColors.textMuted,
-                            fontSize: 11,
-                            letterSpacing: 2)),
-                    Text(car.localizedName(lang),
-                        style: PaceTheme.dash(size: 26, italic: true)),
+                    Text(
+                      l10n.trophiesYourRide,
+                      style: TextStyle(
+                        color: PaceColors.textMuted,
+                        fontSize: 11,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    Text(
+                      car.localizedName(lang),
+                      style: PaceTheme.dash(size: 26, italic: true),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          Text(car.localizedTagline(lang),
-              style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+          Text(
+            car.localizedTagline(lang),
+            style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+          ),
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
@@ -294,14 +330,18 @@ class _GarageCard extends StatelessWidget {
               value: progress,
               minHeight: 10,
               backgroundColor: PaceColors.night,
-              valueColor:
-                  AlwaysStoppedAnimation(PaceColors.neonLime),
+              valueColor: AlwaysStoppedAnimation(PaceColors.neonLime),
             ),
           ),
           const SizedBox(height: 8),
-          Text(hint,
-              style: TextStyle(
-                  color: PaceColors.neonLime, fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(
+            hint,
+            style: TextStyle(
+              color: PaceColors.neonLime,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -312,8 +352,9 @@ class _GarageCard extends StatelessWidget {
 /// "50 Cigs" — so a locked tile tells you what to work toward.
 String _milestoneGoal(Milestone m, AppLocalizations l10n) {
   return switch (m.kind) {
-    MilestoneKind.time =>
-      formatHumanDuration(Duration(seconds: m.threshold.toInt())),
+    MilestoneKind.time => formatHumanDuration(
+      Duration(seconds: m.threshold.toInt()),
+    ),
     MilestoneKind.money => formatMoneyCents(m.threshold.toInt()),
     MilestoneKind.avoided => l10n.trophiesCigsCount(m.threshold.toInt()),
   };
@@ -350,7 +391,12 @@ class _MilestoneTile extends StatelessWidget {
                 : PaceColors.chrome.withValues(alpha: 0.4),
           ),
           boxShadow: unlocked
-              ? [BoxShadow(color: style.color.withValues(alpha: 0.2), blurRadius: 16)]
+              ? [
+                  BoxShadow(
+                    color: style.color.withValues(alpha: 0.2),
+                    blurRadius: 16,
+                  ),
+                ]
               : null,
         ),
         child: Column(
@@ -360,20 +406,28 @@ class _MilestoneTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(unlocked ? style.icon : Icons.lock_outline,
-                    color: color, size: 26),
+                Icon(
+                  unlocked ? style.icon : Icons.lock_outline,
+                  color: color,
+                  size: 26,
+                ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(_milestoneGoal(milestone, l10n),
-                      style: TextStyle(
-                          color: color,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800)),
+                  child: Text(
+                    _milestoneGoal(milestone, l10n),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -395,8 +449,11 @@ class _MilestoneTile extends StatelessWidget {
                   ),
                 ),
                 if (unlocked)
-                  Icon(Icons.ios_share,
-                      color: style.color.withValues(alpha: 0.85), size: 16),
+                  Icon(
+                    Icons.ios_share,
+                    color: style.color.withValues(alpha: 0.85),
+                    size: 16,
+                  ),
               ],
             ),
           ],

@@ -92,7 +92,10 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 ),
               ),
               const SizedBox(height: 18),
-              Text(l10n.cockpitPitStopTitle, style: PaceTheme.dash(size: 30, italic: true)),
+              Text(
+                l10n.cockpitPitStopTitle,
+                style: PaceTheme.dash(size: 30, italic: true),
+              ),
               const SizedBox(height: 2),
               Text(
                 l10n.cockpitPitStopSubtitle,
@@ -113,7 +116,10 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                 onChanged: (v) => setState(() => _stress = v),
               ),
               const SizedBox(height: 22),
-              Text(l10n.cockpitSituation, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+              Text(
+                l10n.cockpitSituation,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+              ),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -123,8 +129,9 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                     _Chip(
                       label: s.label,
                       selected: _situationId == s.id,
-                      onTap: () => setState(() =>
-                          _situationId = _situationId == s.id ? null : s.id),
+                      onTap: () => setState(
+                        () => _situationId = _situationId == s.id ? null : s.id,
+                      ),
                     ),
                   _Chip(
                     label: l10n.cockpitSituationNew,
@@ -166,13 +173,17 @@ class _PitStopSheetState extends ConsumerState<_PitStopSheet> {
                       cravingLevel: _craving,
                       stressLevel: _stress,
                       situationId: _situationId,
-                      note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+                      note: _note.text.trim().isEmpty
+                          ? null
+                          : _note.text.trim(),
                     ),
                   ),
                   child: Text(
                     l10n.cockpitSubmit,
                     style: const TextStyle(
-                        fontWeight: FontWeight.w800, letterSpacing: 1.5),
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -206,8 +217,14 @@ class _LevelSelector extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
-            Text(l10n.cockpitLevelValue(value.toString()), style: PaceTheme.dash(size: 18, color: color)),
+            Text(
+              label,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+            ),
+            Text(
+              l10n.cockpitLevelValue(value.toString()),
+              style: PaceTheme.dash(size: 18, color: color),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -224,7 +241,12 @@ class _LevelSelector extends StatelessWidget {
                       color: i <= value ? color : PaceColors.panelLight,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: i <= value
-                          ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 10)]
+                          ? [
+                              BoxShadow(
+                                color: color.withValues(alpha: 0.5),
+                                blurRadius: 10,
+                              ),
+                            ]
                           : null,
                     ),
                     alignment: Alignment.center,
@@ -270,10 +292,17 @@ class _Chip extends StatelessWidget {
           color: selected ? PaceColors.neonMagenta : PaceColors.panelLight,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? PaceColors.neonMagenta : border.withValues(alpha: 0.6),
+            color: selected
+                ? PaceColors.neonMagenta
+                : border.withValues(alpha: 0.6),
           ),
           boxShadow: selected
-              ? [BoxShadow(color: PaceColors.neonMagenta.withValues(alpha: 0.5), blurRadius: 12)]
+              ? [
+                  BoxShadow(
+                    color: PaceColors.neonMagenta.withValues(alpha: 0.5),
+                    blurRadius: 12,
+                  ),
+                ]
               : null,
         ),
         child: Text(
@@ -282,8 +311,8 @@ class _Chip extends StatelessWidget {
             color: selected
                 ? Colors.white
                 : accent
-                    ? PaceColors.neonCyan
-                    : PaceColors.textPrimary,
+                ? PaceColors.neonCyan
+                : PaceColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),

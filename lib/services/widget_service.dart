@@ -32,9 +32,14 @@ abstract final class WidgetService {
     required int streak,
   }) async {
     await HomeWidget.saveWidgetData<String>('mode', mode);
-    await HomeWidget.saveWidgetData<String>('is_baseline', isBaseline ? '1' : '0');
+    await HomeWidget.saveWidgetData<String>(
+      'is_baseline',
+      isBaseline ? '1' : '0',
+    );
     await HomeWidget.saveWidgetData<int>(
-        'timer_ref_ms', timerRef.millisecondsSinceEpoch);
+      'timer_ref_ms',
+      timerRef.millisecondsSinceEpoch,
+    );
     await HomeWidget.saveWidgetData<int>('free_day', freeDay);
     await HomeWidget.saveWidgetData<String>('best_label', bestLabel);
     await HomeWidget.saveWidgetData<String>('saved_money', savedMoney);
@@ -74,13 +79,18 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
 
   final today = DateTime(now.year, now.month, now.day);
   final smokedToday = pitTimes
-      .where((t) => !t.isBefore(today) && t.isBefore(today.add(const Duration(days: 1))))
+      .where(
+        (t) =>
+            !t.isBefore(today) &&
+            t.isBefore(today.add(const Duration(days: 1))),
+      )
       .length;
 
   final quitPlan = ref.read(quitPlanProvider);
   final smokeFree = quitPlan.isSmokeFree;
   final isBaseline =
-      !smokeFree && (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
+      !smokeFree &&
+      (stint?.phase ?? StintPhase.baseline) == StintPhase.baseline;
   final mode = smokeFree ? 'free' : 'stint';
   final freeDay = quitPlan.dayNumber;
   // Smoke-free: count up from the run start; otherwise the stint reference.
@@ -103,8 +113,10 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
       bestLabel: formatHumanDuration(best),
       savedMoney: stats == null
           ? '—'
-          : formatMoneyCents(stats.savedMoneyCents,
-              currencyCode: settings.currencyCode),
+          : formatMoneyCents(
+              stats.savedMoneyCents,
+              currencyCode: settings.currencyCode,
+            ),
       carName: car.name,
       streak: streak,
     );
@@ -126,8 +138,10 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
       'best': formatHumanDuration(best),
       'savedMoney': stats == null
           ? '—'
-          : formatMoneyCents(stats.savedMoneyCents,
-              currencyCode: settings.currencyCode),
+          : formatMoneyCents(
+              stats.savedMoneyCents,
+              currencyCode: settings.currencyCode,
+            ),
       'carName': car.name,
       'streak': streak.toString(),
       'smokedToday': smokedToday.toString(),

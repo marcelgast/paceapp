@@ -110,8 +110,9 @@ abstract final class SavingsCalculator {
     var bonusMoneyCents = 0;
     if (smokeFree) {
       final daysSinceQuit = now.difference(quitMoment).inSeconds / 86400.0;
-      final slipsAfterQuit =
-          pits.where((p) => p.occurredAt.isAfter(quitMoment)).length;
+      final slipsAfterQuit = pits
+          .where((p) => p.occurredAt.isAfter(quitMoment))
+          .length;
       final avoided = baselineCigsPerDay * daysSinceQuit - slipsAfterQuit;
       bonusCigarettes = avoided < 0 ? 0 : avoided;
       bonusMoneyCents = (bonusCigarettes * perCigAt(now)).round();

@@ -9,8 +9,10 @@ class SleepWindow {
   final int startMinutes;
   final int endMinutes;
 
-  static const SleepWindow defaultWindow =
-      SleepWindow(startMinutes: 23 * 60, endMinutes: 7 * 60);
+  static const SleepWindow defaultWindow = SleepWindow(
+    startMinutes: 23 * 60,
+    endMinutes: 7 * 60,
+  );
 
   /// Sleep length in minutes, wrap-aware. 0 means "no sleep window".
   int get durationMinutes => (endMinutes - startMinutes) % (24 * 60);
@@ -25,8 +27,11 @@ class SleepWindow {
 
     var asleepSeconds = 0;
     // A night can start the day before [start], so begin one day early.
-    var day = DateTime(start.year, start.month, start.day)
-        .subtract(const Duration(days: 1));
+    var day = DateTime(
+      start.year,
+      start.month,
+      start.day,
+    ).subtract(const Duration(days: 1));
     final lastDay = DateTime(end.year, end.month, end.day);
     while (!day.isAfter(lastDay)) {
       final nightStart = day.add(Duration(minutes: startMinutes));

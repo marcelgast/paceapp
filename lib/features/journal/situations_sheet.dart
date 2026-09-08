@@ -68,10 +68,15 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            Text(l10n.journalSituations, style: PaceTheme.dash(size: 28, italic: true)),
+            Text(
+              l10n.journalSituations,
+              style: PaceTheme.dash(size: 28, italic: true),
+            ),
             const SizedBox(height: 2),
-            Text(l10n.situationsIntro,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
+            Text(
+              l10n.situationsIntro,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+            ),
             const SizedBox(height: 18),
             ConstrainedBox(
               constraints: BoxConstraints(
@@ -85,18 +90,26 @@ class _SituationsSheetState extends ConsumerState<_SituationsSheet> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           children: [
-                            Icon(Icons.place_outlined,
-                                color: PaceColors.neonCyan, size: 20),
+                            Icon(
+                              Icons.place_outlined,
+                              color: PaceColors.neonCyan,
+                              size: 20,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: Text(s.label,
-                                  style: const TextStyle(
-                                      color: PaceColors.textPrimary,
-                                      fontSize: 15)),
+                              child: Text(
+                                s.label,
+                                style: const TextStyle(
+                                  color: PaceColors.textPrimary,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: PaceColors.textFaint),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: PaceColors.textFaint,
+                              ),
                               onPressed: () => ref
                                   .read(databaseProvider)
                                   .archiveSituation(s.id),

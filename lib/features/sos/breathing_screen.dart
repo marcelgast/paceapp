@@ -11,10 +11,12 @@ class BreathingScreen extends StatefulWidget {
   const BreathingScreen({super.key});
 
   static Future<void> open(BuildContext context) {
-    return Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => const BreathingScreen(),
-      fullscreenDialog: true,
-    ));
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const BreathingScreen(),
+        fullscreenDialog: true,
+      ),
+    );
   }
 
   @override
@@ -26,8 +28,10 @@ enum _Phase { inhale, hold, exhale }
 class _BreathingScreenState extends State<BreathingScreen>
     with SingleTickerProviderStateMixin {
   static const _cycle = Duration(seconds: 12); // 4 + 4 + 4
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: _cycle)..repeat();
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: _cycle,
+  )..repeat();
 
   int _phaseIndex = -1;
   int _breaths = 0;
@@ -84,31 +88,49 @@ class _BreathingScreenState extends State<BreathingScreen>
             final scale = _scaleFor(v);
             final secondsLeft = (4 - (v * 12) % 4).ceil().clamp(1, 4);
             final (String label, Color color, IconData icon) = switch (phase) {
-              _Phase.inhale => (l10n.sosInhale, PaceColors.neonCyan, Icons.arrow_upward_rounded),
-              _Phase.hold => (l10n.sosHold, PaceColors.neonPurple, Icons.pause_rounded),
-              _Phase.exhale => (l10n.sosExhale, PaceColors.neonLime, Icons.arrow_downward_rounded),
+              _Phase.inhale => (
+                l10n.sosInhale,
+                PaceColors.neonCyan,
+                Icons.arrow_upward_rounded,
+              ),
+              _Phase.hold => (
+                l10n.sosHold,
+                PaceColors.neonPurple,
+                Icons.pause_rounded,
+              ),
+              _Phase.exhale => (
+                l10n.sosExhale,
+                PaceColors.neonLime,
+                Icons.arrow_downward_rounded,
+              ),
             };
 
             return Column(
               children: [
                 const SizedBox(height: 12),
-                Text(l10n.sosCravingPassing,
-                    style: TextStyle(
-                        color: PaceColors.textMuted,
-                        fontSize: 12,
-                        letterSpacing: 3,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  l10n.sosCravingPassing,
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 12,
+                    letterSpacing: 3,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(l10n.sosBreatheAlong,
-                    style: TextStyle(color: PaceColors.textFaint, fontSize: 13)),
+                Text(
+                  l10n.sosBreatheAlong,
+                  style: TextStyle(color: PaceColors.textFaint, fontSize: 13),
+                ),
                 Expanded(
                   child: Center(
                     child: _Orb(
-                        scale: scale,
-                        color: color,
-                        label: label,
-                        icon: icon,
-                        seconds: secondsLeft),
+                      scale: scale,
+                      color: color,
+                      label: label,
+                      icon: icon,
+                      seconds: secondsLeft,
+                    ),
                   ),
                 ),
                 Text(
@@ -121,7 +143,8 @@ class _BreathingScreenState extends State<BreathingScreen>
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: _StopButton(
-                      onTap: () => Navigator.of(context).maybePop()),
+                    onTap: () => Navigator.of(context).maybePop(),
+                  ),
                 ),
                 const SizedBox(height: 24),
               ],
@@ -165,15 +188,18 @@ class _Orb extends StatelessWidget {
               height: baseSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: RadialGradient(colors: [
-                  color.withValues(alpha: 0.35),
-                  color.withValues(alpha: 0.04),
-                ]),
+                gradient: RadialGradient(
+                  colors: [
+                    color.withValues(alpha: 0.35),
+                    color.withValues(alpha: 0.04),
+                  ],
+                ),
                 boxShadow: [
                   BoxShadow(
-                      color: color.withValues(alpha: 0.45),
-                      blurRadius: 60,
-                      spreadRadius: 10),
+                    color: color.withValues(alpha: 0.45),
+                    blurRadius: 60,
+                    spreadRadius: 10,
+                  ),
                 ],
               ),
             ),
@@ -201,14 +227,22 @@ class _Orb extends StatelessWidget {
             children: [
               Icon(icon, color: Colors.white, size: 30),
               const SizedBox(height: 6),
-              Text(label,
-                  style: PaceTheme.dash(
-                      size: 30, weight: FontWeight.w800, color: Colors.white)),
-              Text('$seconds',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                label,
+                style: PaceTheme.dash(
+                  size: 30,
+                  weight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                '$seconds',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ],
@@ -236,12 +270,15 @@ class _StopButton extends StatelessWidget {
           border: Border.all(color: PaceColors.neonLime, width: 1.5),
         ),
         alignment: Alignment.center,
-        child: Text(l10n.sosStopButton,
-            style: TextStyle(
-                color: PaceColors.neonLime,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5)),
+        child: Text(
+          l10n.sosStopButton,
+          style: TextStyle(
+            color: PaceColors.neonLime,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+          ),
+        ),
       ),
     );
   }

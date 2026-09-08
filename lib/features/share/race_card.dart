@@ -75,7 +75,10 @@ class RaceCard extends StatelessWidget {
           ),
           Opacity(
             opacity: 0.16,
-            child: Image.asset('assets/textures/asphalt.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/textures/asphalt.png',
+              fit: BoxFit.cover,
+            ),
           ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -156,13 +159,18 @@ class RaceCard extends StatelessWidget {
             ).createShader(rect),
             child: Text(
               data.heroValue,
-              style: PaceTheme.dash(
-                size: 108,
-                weight: FontWeight.w900,
-                color: Colors.white,
-                letterSpacing: -1,
-              ).copyWith(
-                  shadows: PaceTheme.neonGlow(PaceColors.neonMagenta, blur: 24)),
+              style:
+                  PaceTheme.dash(
+                    size: 108,
+                    weight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: -1,
+                  ).copyWith(
+                    shadows: PaceTheme.neonGlow(
+                      PaceColors.neonMagenta,
+                      blur: 24,
+                    ),
+                  ),
             ),
           ),
         ),
@@ -223,13 +231,17 @@ class RaceCard extends StatelessWidget {
         children: [
           _kpi(l10n.shareSaved, data.savedMoney, PaceColors.neonLime),
           _divider(),
-          _kpi(l10n.shareAvoided, '${data.avoidedCigarettes}',
-              PaceColors.neonCyan),
+          _kpi(
+            l10n.shareAvoided,
+            '${data.avoidedCigarettes}',
+            PaceColors.neonCyan,
+          ),
           _divider(),
           _kpi(
-              l10n.shareStreak,
-              data.streak > 0 ? l10n.shareStreakDays(data.streak) : '—',
-              PaceColors.neonOrange),
+            l10n.shareStreak,
+            data.streak > 0 ? l10n.shareStreakDays(data.streak) : '—',
+            PaceColors.neonOrange,
+          ),
         ],
       ),
     );
@@ -243,7 +255,10 @@ class RaceCard extends StatelessWidget {
             child: Text(
               value,
               style: PaceTheme.dash(
-                  size: 26, weight: FontWeight.w800, color: color),
+                size: 26,
+                weight: FontWeight.w800,
+                color: color,
+              ),
             ),
           ),
           const SizedBox(height: 4),
@@ -262,22 +277,25 @@ class RaceCard extends StatelessWidget {
   }
 
   Widget _divider() => Container(
-        width: 1,
-        height: 34,
-        color: PaceColors.chrome.withValues(alpha: 0.7),
-      );
+    width: 1,
+    height: 34,
+    color: PaceColors.chrome.withValues(alpha: 0.7),
+  );
 
   Widget _footer() {
     return Column(
       children: [
         Text(
           data.carName.toUpperCase(),
-          style: PaceTheme.dash(
-            size: 20,
-            weight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: 1,
-          ).copyWith(shadows: PaceTheme.neonGlow(PaceColors.neonMagenta, blur: 12)),
+          style:
+              PaceTheme.dash(
+                size: 20,
+                weight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: 1,
+              ).copyWith(
+                shadows: PaceTheme.neonGlow(PaceColors.neonMagenta, blur: 12),
+              ),
         ),
         const SizedBox(height: 4),
         Text(

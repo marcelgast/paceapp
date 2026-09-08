@@ -6,7 +6,12 @@ void main() {
   final start = DateTime(2026, 6, 1, 9);
 
   PitSample s(DateTime at, {bool early = false}) => PitSample(
-      occurredAt: at, craving: 3, stress: 3, situationId: null, wasEarly: early);
+    occurredAt: at,
+    craving: 3,
+    stress: 3,
+    situationId: null,
+    wasEarly: early,
+  );
 
   test('only finished weeks produce a report', () {
     // 10 days elapsed -> one finished week (days 1-7), week 2 still running.
@@ -15,11 +20,17 @@ void main() {
       s(start.add(const Duration(days: 1))),
       s(start.add(const Duration(days: 8))),
     ];
-    final reports =
-        WeeklyReportBuilder.build(samples, startedAt: start, now: now);
+    final reports = WeeklyReportBuilder.build(
+      samples,
+      startedAt: start,
+      now: now,
+    );
     expect(reports.length, 1);
     expect(reports.first.weekNumber, 1);
-    expect(reports.first.cigarettes, 1); // only the day-1 cigarette is in week 1
+    expect(
+      reports.first.cigarettes,
+      1,
+    ); // only the day-1 cigarette is in week 1
   });
 
   test('delta compares to the previous week', () {
@@ -32,8 +43,11 @@ void main() {
       // week 2: 1 cigarette
       s(start.add(const Duration(days: 8))),
     ];
-    final reports =
-        WeeklyReportBuilder.build(samples, startedAt: start, now: now);
+    final reports = WeeklyReportBuilder.build(
+      samples,
+      startedAt: start,
+      now: now,
+    );
     expect(reports.length, 2);
     // newest first -> week 2 first
     expect(reports.first.weekNumber, 2);

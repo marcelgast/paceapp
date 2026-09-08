@@ -13,27 +13,30 @@ void main() {
   const perCig = 40;
 
   group('pre-quit stint savings', () {
-    test('banks one avoided cigarette per full target survived in overtime', () {
-      final stats = SavingsCalculator.compute(
-        startedAt: t0,
-        now: t0.add(const Duration(hours: 5)),
-        packPriceCents: packCents,
-        cigarettesPerPack: perPack,
-        currentTargetSeconds: 3600, // 1h target
-        baselineCigsPerDay: 20,
-        quitDate: null,
-        sleep: noSleep,
-        pits: const [],
-        costEpochs: const [],
-      );
+    test(
+      'banks one avoided cigarette per full target survived in overtime',
+      () {
+        final stats = SavingsCalculator.compute(
+          startedAt: t0,
+          now: t0.add(const Duration(hours: 5)),
+          packPriceCents: packCents,
+          cigarettesPerPack: perPack,
+          currentTargetSeconds: 3600, // 1h target
+          baselineCigsPerDay: 20,
+          quitDate: null,
+          sleep: noSleep,
+          pits: const [],
+          costEpochs: const [],
+        );
 
-      // 5h awake, 1h target → 4h overtime → 4 full laps.
-      expect(stats.savedCigarettes, 4.0);
-      expect(stats.savedMoneyCents, 4 * perCig);
-      expect(stats.actualCigarettes, 0);
-      expect(stats.expectedCigarettes, 4);
-      expect(stats.costPerCigaretteCents, perCig);
-    });
+        // 5h awake, 1h target → 4h overtime → 4 full laps.
+        expect(stats.savedCigarettes, 4.0);
+        expect(stats.savedMoneyCents, 4 * perCig);
+        expect(stats.actualCigarettes, 0);
+        expect(stats.expectedCigarettes, 4);
+        expect(stats.costPerCigaretteCents, perCig);
+      },
+    );
 
     test('measuring phase (no target) earns nothing', () {
       final stats = SavingsCalculator.compute(
@@ -80,25 +83,27 @@ void main() {
       expect(stats.costPerCigaretteCents, 50);
     });
 
-    test('a quit date still in the future does not trigger baseline accrual',
-        () {
-      final stats = SavingsCalculator.compute(
-        startedAt: t0,
-        now: t0.add(const Duration(hours: 5)),
-        packPriceCents: packCents,
-        cigarettesPerPack: perPack,
-        currentTargetSeconds: 3600,
-        baselineCigsPerDay: 20,
-        quitDate: t0.add(const Duration(hours: 6)), // not reached yet
-        sleep: noSleep,
-        pits: const [],
-        costEpochs: const [],
-      );
+    test(
+      'a quit date still in the future does not trigger baseline accrual',
+      () {
+        final stats = SavingsCalculator.compute(
+          startedAt: t0,
+          now: t0.add(const Duration(hours: 5)),
+          packPriceCents: packCents,
+          cigarettesPerPack: perPack,
+          currentTargetSeconds: 3600,
+          baselineCigsPerDay: 20,
+          quitDate: t0.add(const Duration(hours: 6)), // not reached yet
+          sleep: noSleep,
+          pits: const [],
+          costEpochs: const [],
+        );
 
-      // Identical to the no-quit case — savings come only from laps.
-      expect(stats.savedCigarettes, 4.0);
-      expect(stats.savedMoneyCents, 4 * perCig);
-    });
+        // Identical to the no-quit case — savings come only from laps.
+        expect(stats.savedCigarettes, 4.0);
+        expect(stats.savedMoneyCents, 4 * perCig);
+      },
+    );
   });
 
   group('post-quit baseline accrual', () {

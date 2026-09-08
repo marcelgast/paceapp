@@ -20,14 +20,16 @@ const List<String> kDefaultSituations = [
   'Sonstiges',
 ];
 
-@DriftDatabase(tables: [
-  AppSettingsRows,
-  Situations,
-  PitStops,
-  Unlocks,
-  CostPeriods,
-  SavingsGoals,
-])
+@DriftDatabase(
+  tables: [
+    AppSettingsRows,
+    Situations,
+    PitStops,
+    Unlocks,
+    CostPeriods,
+    SavingsGoals,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
   AppDatabase.forTesting(super.executor);
@@ -37,62 +39,61 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) async {
-          await m.createAll();
-          await seedDefaultSituations();
-        },
-        onUpgrade: (m, from, to) async {
-          if (from < 2) await m.createTable(unlocks);
-          if (from < 3) {
-            await m.addColumn(
-                appSettingsRows, appSettingsRows.currentTargetSeconds);
-            await m.addColumn(appSettingsRows, appSettingsRows.lastProposalAt);
-            await m.addColumn(appSettingsRows, appSettingsRows.growthPermille);
-          }
-          if (from < 5) {
-            await m.addColumn(
-                appSettingsRows, appSettingsRows.sleepStartMinutes);
-            await m.addColumn(
-                appSettingsRows, appSettingsRows.sleepEndMinutes);
-          }
-          if (from < 6) {
-            await m.addColumn(appSettingsRows, appSettingsRows.skinId);
-          }
-          if (from < 7) {
-            await m.addColumn(
-                appSettingsRows, appSettingsRows.liveActivityEnabled);
-          }
-          if (from < 8) {
-            await m.addColumn(appSettingsRows, appSettingsRows.proPurchased);
-          }
-          if (from < 9) {
-            await m.addColumn(appSettingsRows, appSettingsRows.quitDate);
-            await m.createTable(savingsGoals);
-          }
-          if (from < 4) {
-            await m.createTable(costPeriods);
-            // Seed the first cost period from the existing settings so past
-            // savings keep their original pricing.
-            final s = await getSettings();
-            if (s != null) {
-              await into(costPeriods).insert(
-                CostPeriodsCompanion.insert(
-                  id: newId(),
-                  effectiveFrom: s.startedAt,
-                  packPriceCents: s.packPriceCents,
-                  cigarettesPerPack: s.cigarettesPerPack,
-                ),
-              );
-            }
-          }
-        },
-      );
+    onCreate: (m) async {
+      await m.createAll();
+      await seedDefaultSituations();
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) await m.createTable(unlocks);
+      if (from < 3) {
+        await m.addColumn(
+          appSettingsRows,
+          appSettingsRows.currentTargetSeconds,
+        );
+        await m.addColumn(appSettingsRows, appSettingsRows.lastProposalAt);
+        await m.addColumn(appSettingsRows, appSettingsRows.growthPermille);
+      }
+      if (from < 5) {
+        await m.addColumn(appSettingsRows, appSettingsRows.sleepStartMinutes);
+        await m.addColumn(appSettingsRows, appSettingsRows.sleepEndMinutes);
+      }
+      if (from < 6) {
+        await m.addColumn(appSettingsRows, appSettingsRows.skinId);
+      }
+      if (from < 7) {
+        await m.addColumn(appSettingsRows, appSettingsRows.liveActivityEnabled);
+      }
+      if (from < 8) {
+        await m.addColumn(appSettingsRows, appSettingsRows.proPurchased);
+      }
+      if (from < 9) {
+        await m.addColumn(appSettingsRows, appSettingsRows.quitDate);
+        await m.createTable(savingsGoals);
+      }
+      if (from < 4) {
+        await m.createTable(costPeriods);
+        // Seed the first cost period from the existing settings so past
+        // savings keep their original pricing.
+        final s = await getSettings();
+        if (s != null) {
+          await into(costPeriods).insert(
+            CostPeriodsCompanion.insert(
+              id: newId(),
+              effectiveFrom: s.startedAt,
+              packPriceCents: s.packPriceCents,
+              cigarettesPerPack: s.cigarettesPerPack,
+            ),
+          );
+        }
+      }
+    },
+  );
 
   // ---- Cost periods -------------------------------------------------------
 
-  Stream<List<CostPeriod>> watchCostPeriods() => (select(costPeriods)
-        ..orderBy([(t) => OrderingTerm(expression: t.effectiveFrom)]))
-      .watch();
+  Stream<List<CostPeriod>> watchCostPeriods() => (select(
+    costPeriods,
+  )..orderBy([(t) => OrderingTerm(expression: t.effectiveFrom)])).watch();
 
   /// Records a price/pack-size change effective [at]. The new values also become
   /// the settings row's current values (for form pre-fill and display).
@@ -118,26 +119,29 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> updateSkin(String skinId) {
-    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
-        .write(AppSettingsRowsCompanion(skinId: Value(skinId)));
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(skinId: Value(skinId)),
+    );
   }
 
   Future<void> updateLiveActivityEnabled(bool enabled) {
-    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
-        .write(AppSettingsRowsCompanion(liveActivityEnabled: Value(enabled)));
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(liveActivityEnabled: Value(enabled)),
+    );
   }
 
   /// Sets or clears the quit-smoking target date (`null` clears it).
   Future<void> setQuitDate(DateTime? date) {
-    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
-        .write(AppSettingsRowsCompanion(quitDate: Value(date)));
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(quitDate: Value(date)),
+    );
   }
 
   // ---- Savings goals ------------------------------------------------------
 
-  Stream<List<SavingsGoal>> watchSavingsGoals() => (select(savingsGoals)
-        ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
-      .watch();
+  Stream<List<SavingsGoal>> watchSavingsGoals() => (select(
+    savingsGoals,
+  )..orderBy([(t) => OrderingTerm(expression: t.createdAt)])).watch();
 
   Future<void> addSavingsGoal({required String name, required int priceCents}) {
     return into(savingsGoals).insert(
@@ -156,8 +160,9 @@ class AppDatabase extends _$AppDatabase {
 
   /// Pins the moment a goal was reached so its celebration fires exactly once.
   Future<void> markSavingsGoalReached(String id, DateTime at) {
-    return (update(savingsGoals)..where((t) => t.id.equals(id)))
-        .write(SavingsGoalsCompanion(reachedAt: Value(at)));
+    return (update(savingsGoals)..where((t) => t.id.equals(id))).write(
+      SavingsGoalsCompanion(reachedAt: Value(at)),
+    );
   }
 
   Future<void> updateSleepWindow({
@@ -176,20 +181,18 @@ class AppDatabase extends _$AppDatabase {
   /// simple overwrite — it shifts the whole expected-consumption reference.
   Future<void> updateBaseline(int baselineCigsPerDay) {
     return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
-      AppSettingsRowsCompanion(
-        baselineCigsPerDay: Value(baselineCigsPerDay)),
+      AppSettingsRowsCompanion(baselineCigsPerDay: Value(baselineCigsPerDay)),
     );
   }
 
   // ---- Settings -----------------------------------------------------------
 
-  Stream<AppSettingsRow?> watchSettings() =>
-      (select(appSettingsRows)..where((t) => t.id.equals(1)))
-          .watchSingleOrNull();
+  Stream<AppSettingsRow?> watchSettings() => (select(
+    appSettingsRows,
+  )..where((t) => t.id.equals(1))).watchSingleOrNull();
 
   Future<AppSettingsRow?> getSettings() =>
-      (select(appSettingsRows)..where((t) => t.id.equals(1)))
-          .getSingleOrNull();
+      (select(appSettingsRows)..where((t) => t.id.equals(1))).getSingleOrNull();
 
   Future<void> saveOnboarding({
     required int packPriceCents,
@@ -242,8 +245,9 @@ class AppDatabase extends _$AppDatabase {
   /// Decline a weekly proposal: keep the target, just bump the timestamp so the
   /// next proposal is due in a week.
   Future<void> declineProposal(DateTime at) {
-    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
-        .write(AppSettingsRowsCompanion(lastProposalAt: Value(at)));
+    return (update(appSettingsRows)..where((t) => t.id.equals(1))).write(
+      AppSettingsRowsCompanion(lastProposalAt: Value(at)),
+    );
   }
 
   // ---- Situations ---------------------------------------------------------
@@ -263,9 +267,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<List<Situation>> watchAllSituations() {
-    return (select(situations)
-          ..orderBy([(t) => OrderingTerm(expression: t.sortOrder)]))
-        .watch();
+    return (select(
+      situations,
+    )..orderBy([(t) => OrderingTerm(expression: t.sortOrder)])).watch();
   }
 
   Stream<List<Situation>> watchActiveSituations() {
@@ -276,10 +280,10 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<Situation> addSituation(String label) async {
-    final maxOrder = await (selectOnly(situations)
-          ..addColumns([situations.sortOrder.max()]))
-        .map((row) => row.read(situations.sortOrder.max()))
-        .getSingleOrNull();
+    final maxOrder =
+        await (selectOnly(situations)..addColumns([situations.sortOrder.max()]))
+            .map((row) => row.read(situations.sortOrder.max()))
+            .getSingleOrNull();
     final row = SituationsCompanion.insert(
       id: newId(),
       label: label.trim(),
@@ -287,13 +291,15 @@ class AppDatabase extends _$AppDatabase {
       createdAt: DateTime.now(),
     );
     await into(situations).insert(row);
-    return (select(situations)..where((t) => t.id.equals(row.id.value)))
-        .getSingle();
+    return (select(
+      situations,
+    )..where((t) => t.id.equals(row.id.value))).getSingle();
   }
 
   Future<void> archiveSituation(String id) {
-    return (update(situations)..where((t) => t.id.equals(id)))
-        .write(SituationsCompanion(archivedAt: Value(DateTime.now())));
+    return (update(situations)..where((t) => t.id.equals(id))).write(
+      SituationsCompanion(archivedAt: Value(DateTime.now())),
+    );
   }
 
   // ---- Pit stops ----------------------------------------------------------
@@ -301,19 +307,18 @@ class AppDatabase extends _$AppDatabase {
   Future<PitStop?> lastPitStop() {
     return (select(pitStops)
           ..orderBy([
-            (t) => OrderingTerm(
-                expression: t.occurredAt, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.occurredAt, mode: OrderingMode.desc),
           ])
           ..limit(1))
         .getSingleOrNull();
   }
 
   Stream<List<PitStop>> watchPitStops() {
-    return (select(pitStops)
-          ..orderBy([
-            (t) => OrderingTerm(
-                expression: t.occurredAt, mode: OrderingMode.desc),
-          ]))
+    return (select(pitStops)..orderBy([
+          (t) =>
+              OrderingTerm(expression: t.occurredAt, mode: OrderingMode.desc),
+        ]))
         .watch();
   }
 
@@ -324,17 +329,16 @@ class AppDatabase extends _$AppDatabase {
     return rows.map((r) => r.milestoneKey).toSet();
   }
 
-  Stream<Set<String>> watchCelebratedKeys() => select(unlocks)
-      .watch()
-      .map((rows) => rows.map((r) => r.milestoneKey).toSet());
+  Stream<Set<String>> watchCelebratedKeys() => select(
+    unlocks,
+  ).watch().map((rows) => rows.map((r) => r.milestoneKey).toSet());
 
   Future<void> markCelebrated(Iterable<String> keys, DateTime at) async {
     await batch((b) {
-      b.insertAll(
-        unlocks,
-        [for (final k in keys) UnlocksCompanion.insert(milestoneKey: k, achievedAt: at)],
-        mode: InsertMode.insertOrIgnore,
-      );
+      b.insertAll(unlocks, [
+        for (final k in keys)
+          UnlocksCompanion.insert(milestoneKey: k, achievedAt: at),
+      ], mode: InsertMode.insertOrIgnore);
     });
   }
 

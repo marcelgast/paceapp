@@ -40,20 +40,29 @@ class JournalScreen extends ConsumerWidget {
                       onTap: () => showSituationsSheet(context),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 8),
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: PaceColors.neonCyan),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.tune, color: PaceColors.neonCyan, size: 16),
+                            Icon(
+                              Icons.tune,
+                              color: PaceColors.neonCyan,
+                              size: 16,
+                            ),
                             const SizedBox(width: 6),
-                            Text(l10n.journalSituations,
-                                style: TextStyle(
-                                    color: PaceColors.neonCyan,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600)),
+                            Text(
+                              l10n.journalSituations,
+                              style: TextStyle(
+                                color: PaceColors.neonCyan,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -68,7 +77,8 @@ class JournalScreen extends ConsumerWidget {
                         pitStops: pitStops,
                         reports: reports,
                         labels: labels,
-                        now: now),
+                        now: now,
+                      ),
               ),
             ],
           ),
@@ -108,15 +118,21 @@ class _JournalList extends StatelessWidget {
         continue;
       }
       final p = item.pit!;
-      final day = DateTime(p.occurredAt.year, p.occurredAt.month, p.occurredAt.day);
+      final day = DateTime(
+        p.occurredAt.year,
+        p.occurredAt.month,
+        p.occurredAt.day,
+      );
       if (lastDay == null || day != lastDay) {
         rows.add(_DayHeader(label: formatDayHeader(day, now)));
         lastDay = day;
       }
-      rows.add(_PitStopCard(
-        pitStop: p,
-        situation: p.situationId == null ? null : labels[p.situationId],
-      ));
+      rows.add(
+        _PitStopCard(
+          pitStop: p,
+          situation: p.situationId == null ? null : labels[p.situationId],
+        ),
+      );
     }
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
@@ -147,10 +163,14 @@ class _ReportCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: PaceColors.neonMagenta.withValues(alpha: 0.6)),
+        border: Border.all(
+          color: PaceColors.neonMagenta.withValues(alpha: 0.6),
+        ),
         boxShadow: [
           BoxShadow(
-              color: PaceColors.neonMagenta.withValues(alpha: 0.15), blurRadius: 18),
+            color: PaceColors.neonMagenta.withValues(alpha: 0.15),
+            blurRadius: 18,
+          ),
         ],
       ),
       child: Column(
@@ -160,12 +180,15 @@ class _ReportCard extends StatelessWidget {
             children: [
               Icon(Icons.flag_circle, color: PaceColors.neonMagenta, size: 20),
               const SizedBox(width: 8),
-              Text(l10n.journalRaceReportWeek(report.weekNumber.toString()),
-                  style: TextStyle(
-                      color: PaceColors.neonMagenta,
-                      fontSize: 12,
-                      letterSpacing: 1.5,
-                      fontWeight: FontWeight.w800)),
+              Text(
+                l10n.journalRaceReportWeek(report.weekNumber.toString()),
+                style: TextStyle(
+                  color: PaceColors.neonMagenta,
+                  fontSize: 12,
+                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -176,30 +199,49 @@ class _ReportCard extends StatelessWidget {
               Text(
                 report.medianPace == null
                     ? '—'
-                    : l10n.journalEvery(formatHumanDuration(report.medianPace!)),
-                style: PaceTheme.dash(size: 26, weight: FontWeight.w900, color: Colors.white),
+                    : l10n.journalEvery(
+                        formatHumanDuration(report.medianPace!),
+                      ),
+                style: PaceTheme.dash(
+                  size: 26,
+                  weight: FontWeight.w900,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 8),
-              Text(l10n.journalMedianPace,
-                  style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+              Text(
+                l10n.journalMedianPace,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               _ReportStat(
-                  label: l10n.journalCigarettes, value: '${report.cigarettes}', color: PaceColors.neonCyan),
+                label: l10n.journalCigarettes,
+                value: '${report.cigarettes}',
+                color: PaceColors.neonCyan,
+              ),
               const SizedBox(width: 20),
               _ReportStat(
-                  label: l10n.journalSpin, value: '${report.dreher}', color: PaceColors.neonOrange),
+                label: l10n.journalSpin,
+                value: '${report.dreher}',
+                color: PaceColors.neonOrange,
+              ),
               const Spacer(),
               if (delta != null && delta != 0)
                 Text(
-                  delta < 0 ? l10n.journalFewer((-delta).toString()) : '+$delta',
+                  delta < 0
+                      ? l10n.journalFewer((-delta).toString())
+                      : '+$delta',
                   style: TextStyle(
-                      color: delta < 0 ? PaceColors.neonLime : PaceColors.neonOrange,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800),
+                    color: delta < 0
+                        ? PaceColors.neonLime
+                        : PaceColors.neonOrange,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
             ],
           ),
@@ -210,7 +252,11 @@ class _ReportCard extends StatelessWidget {
 }
 
 class _ReportStat extends StatelessWidget {
-  const _ReportStat({required this.label, required this.value, required this.color});
+  const _ReportStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   final String label;
   final String value;
@@ -224,7 +270,10 @@ class _ReportStat extends StatelessWidget {
       children: [
         Text(value, style: PaceTheme.dash(size: 20, color: color)),
         const SizedBox(width: 4),
-        Text(label, style: TextStyle(color: PaceColors.textMuted, fontSize: 12)),
+        Text(
+          label,
+          style: TextStyle(color: PaceColors.textMuted, fontSize: 12),
+        ),
       ],
     );
   }
@@ -273,8 +322,9 @@ class _PitStopCard extends ConsumerWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: PaceColors.neonOrange,
-                foregroundColor: Colors.black),
+              backgroundColor: PaceColors.neonOrange,
+              foregroundColor: Colors.black,
+            ),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.journalDelete),
           ),
@@ -302,44 +352,60 @@ class _PitStopCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Text(formatClock(pitStop.occurredAt),
-                  style: PaceTheme.dash(size: 22, color: PaceColors.neonCyan)),
+              Text(
+                formatClock(pitStop.occurredAt),
+                style: PaceTheme.dash(size: 22, color: PaceColors.neonCyan),
+              ),
               const SizedBox(width: 12),
               if (situation != null)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: PaceColors.panelLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(situation!,
-                      style: const TextStyle(
-                          color: PaceColors.textPrimary, fontSize: 12)),
+                  child: Text(
+                    situation!,
+                    style: const TextStyle(
+                      color: PaceColors.textPrimary,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               const Spacer(),
               if (pitStop.wasEarlyPit)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: PaceColors.neonOrange.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(l10n.journalSpinBadge,
-                      style: TextStyle(
-                          color: PaceColors.neonOrange,
-                          fontSize: 10,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.w800)),
+                  child: Text(
+                    l10n.journalSpinBadge,
+                    style: TextStyle(
+                      color: PaceColors.neonOrange,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
               GestureDetector(
                 onTap: () => _delete(context, ref),
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.only(left: 10),
-                  child: Icon(Icons.delete_outline,
-                      color: PaceColors.textFaint, size: 18),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: PaceColors.textFaint,
+                    size: 18,
+                  ),
                 ),
               ),
             ],
@@ -348,23 +414,28 @@ class _PitStopCard extends ConsumerWidget {
           Row(
             children: [
               _MiniLevel(
-                  label: l10n.journalCraving,
-                  value: pitStop.cravingLevel,
-                  color: PaceColors.neonMagenta),
+                label: l10n.journalCraving,
+                value: pitStop.cravingLevel,
+                color: PaceColors.neonMagenta,
+              ),
               const SizedBox(width: 16),
               _MiniLevel(
-                  label: l10n.journalStress,
-                  value: pitStop.stressLevel,
-                  color: PaceColors.neonOrange),
+                label: l10n.journalStress,
+                value: pitStop.stressLevel,
+                color: PaceColors.neonOrange,
+              ),
             ],
           ),
           if (pitStop.note != null && pitStop.note!.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(pitStop.note!,
-                style: TextStyle(
-                    color: PaceColors.textMuted,
-                    fontSize: 13,
-                    fontStyle: FontStyle.italic)),
+            Text(
+              pitStop.note!,
+              style: TextStyle(
+                color: PaceColors.textMuted,
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           ],
         ],
       ),
@@ -387,8 +458,10 @@ class _MiniLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text('$label ',
-            style: const TextStyle(color: PaceColors.textFaint, fontSize: 12)),
+        Text(
+          '$label ',
+          style: const TextStyle(color: PaceColors.textFaint, fontSize: 12),
+        ),
         for (var i = 1; i <= 5; i++)
           Container(
             width: 7,
@@ -416,11 +489,12 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.flag_outlined,
-                color: PaceColors.neonLime, size: 56),
+            Icon(Icons.flag_outlined, color: PaceColors.neonLime, size: 56),
             const SizedBox(height: 16),
-            Text(l10n.journalEmptyTitle,
-                style: PaceTheme.dash(size: 24, italic: true)),
+            Text(
+              l10n.journalEmptyTitle,
+              style: PaceTheme.dash(size: 24, italic: true),
+            ),
             const SizedBox(height: 8),
             Text(
               l10n.journalEmptyBody,

@@ -41,13 +41,16 @@ class _ProposalOverlay extends ConsumerStatefulWidget {
 }
 
 class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
-  late double _growth = (widget.state.growthPermille / 1000)
-      .clamp(ProposalCalculator.minGrowth, ProposalCalculator.maxGrowth);
+  late double _growth = (widget.state.growthPermille / 1000).clamp(
+    ProposalCalculator.minGrowth,
+    ProposalCalculator.maxGrowth,
+  );
   bool _accepted = false;
   int _lastHapticPct = -1;
 
-  late final ConfettiController _confetti =
-      ConfettiController(duration: const Duration(seconds: 2));
+  late final ConfettiController _confetti = ConfettiController(
+    duration: const Duration(seconds: 2),
+  );
 
   @override
   void dispose() {
@@ -64,7 +67,9 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
     _confetti.play();
     HapticFeedback.heavyImpact();
     await Future<void>.delayed(const Duration(milliseconds: 1300));
-    await ref.read(databaseProvider).acceptProposal(
+    await ref
+        .read(databaseProvider)
+        .acceptProposal(
           targetSeconds: _proposed.inSeconds,
           growthPermille: (_growth * 1000).round(),
           at: DateTime.now(),
@@ -114,7 +119,10 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
             ),
             Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 40,
+                ),
                 child: _accepted ? _acceptedView() : _proposalView(),
               ),
             ),
@@ -131,98 +139,147 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
     final pct = (_growth * 100).round();
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(l10n.proposalStretchCheck,
-            style: TextStyle(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.proposalStretchCheck,
+              style: TextStyle(
                 color: PaceColors.neonOrange,
                 fontSize: 13,
                 letterSpacing: 4,
-                fontWeight: FontWeight.w800)),
-        const SizedBox(height: 10),
-        GraffitiHeadline(l10n.proposalWeekDone, size: 40, color: Colors.white),
-        const SizedBox(height: 12),
-        Text(
-          widget.state.currentTarget == null
-              ? l10n.proposalFirstTargetPrompt
-              : l10n.proposalStretchPrompt,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: PaceColors.textMuted, fontSize: 15, height: 1.4),
-        ),
-        const SizedBox(height: 28),
-        Text(l10n.proposalNewTarget,
-            style: TextStyle(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 10),
+            GraffitiHeadline(
+              l10n.proposalWeekDone,
+              size: 40,
+              color: Colors.white,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              widget.state.currentTarget == null
+                  ? l10n.proposalFirstTargetPrompt
+                  : l10n.proposalStretchPrompt,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: PaceColors.textMuted,
+                fontSize: 15,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 28),
+            Text(
+              l10n.proposalNewTarget,
+              style: TextStyle(
                 color: PaceColors.neonCyan,
                 fontSize: 11,
                 letterSpacing: 2,
-                fontWeight: FontWeight.w700)),
-        const SizedBox(height: 4),
-        // Live target — re-keyed so it pops on every change.
-        Text(
-          l10n.proposalEvery(formatHumanDuration(_proposed)),
-          key: ValueKey(_proposed.inSeconds),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 34,
-            fontWeight: FontWeight.w900,
-          ),
-        ).animate().scaleXY(begin: 0.92, end: 1.0, duration: 180.ms, curve: Curves.easeOut),
-        const SizedBox(height: 4),
-        Text(l10n.proposalMoreRoom(formatHumanDuration(delta)),
-            style: TextStyle(color: PaceColors.neonLime, fontSize: 13, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(l10n.proposalStretchBy, style: TextStyle(color: PaceColors.textMuted, fontSize: 13)),
-            Text(l10n.proposalPercent(pct),
-                style: TextStyle(
-                    color: PaceColors.neonMagenta, fontSize: 18, fontWeight: FontWeight.w900)),
-          ],
-        ),
-        SliderTheme(
-          data: SliderThemeData(
-            activeTrackColor: PaceColors.neonMagenta,
-            inactiveTrackColor: PaceColors.panelLight,
-            thumbColor: Colors.white,
-            overlayColor: PaceColors.neonMagenta.withValues(alpha: 0.2),
-            trackHeight: 6,
-          ),
-          child: Slider(
-            min: ProposalCalculator.minGrowth,
-            max: ProposalCalculator.maxGrowth,
-            value: _growth,
-            onChanged: _onSlide,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _AcceptButton(onTap: _accept),
-        const SizedBox(height: 10),
-        TextButton(
-          onPressed: _decline,
-          child: Text(l10n.proposalKeepIt,
-              style: TextStyle(color: PaceColors.textMuted, fontSize: 15)),
-        ),
-        const SizedBox(height: 8),
-        Container(height: 0.5, color: PaceColors.chrome),
-        const SizedBox(height: 8),
-        TextButton.icon(
-          onPressed: () async {
-            final nav = Navigator.of(context);
-            await ref.read(databaseProvider).declineProposal(DateTime.now());
-            await nav.push(MaterialPageRoute<void>(
-                builder: (_) => const QuitDateScreen()));
-          },
-          icon: Icon(Icons.event_available,
-              color: PaceColors.neonCyan, size: 18),
-          label: Text(l10n.proposalSetQuitDate,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 4),
+            // Live target — re-keyed so it pops on every change.
+            Text(
+              l10n.proposalEvery(formatHumanDuration(_proposed)),
+              key: ValueKey(_proposed.inSeconds),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 34,
+                fontWeight: FontWeight.w900,
+              ),
+            ).animate().scaleXY(
+              begin: 0.92,
+              end: 1.0,
+              duration: 180.ms,
+              curve: Curves.easeOut,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.proposalMoreRoom(formatHumanDuration(delta)),
               style: TextStyle(
+                color: PaceColors.neonLime,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.proposalStretchBy,
+                  style: TextStyle(color: PaceColors.textMuted, fontSize: 13),
+                ),
+                Text(
+                  l10n.proposalPercent(pct),
+                  style: TextStyle(
+                    color: PaceColors.neonMagenta,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+            SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: PaceColors.neonMagenta,
+                inactiveTrackColor: PaceColors.panelLight,
+                thumbColor: Colors.white,
+                overlayColor: PaceColors.neonMagenta.withValues(alpha: 0.2),
+                trackHeight: 6,
+              ),
+              child: Slider(
+                min: ProposalCalculator.minGrowth,
+                max: ProposalCalculator.maxGrowth,
+                value: _growth,
+                onChanged: _onSlide,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _AcceptButton(onTap: _accept),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: _decline,
+              child: Text(
+                l10n.proposalKeepIt,
+                style: TextStyle(color: PaceColors.textMuted, fontSize: 15),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(height: 0.5, color: PaceColors.chrome),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () async {
+                final nav = Navigator.of(context);
+                await ref
+                    .read(databaseProvider)
+                    .declineProposal(DateTime.now());
+                await nav.push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const QuitDateScreen(),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.event_available,
+                color: PaceColors.neonCyan,
+                size: 18,
+              ),
+              label: Text(
+                l10n.proposalSetQuitDate,
+                style: TextStyle(
                   color: PaceColors.neonCyan,
                   fontSize: 14,
-                  fontWeight: FontWeight.w700)),
-        ),
-      ],
-    ).animate().fadeIn(duration: 260.ms).scaleXY(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        )
+        .animate()
+        .fadeIn(duration: 260.ms)
+        .scaleXY(
           begin: 0.85,
           end: 1.0,
           curve: Curves.easeOutBack,
@@ -233,22 +290,41 @@ class _ProposalOverlayState extends ConsumerState<_ProposalOverlay> {
   Widget _acceptedView() {
     final l10n = AppLocalizations.of(context);
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.flag_circle, color: PaceColors.neonLime, size: 96)
-            .animate(onPlay: (c) => c.repeat(reverse: true))
-            .scaleXY(begin: 1.0, end: 1.12, duration: 700.ms, curve: Curves.easeInOut),
-        const SizedBox(height: 20),
-        GraffitiHeadline(l10n.proposalTargetSet, size: 40, color: PaceColors.neonLime),
-        const SizedBox(height: 12),
-        Text(l10n.proposalEvery(formatHumanDuration(_proposed)),
-            style: const TextStyle(
-                color: Colors.white, fontSize: 30, fontWeight: FontWeight.w900)),
-        const SizedBox(height: 8),
-        Text(l10n.proposalAcceptedHint,
-            style: TextStyle(color: PaceColors.textMuted, fontSize: 15)),
-      ],
-    ).animate().fadeIn(duration: 260.ms).scaleXY(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.flag_circle, color: PaceColors.neonLime, size: 96)
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .scaleXY(
+                  begin: 1.0,
+                  end: 1.12,
+                  duration: 700.ms,
+                  curve: Curves.easeInOut,
+                ),
+            const SizedBox(height: 20),
+            GraffitiHeadline(
+              l10n.proposalTargetSet,
+              size: 40,
+              color: PaceColors.neonLime,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.proposalEvery(formatHumanDuration(_proposed)),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.proposalAcceptedHint,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 15),
+            ),
+          ],
+        )
+        .animate()
+        .fadeIn(duration: 260.ms)
+        .scaleXY(
           begin: 0.7,
           end: 1.0,
           curve: Curves.elasticOut,
@@ -266,28 +342,34 @@ class _AcceptButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 58,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: PaceColors.underglow),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: PaceColors.neonMagenta.withValues(alpha: 0.5),
-                blurRadius: 24),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(l10n.proposalApply,
-            style: const TextStyle(
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            height: 58,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: PaceColors.underglow),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: PaceColors.neonMagenta.withValues(alpha: 0.5),
+                  blurRadius: 24,
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              l10n.proposalApply,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 2)),
-      ),
-    ).animate(onPlay: (c) => c.repeat()).shimmer(
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+        )
+        .animate(onPlay: (c) => c.repeat())
+        .shimmer(
           duration: 2200.ms,
           color: Colors.white.withValues(alpha: 0.18),
         );

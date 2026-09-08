@@ -22,19 +22,23 @@ Future<void> recordPitStop(BuildContext context, WidgetRef ref) async {
 
   final now = DateTime.now();
   final target = stint?.target;
-  await ref.read(databaseProvider).addPitStop(
+  await ref
+      .read(databaseProvider)
+      .addPitStop(
         occurredAt: now,
         cravingLevel: draft.cravingLevel,
         stressLevel: draft.stressLevel,
         situationId: draft.situationId,
         wasEarlyPit: stint?.phase == StintPhase.countdown,
-        targetIntervalSeconds:
-            (target != null && target > Duration.zero) ? target.inSeconds : null,
+        targetIntervalSeconds: (target != null && target > Duration.zero)
+            ? target.inSeconds
+            : null,
         note: draft.note,
       );
   HapticFeedback.mediumImpact();
 
-  final inBaseline = settings != null &&
+  final inBaseline =
+      settings != null &&
       now.difference(settings.startedAt) < StintCalculator.baselineDuration;
   if (!inBaseline && forwardTarget != null && forwardTarget > Duration.zero) {
     await NotificationService.scheduleStintComplete(now.add(forwardTarget));

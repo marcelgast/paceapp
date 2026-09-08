@@ -133,7 +133,10 @@ class _Bulb extends StatelessWidget {
                 ),
               ]
             : null,
-        border: Border.all(color: Colors.black.withValues(alpha: 0.6), width: 2),
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 0.6),
+          width: 2,
+        ),
       ),
     );
   }

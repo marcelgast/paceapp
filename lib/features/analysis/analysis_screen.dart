@@ -26,13 +26,15 @@ class AnalysisScreen extends ConsumerWidget {
     final deep = a.total > 0
         ? DeepAnalytics.from(
             pitStops
-                .map((p) => PitSample(
-                      occurredAt: p.occurredAt,
-                      craving: p.cravingLevel,
-                      stress: p.stressLevel,
-                      situationId: p.situationId,
-                      wasEarly: p.wasEarlyPit,
-                    ))
+                .map(
+                  (p) => PitSample(
+                    occurredAt: p.occurredAt,
+                    craving: p.cravingLevel,
+                    stress: p.stressLevel,
+                    situationId: p.situationId,
+                    wasEarly: p.wasEarlyPit,
+                  ),
+                )
                 .toList(),
             labels: labels,
             now: DateTime.now(),
@@ -51,7 +53,9 @@ class AnalysisScreen extends ConsumerWidget {
                     GraffitiHeadline(l10n.analysisTitle, size: 26),
                     const SizedBox(height: 16),
                     _MedianPaceCard(
-                        pace: a.medianPace, prev: a.previousMedianPace),
+                      pace: a.medianPace,
+                      prev: a.previousMedianPace,
+                    ),
                     const SizedBox(height: 16),
                     _SummaryRow(a: a),
                     const SizedBox(height: 28),
@@ -95,7 +99,9 @@ class _MedianPaceCard extends StatelessWidget {
         border: Border.all(color: PaceColors.neonCyan.withValues(alpha: 0.7)),
         boxShadow: [
           BoxShadow(
-              color: PaceColors.neonCyan.withValues(alpha: 0.18), blurRadius: 22),
+            color: PaceColors.neonCyan.withValues(alpha: 0.18),
+            blurRadius: 22,
+          ),
         ],
       ),
       child: Column(
@@ -105,12 +111,15 @@ class _MedianPaceCard extends StatelessWidget {
             children: [
               Icon(Icons.speed, color: PaceColors.neonCyan, size: 18),
               const SizedBox(width: 6),
-              Text(l10n.analysisMedianPace,
-                  style: TextStyle(
-                      color: PaceColors.neonCyan,
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.w800)),
+              Text(
+                l10n.analysisMedianPace,
+                style: TextStyle(
+                  color: PaceColors.neonCyan,
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -124,9 +133,10 @@ class _MedianPaceCard extends StatelessWidget {
                       ? l10n.analysisEvery(formatHumanDuration(pace!))
                       : l10n.analysisCollecting,
                   style: PaceTheme.dash(
-                      size: has ? 38 : 26,
-                      weight: FontWeight.w900,
-                      color: has ? Colors.white : PaceColors.textMuted),
+                    size: has ? 38 : 26,
+                    weight: FontWeight.w900,
+                    color: has ? Colors.white : PaceColors.textMuted,
+                  ),
                 ),
               ),
               if (has && prev != null) ...[
@@ -138,7 +148,11 @@ class _MedianPaceCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             has ? l10n.analysisMedianHint : l10n.analysisMedianEmptyHint,
-            style: TextStyle(color: PaceColors.textMuted, fontSize: 13, height: 1.3),
+            style: TextStyle(
+              color: PaceColors.textMuted,
+              fontSize: 13,
+              height: 1.3,
+            ),
           ),
         ],
       ),
@@ -169,9 +183,14 @@ class _TrendChip extends StatelessWidget {
         color: color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(label,
-          style: TextStyle(
-              color: color, fontSize: 12, fontWeight: FontWeight.w800)),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
     );
   }
 }
@@ -182,12 +201,15 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text.toUpperCase(),
-        style: const TextStyle(
-            color: PaceColors.textMuted,
-            fontSize: 12,
-            letterSpacing: 2,
-            fontWeight: FontWeight.w700));
+    return Text(
+      text.toUpperCase(),
+      style: const TextStyle(
+        color: PaceColors.textMuted,
+        fontSize: 12,
+        letterSpacing: 2,
+        fontWeight: FontWeight.w700,
+      ),
+    );
   }
 }
 
@@ -201,26 +223,33 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       children: [
         _StatTile(
-            label: l10n.analysisAvgCraving,
-            value: a.avgCraving.toStringAsFixed(1),
-            color: PaceColors.neonMagenta),
+          label: l10n.analysisAvgCraving,
+          value: a.avgCraving.toStringAsFixed(1),
+          color: PaceColors.neonMagenta,
+        ),
         const SizedBox(width: 12),
         _StatTile(
-            label: l10n.analysisAvgStress,
-            value: a.avgStress.toStringAsFixed(1),
-            color: PaceColors.neonOrange),
+          label: l10n.analysisAvgStress,
+          value: a.avgStress.toStringAsFixed(1),
+          color: PaceColors.neonOrange,
+        ),
         const SizedBox(width: 12),
         _StatTile(
-            label: l10n.analysisSpins,
-            value: '${(a.earlyRate * 100).round()}%',
-            color: PaceColors.neonCyan),
+          label: l10n.analysisSpins,
+          value: '${(a.earlyRate * 100).round()}%',
+          color: PaceColors.neonCyan,
+        ),
       ],
     );
   }
 }
 
 class _StatTile extends StatelessWidget {
-  const _StatTile({required this.label, required this.value, required this.color});
+  const _StatTile({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
   final String label;
   final String value;
   final Color color;
@@ -239,9 +268,11 @@ class _StatTile extends StatelessWidget {
           children: [
             Text(value, style: PaceTheme.dash(size: 26, color: color)),
             const SizedBox(height: 4),
-            Text(label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: PaceColors.textMuted, fontSize: 11)),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: PaceColors.textMuted, fontSize: 11),
+            ),
           ],
         ),
       ),
@@ -265,11 +296,15 @@ class _SituationBars extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 96,
-                  child: Text(s.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          color: PaceColors.textPrimary, fontSize: 13)),
+                  child: Text(
+                    s.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: PaceColors.textPrimary,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: ClipRRect(
@@ -287,7 +322,7 @@ class _SituationBars extends StatelessWidget {
                               gradient: LinearGradient(
                                 colors: [
                                   PaceColors.neonMagenta,
-                                  PaceColors.neonPurple
+                                  PaceColors.neonPurple,
                                 ],
                               ),
                             ),
@@ -300,9 +335,14 @@ class _SituationBars extends StatelessWidget {
                 const SizedBox(width: 10),
                 SizedBox(
                   width: 24,
-                  child: Text('${s.count}',
-                      textAlign: TextAlign.right,
-                      style: PaceTheme.dash(size: 18, color: PaceColors.neonMagenta)),
+                  child: Text(
+                    '${s.count}',
+                    textAlign: TextAlign.right,
+                    style: PaceTheme.dash(
+                      size: 18,
+                      color: PaceColors.neonMagenta,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -345,9 +385,13 @@ class _WeekBars extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('${d.count}',
-                      style: const TextStyle(
-                          color: PaceColors.textMuted, fontSize: 11)),
+                  Text(
+                    '${d.count}',
+                    style: const TextStyle(
+                      color: PaceColors.textMuted,
+                      fontSize: 11,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Container(
                     height: (d.count / max) * 80 + 4,
@@ -362,9 +406,13 @@ class _WeekBars extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(letters[d.day.weekday - 1],
-                      style: const TextStyle(
-                          color: PaceColors.textFaint, fontSize: 11)),
+                  Text(
+                    letters[d.day.weekday - 1],
+                    style: const TextStyle(
+                      color: PaceColors.textFaint,
+                      fontSize: 11,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -388,8 +436,10 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
             const SizedBox(height: 16),
-            Text(l10n.analysisEmptyTitle,
-                style: PaceTheme.dash(size: 24, italic: true)),
+            Text(
+              l10n.analysisEmptyTitle,
+              style: PaceTheme.dash(size: 24, italic: true),
+            ),
             const SizedBox(height: 8),
             Text(
               l10n.analysisEmptyBody,

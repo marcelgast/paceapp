@@ -50,7 +50,9 @@ final sleepWindowProvider = Provider<SleepWindow>((ref) {
   final s = ref.watch(settingsProvider).value;
   if (s == null) return SleepWindow.defaultWindow;
   return SleepWindow(
-      startMinutes: s.sleepStartMinutes, endMinutes: s.sleepEndMinutes);
+    startMinutes: s.sleepStartMinutes,
+    endMinutes: s.sleepEndMinutes,
+  );
 });
 
 /// All situations including archived — used to label historic pit stops.
@@ -176,7 +178,8 @@ final proposalProvider = Provider<ProposalState?>((ref) {
     measured: measured,
     currentTarget: currentTarget,
     fallback: StintCalculator.intervalFromDailyRate(
-        settings.baselineCigsPerDay.toDouble()),
+      settings.baselineCigsPerDay.toDouble(),
+    ),
   );
 
   return ProposalState(
@@ -236,13 +239,15 @@ final behaviorAnalysisProvider = Provider<BehaviorAnalysis>((ref) {
   final pitStops = ref.watch(pitStopsProvider).value ?? const [];
   final labels = ref.watch(situationLabelsProvider);
   final samples = pitStops
-      .map((p) => PitSample(
-            occurredAt: p.occurredAt,
-            craving: p.cravingLevel,
-            stress: p.stressLevel,
-            situationId: p.situationId,
-            wasEarly: p.wasEarlyPit,
-          ))
+      .map(
+        (p) => PitSample(
+          occurredAt: p.occurredAt,
+          craving: p.cravingLevel,
+          stress: p.stressLevel,
+          situationId: p.situationId,
+          wasEarly: p.wasEarlyPit,
+        ),
+      )
       .toList();
   return BehaviorAnalysis.from(samples, labels: labels, now: DateTime.now());
 });
@@ -254,16 +259,21 @@ final weeklyReportsProvider = Provider<List<WeeklyReport>>((ref) {
   if (settings == null || now == null) return const [];
 
   final samples = (pitStops ?? const <PitStop>[])
-      .map((p) => PitSample(
-            occurredAt: p.occurredAt,
-            craving: p.cravingLevel,
-            stress: p.stressLevel,
-            situationId: p.situationId,
-            wasEarly: p.wasEarlyPit,
-          ))
+      .map(
+        (p) => PitSample(
+          occurredAt: p.occurredAt,
+          craving: p.cravingLevel,
+          stress: p.stressLevel,
+          situationId: p.situationId,
+          wasEarly: p.wasEarlyPit,
+        ),
+      )
       .toList();
-  return WeeklyReportBuilder.build(samples,
-      startedAt: settings.startedAt, now: now);
+  return WeeklyReportBuilder.build(
+    samples,
+    startedAt: settings.startedAt,
+    now: now,
+  );
 });
 
 final streakProvider = Provider<StreakResult>((ref) {
@@ -282,7 +292,9 @@ final streakProvider = Provider<StreakResult>((ref) {
   } else {
     final week1 = all.where((p) => p.occurredAt.isBefore(measuringEnd)).length;
     final measured = week1 / StintCalculator.baselineDuration.inDays;
-    threshold = measured > 0 ? measured : settings.baselineCigsPerDay.toDouble();
+    threshold = measured > 0
+        ? measured
+        : settings.baselineCigsPerDay.toDouble();
   }
 
   return StreakCalculator.compute(

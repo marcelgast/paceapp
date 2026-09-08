@@ -16,12 +16,16 @@ class QuitDateScreen extends ConsumerWidget {
   const QuitDateScreen({super.key});
 
   static Future<void> open(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const QuitDateScreen()),
-    );
+    return Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const QuitDateScreen()));
   }
 
-  Future<void> _pick(BuildContext context, WidgetRef ref, DateTime? current) async {
+  Future<void> _pick(
+    BuildContext context,
+    WidgetRef ref,
+    DateTime? current,
+  ) async {
     final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -41,8 +45,13 @@ class QuitDateScreen extends ConsumerWidget {
       helpText: l10n.quitPickTime,
     );
     if (pickedTime == null) return;
-    final quit = DateTime(pickedDate.year, pickedDate.month, pickedDate.day,
-        pickedTime.hour, pickedTime.minute);
+    final quit = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
     await ref.read(databaseProvider).setQuitDate(quit);
     await NotificationService.requestPermission();
     await NotificationService.scheduleQuitDay(
@@ -82,8 +91,10 @@ class QuitDateScreen extends ConsumerWidget {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back,
-                          color: PaceColors.textPrimary),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: PaceColors.textPrimary,
+                      ),
                     ),
                   ],
                 ),
@@ -129,11 +140,14 @@ class QuitDateScreen extends ConsumerWidget {
                       Center(
                         child: TextButton(
                           onPressed: () => _remove(ref),
-                          child: Text(l10n.quitRemoveDate,
-                              style: TextStyle(
-                                  color: PaceColors.neonOrange,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700)),
+                          child: Text(
+                            l10n.quitRemoveDate,
+                            style: TextStyle(
+                              color: PaceColors.neonOrange,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ),
                       ),
                     ] else
@@ -184,26 +198,37 @@ class _Callout extends StatelessWidget {
               Icon(icon, color: accent, size: 22),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(title,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800)),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          Text(body,
-              style: TextStyle(
-                  color: PaceColors.textMuted, fontSize: 14, height: 1.45)),
+          Text(
+            body,
+            style: TextStyle(
+              color: PaceColors.textMuted,
+              fontSize: 14,
+              height: 1.45,
+            ),
+          ),
           if (extra != null) ...[
             const SizedBox(height: 8),
-            Text(extra!,
-                style: TextStyle(
-                    color: accent,
-                    fontSize: 13,
-                    height: 1.4,
-                    fontWeight: FontWeight.w600)),
+            Text(
+              extra!,
+              style: TextStyle(
+                color: accent,
+                fontSize: 13,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ],
       ),
@@ -222,10 +247,12 @@ class _CurrentDateCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          PaceColors.neonLime.withValues(alpha: 0.14),
-          PaceColors.neonCyan.withValues(alpha: 0.08),
-        ]),
+        gradient: LinearGradient(
+          colors: [
+            PaceColors.neonLime.withValues(alpha: 0.14),
+            PaceColors.neonCyan.withValues(alpha: 0.08),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: PaceColors.neonLime.withValues(alpha: 0.5)),
       ),
@@ -237,18 +264,24 @@ class _CurrentDateCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.quitYourDate,
-                    style: TextStyle(
-                        color: PaceColors.textMuted,
-                        fontSize: 12,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  l10n.quitYourDate,
+                  style: TextStyle(
+                    color: PaceColors.textMuted,
+                    fontSize: 12,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('${formatDate(date)} · ${formatClock(date)}',
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 19,
-                        fontWeight: FontWeight.w900)),
+                Text(
+                  '${formatDate(date)} · ${formatClock(date)}',
+                  style: const TextStyle(
+                    color: PaceColors.textPrimary,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ],
             ),
           ),
@@ -275,12 +308,15 @@ class _PrimaryButton extends StatelessWidget {
           gradient: LinearGradient(colors: PaceColors.underglow),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Text(label,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1)),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
+          ),
+        ),
       ),
     );
   }

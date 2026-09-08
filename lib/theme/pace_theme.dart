@@ -35,9 +35,9 @@ abstract final class PaceTheme {
 
   /// Neon glow shadow stack for text / wordmarks.
   static List<Shadow> neonGlow(Color color, {double blur = 18}) => [
-        Shadow(color: color, blurRadius: blur),
-        Shadow(color: color.withValues(alpha: 0.6), blurRadius: blur * 2),
-      ];
+    Shadow(color: color, blurRadius: blur),
+    Shadow(color: color.withValues(alpha: 0.6), blurRadius: blur * 2),
+  ];
 
   static ThemeData dark() {
     final base = ThemeData.dark(useMaterial3: true);

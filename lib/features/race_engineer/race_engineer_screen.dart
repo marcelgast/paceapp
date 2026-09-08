@@ -16,9 +16,9 @@ class RaceEngineerScreen extends ConsumerWidget {
   const RaceEngineerScreen({super.key});
 
   static Future<void> open(BuildContext context) {
-    return Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const RaceEngineerScreen()),
-    );
+    return Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const RaceEngineerScreen()));
   }
 
   @override
@@ -29,16 +29,22 @@ class RaceEngineerScreen extends ConsumerWidget {
     final now = DateTime.now();
 
     final samples = pitStops
-        .map((p) => PitSample(
-              occurredAt: p.occurredAt,
-              craving: p.cravingLevel,
-              stress: p.stressLevel,
-              situationId: p.situationId,
-              wasEarly: p.wasEarlyPit,
-            ))
+        .map(
+          (p) => PitSample(
+            occurredAt: p.occurredAt,
+            craving: p.cravingLevel,
+            stress: p.stressLevel,
+            situationId: p.situationId,
+            wasEarly: p.wasEarlyPit,
+          ),
+        )
         .toList();
-    final a = DeepAnalytics.from(samples,
-        labels: labels, now: now, noSituationLabel: l10n.analysisNoSituation);
+    final a = DeepAnalytics.from(
+      samples,
+      labels: labels,
+      now: now,
+      noSituationLabel: l10n.analysisNoSituation,
+    );
 
     return Scaffold(
       body: RacetrackBackground(
@@ -52,8 +58,10 @@ class RaceEngineerScreen extends ConsumerWidget {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).maybePop(),
-                      icon: const Icon(Icons.arrow_back,
-                          color: PaceColors.textMuted),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: PaceColors.textMuted,
+                      ),
                     ),
                     GraffitiHeadline(l10n.raceEngineerTitle, size: 26),
                   ],
@@ -65,9 +73,13 @@ class RaceEngineerScreen extends ConsumerWidget {
                     : ListView(
                         padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
                         children: [
-                          Text(l10n.raceEngineerSubtitle,
-                              style: TextStyle(
-                                  color: PaceColors.textMuted, fontSize: 14)),
+                          Text(
+                            l10n.raceEngineerSubtitle,
+                            style: TextStyle(
+                              color: PaceColors.textMuted,
+                              fontSize: 14,
+                            ),
+                          ),
                           const SizedBox(height: 20),
                           RaceEngineerSection(analytics: a),
                         ],
@@ -125,19 +137,25 @@ class _Card extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(
-                  color: PaceColors.textMuted,
-                  fontSize: 12,
-                  letterSpacing: 2,
-                  fontWeight: FontWeight.w700)),
+          Text(
+            title,
+            style: const TextStyle(
+              color: PaceColors.textMuted,
+              fontSize: 12,
+              letterSpacing: 2,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           if (caption != null) ...[
             const SizedBox(height: 4),
-            Text(caption!,
-                style: TextStyle(
-                    color: PaceColors.neonOrange,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700)),
+            Text(
+              caption!,
+              style: TextStyle(
+                color: PaceColors.neonOrange,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
           const SizedBox(height: 14),
           child,
@@ -215,9 +233,10 @@ class _HourCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               for (final h in const [0, 6, 12, 18, 23])
-                Text('$h',
-                    style: TextStyle(
-                        color: PaceColors.textFaint, fontSize: 10)),
+                Text(
+                  '$h',
+                  style: TextStyle(color: PaceColors.textFaint, fontSize: 10),
+                ),
             ],
           ),
         ],
@@ -266,14 +285,17 @@ class _WeekdayCard extends StatelessWidget {
             children: [
               for (var d = 0; d < 7; d++)
                 Expanded(
-                  child: Text(letters[d],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: d == analytics.peakWeekday
-                              ? PaceColors.neonMagenta
-                              : PaceColors.textFaint,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700)),
+                  child: Text(
+                    letters[d],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: d == analytics.peakWeekday
+                          ? PaceColors.neonMagenta
+                          : PaceColors.textFaint,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -293,7 +315,9 @@ class _TriggersCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxV = analytics.triggers.isEmpty
         ? 0
-        : analytics.triggers.map((t) => t.count).reduce((a, b) => a > b ? a : b);
+        : analytics.triggers
+              .map((t) => t.count)
+              .reduce((a, b) => a > b ? a : b);
     return _Card(
       title: l10n.raceEngineerTriggers,
       child: Column(
@@ -305,13 +329,16 @@ class _TriggersCard extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 90,
-                    child: Text(t.label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: PaceColors.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600)),
+                    child: Text(
+                      t.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -321,19 +348,23 @@ class _TriggersCard extends StatelessWidget {
                         value: maxV == 0 ? 0 : t.count / maxV,
                         minHeight: 10,
                         backgroundColor: PaceColors.night,
-                        valueColor: AlwaysStoppedAnimation(
-                            PaceColors.neonCyan),
+                        valueColor: AlwaysStoppedAnimation(PaceColors.neonCyan),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Text('${t.count}',
-                      style: PaceTheme.dash(size: 16, color: Colors.white)),
+                  Text(
+                    '${t.count}',
+                    style: PaceTheme.dash(size: 16, color: Colors.white),
+                  ),
                   const SizedBox(width: 8),
-                  Icon(Icons.local_fire_department,
-                      color: PaceColors.neonMagenta
-                          .withValues(alpha: 0.4 + t.avgCraving / 5 * 0.6),
-                      size: 16),
+                  Icon(
+                    Icons.local_fire_department,
+                    color: PaceColors.neonMagenta.withValues(
+                      alpha: 0.4 + t.avgCraving / 5 * 0.6,
+                    ),
+                    size: 16,
+                  ),
                 ],
               ),
             ),
@@ -380,8 +411,10 @@ class _TrendCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(l10n.raceEngineerTrendAxis,
-              style: TextStyle(color: PaceColors.textFaint, fontSize: 10)),
+          Text(
+            l10n.raceEngineerTrendAxis,
+            style: TextStyle(color: PaceColors.textFaint, fontSize: 10),
+          ),
         ],
       ),
     );
@@ -403,12 +436,16 @@ class _Empty extends StatelessWidget {
           children: [
             Icon(Icons.insights, color: PaceColors.neonCyan, size: 56),
             const SizedBox(height: 16),
-            Text(l10n.raceEngineerEmptyTitle,
-                style: PaceTheme.dash(size: 22, italic: true)),
+            Text(
+              l10n.raceEngineerEmptyTitle,
+              style: PaceTheme.dash(size: 22, italic: true),
+            ),
             const SizedBox(height: 8),
-            Text(l10n.raceEngineerEmptyBody,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: PaceColors.textMuted, fontSize: 14)),
+            Text(
+              l10n.raceEngineerEmptyBody,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: PaceColors.textMuted, fontSize: 14),
+            ),
           ],
         ),
       ),

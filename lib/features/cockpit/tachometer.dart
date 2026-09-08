@@ -127,8 +127,13 @@ class _GaugePainter extends CustomPainter {
 
     if (!baseline) {
       final needleAt = overtime ? overtimeProgress.clamp(0.0, 1.0) : value;
-      _needle(canvas, center, radius, needleAt,
-          overtime ? PaceColors.neonLime : PaceColors.neonCyan);
+      _needle(
+        canvas,
+        center,
+        radius,
+        needleAt,
+        overtime ? PaceColors.neonLime : PaceColors.neonCyan,
+      );
     }
   }
 
@@ -143,8 +148,13 @@ class _GaugePainter extends CustomPainter {
     );
   }
 
-  void _glow(Canvas canvas, Rect rect, double sweep, Color color,
-      {double blur = 12}) {
+  void _glow(
+    Canvas canvas,
+    Rect rect,
+    double sweep,
+    Color color, {
+    double blur = 12,
+  }) {
     canvas.drawArc(
       rect,
       _start,
@@ -183,7 +193,12 @@ class _GaugePainter extends CustomPainter {
   }
 
   void _needle(
-      Canvas canvas, Offset center, double radius, double value, Color color) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    double value,
+    Color color,
+  ) {
     final angle = _start + _sweep * value;
     final dir = Offset(math.cos(angle), math.sin(angle));
     final tip = center + dir * (radius - 12);

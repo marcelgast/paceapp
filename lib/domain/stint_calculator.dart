@@ -101,8 +101,10 @@ abstract final class StintCalculator {
         elapsed: sinceLastPit,
         remaining: remaining,
         overtime: Duration.zero,
-        progress: (sinceLastPit.inMilliseconds / target.inMilliseconds)
-            .clamp(0.0, 1.0),
+        progress: (sinceLastPit.inMilliseconds / target.inMilliseconds).clamp(
+          0.0,
+          1.0,
+        ),
       );
     }
 

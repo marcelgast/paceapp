@@ -46,8 +46,8 @@ class _Gate extends ConsumerWidget {
       error: (_, _) => const _Splash(),
       data: (row) => (row?.onboardingDone ?? false)
           ? const ProposalHost(
-              child: CelebrationHost(
-                  child: GoalWatcher(child: HomeShell())))
+              child: CelebrationHost(child: GoalWatcher(child: HomeShell())),
+            )
           : const OnboardingScreen(),
     );
   }

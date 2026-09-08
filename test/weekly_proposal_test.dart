@@ -23,7 +23,10 @@ void main() {
         now.subtract(const Duration(minutes: 120)),
         now.subtract(const Duration(minutes: 0)),
       ];
-      final median = ProposalCalculator.measuredMedian(pitTimes: times, now: now);
+      final median = ProposalCalculator.measuredMedian(
+        pitTimes: times,
+        now: now,
+      );
       expect(median, const Duration(minutes: 60));
     });
 
@@ -45,7 +48,10 @@ void main() {
     test('uses fallback when nothing measured and no target', () {
       expect(
         ProposalCalculator.baseFor(
-            measured: null, currentTarget: null, fallback: fallback),
+          measured: null,
+          currentTarget: null,
+          fallback: fallback,
+        ),
         fallback,
       );
     });
@@ -73,7 +79,9 @@ void main() {
     test('stretches the base by the growth factor', () {
       expect(
         ProposalCalculator.proposed(
-            base: const Duration(minutes: 60), growth: 0.10),
+          base: const Duration(minutes: 60),
+          growth: 0.10,
+        ),
         const Duration(minutes: 66),
       );
     });
