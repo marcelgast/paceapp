@@ -335,6 +335,13 @@ final statsProvider = Provider<PaceStats?>((ref) {
     return pc;
   }
 
+  // After the quit moment the stint/lap mechanic stops — the ongoing stint is
+  // frozen at the quit moment (that's the last banked value) and savings then
+  // accrue at the full baseline rate below.
+  final quitDate = settings.quitDate;
+  final smokeFree = quitDate != null && now.isAfter(quitDate);
+  final stintEnd = smokeFree ? quitDate : now;
+
   // One stint per gap between cigarettes, plus the ongoing one. Each carries the
   // target that was active (stored on the pit) and the price then; sleep is
   // excluded from the awake length.
@@ -342,6 +349,7 @@ final statsProvider = Provider<PaceStats?>((ref) {
   final stints = <({int awakeSeconds, int targetSeconds, int perCig})>[];
   var prev = start;
   for (final p in asc) {
+    if (p.occurredAt.isAfter(stintEnd)) break; // post-quit slips: baseline handles it
     stints.add((
       awakeSeconds: sleep.awakeBetween(prev, p.occurredAt).inSeconds,
       targetSeconds: p.targetIntervalSeconds ?? 0,
@@ -350,16 +358,31 @@ final statsProvider = Provider<PaceStats?>((ref) {
     prev = p.occurredAt;
   }
   stints.add((
-    awakeSeconds: sleep.awakeBetween(prev, now).inSeconds,
+    awakeSeconds: sleep.awakeBetween(prev, stintEnd).inSeconds,
     targetSeconds: settings.currentTargetSeconds ?? 0,
-    perCig: perCigAt(now),
+    perCig: perCigAt(stintEnd),
   ));
+
+  // Post-quit: you avoid your whole baseline consumption (minus any slip-ups),
+  // so the counters keep climbing continuously from the value banked at the stop.
+  var bonusCigs = 0.0;
+  var bonusCents = 0;
+  if (smokeFree) {
+    final daysSinceQuit = now.difference(quitDate).inSeconds / 86400.0;
+    final slipsAfterQuit =
+        all.where((p) => p.occurredAt.isAfter(quitDate)).length;
+    final avoided = settings.baselineCigsPerDay * daysSinceQuit - slipsAfterQuit;
+    bonusCigs = avoided < 0 ? 0 : avoided;
+    bonusCents = (bonusCigs * perCigAt(now)).round();
+  }
 
   return PaceStats.compute(
     sinceStart: sinceStart,
     actualCigarettes: all.length,
     currentPerCig: perCigAt(now),
     stints: stints,
+    bonusCigarettes: bonusCigs,
+    bonusMoneyCents: bonusCents,
   );
 });
 

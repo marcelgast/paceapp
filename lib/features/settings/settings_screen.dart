@@ -5,10 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers.dart';
-import '../../services/entitlements.dart';
-import '../../services/pace_pro_store.dart';
 import '../../services/widget_service.dart';
-import '../pro/paywall_sheet.dart';
 import '../quit/quit_date_screen.dart';
 import '../race_engineer/race_engineer_screen.dart';
 import '../../theme/pace_colors.dart';
@@ -180,14 +177,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _openPro(PaceProFeature feature, VoidCallback onOpen) {
-    if (ref.read(entitlementsProvider).can(feature)) {
-      onOpen();
-    } else {
-      showPaceProPaywall(context);
-    }
-  }
-
   Future<void> _reset() async {
     final l10n = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
@@ -224,7 +213,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final settings = ref.watch(settingsProvider).value;
     final periods = ref.watch(costPeriodsProvider).value ?? const [];
     final currency = settings?.currencyCode ?? 'EUR';
-    final isPro = ref.watch(entitlementsProvider).isPro;
 
     // Pre-fill once from the current values.
     if (!_prefilled && settings != null) {
@@ -363,64 +351,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             letterSpacing: 2,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 10),
-                    if (isPro) ...[
-                      _ProActiveCard(
-                        title: l10n.settingsProActive,
-                        subtitle: l10n.settingsProActiveSub,
-                      ),
-                      const SizedBox(height: 10),
-                    ],
                     _ProRow(
                       icon: Icons.insights,
                       title: l10n.settingsProRaceEngineer,
                       subtitle: l10n.settingsProRaceEngineerSub,
-                      badge: l10n.proBadge,
-                      onTap: () => _openPro(
-                          PaceProFeature.raceEngineer,
-                          () => RaceEngineerScreen.open(context)),
+                      onTap: () => RaceEngineerScreen.open(context),
                     ),
                     _ProToggleRow(
                       icon: Icons.bolt,
                       title: l10n.settingsProLiveActivity,
                       subtitle: l10n.settingsProLiveActivitySub,
-                      badge: l10n.proBadge,
                       value: settings?.liveActivityEnabled ?? false,
-                      onChanged: (v) => _openPro(
-                        PaceProFeature.liveActivity,
-                        () async {
-                          await ref
-                              .read(databaseProvider)
-                              .updateLiveActivityEnabled(v);
-                          await pushPaceWidget(ref, liveActivityOverride: v);
-                        },
-                      ),
+                      onChanged: (v) async {
+                        await ref
+                            .read(databaseProvider)
+                            .updateLiveActivityEnabled(v);
+                        await pushPaceWidget(ref, liveActivityOverride: v);
+                      },
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(l10n.settingsProSkin,
-                            style: TextStyle(
-                                color: PaceColors.textMuted,
-                                fontSize: 12,
-                                letterSpacing: 2,
-                                fontWeight: FontWeight.w700)),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: PaceColors.neonMagenta,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(l10n.proBadge,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.w900)),
-                        ),
-                      ],
-                    ),
+                    Text(l10n.settingsProSkin,
+                        style: TextStyle(
+                            color: PaceColors.textMuted,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.w700)),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -431,28 +386,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             skin: s,
                             selected: s.id ==
                                 (settings?.skinId ?? Skin.underground.id),
-                            onTap: () => _openPro(
-                                PaceProFeature.themes,
-                                () => ref
-                                    .read(databaseProvider)
-                                    .updateSkin(s.id)),
+                            onTap: () =>
+                                ref.read(databaseProvider).updateSkin(s.id),
                           ),
                       ],
                     ),
-                    if (!isPro) ...[
-                      const SizedBox(height: 14),
-                      Center(
-                        child: TextButton(
-                          onPressed: () =>
-                              ref.read(paceProStoreProvider).restore(),
-                          child: Text(l10n.settingsProRestore,
-                              style: TextStyle(
-                                  color: PaceColors.textMuted,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                    ],
                     const SizedBox(height: 40),
                     GestureDetector(
                       onTap: _reset,
@@ -652,7 +590,6 @@ class _ProToggleRow extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.badge,
     required this.value,
     required this.onChanged,
   });
@@ -660,7 +597,6 @@ class _ProToggleRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final String badge;
   final bool value;
   final ValueChanged<bool> onChanged;
 
@@ -689,30 +625,11 @@ class _ProToggleRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(title,
-                        style: const TextStyle(
-                            color: PaceColors.textPrimary,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700)),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: PaceColors.neonMagenta,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(badge,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.w900)),
-                    ),
-                  ],
-                ),
+                Text(title,
+                    style: const TextStyle(
+                        color: PaceColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
                 Text(subtitle,
                     style: TextStyle(
@@ -736,14 +653,12 @@ class _ProRow extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.badge,
     required this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
-  final String badge;
   final VoidCallback onTap;
 
   @override
@@ -774,30 +689,11 @@ class _ProRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(title,
-                          style: const TextStyle(
-                              color: PaceColors.textPrimary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: PaceColors.neonMagenta,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(badge,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                letterSpacing: 1,
-                                fontWeight: FontWeight.w900)),
-                      ),
-                    ],
-                  ),
+                  Text(title,
+                      style: const TextStyle(
+                          color: PaceColors.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700)),
                   const SizedBox(height: 2),
                   Text(subtitle,
                       style: TextStyle(
@@ -808,47 +704,6 @@ class _ProRow extends StatelessWidget {
             const Icon(Icons.chevron_right, color: PaceColors.textMuted),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ProActiveCard extends StatelessWidget {
-  const _ProActiveCard({required this.title, required this.subtitle});
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      decoration: BoxDecoration(
-        color: PaceColors.neonLime.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: PaceColors.neonLime.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.verified, color: PaceColors.neonLime, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: PaceColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
-                const SizedBox(height: 2),
-                Text(subtitle,
-                    style: TextStyle(
-                        color: PaceColors.textMuted, fontSize: 12)),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

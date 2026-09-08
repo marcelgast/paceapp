@@ -34,11 +34,17 @@ class PaceStats {
   /// [stints] are every stint (completed and ongoing), each with its awake
   /// length, the target that was active, and the price per cigarette then. A
   /// stint with no target (the measuring phase) earns nothing.
+  ///
+  /// [bonusCigarettes] / [bonusMoneyCents] are added on top of the lap totals —
+  /// used after the quit moment, where you avoid your whole baseline consumption
+  /// (not just banked laps), so the counters keep climbing at your real rate.
   factory PaceStats.compute({
     required Duration sinceStart,
     required int actualCigarettes,
     required int currentPerCig,
     required List<({int awakeSeconds, int targetSeconds, int perCig})> stints,
+    double bonusCigarettes = 0,
+    int bonusMoneyCents = 0,
   }) {
     var laps = 0;
     var moneyCents = 0;
@@ -50,12 +56,13 @@ class PaceStats {
       laps += stintLaps;
       moneyCents += stintLaps * s.perCig;
     }
+    final avoided = laps + bonusCigarettes;
     return PaceStats(
       costPerCigaretteCents: currentPerCig,
-      expectedCigarettes: (actualCigarettes + laps).toDouble(),
+      expectedCigarettes: actualCigarettes + avoided,
       actualCigarettes: actualCigarettes,
-      savedCigarettes: laps.toDouble(),
-      savedMoneyCents: moneyCents,
+      savedCigarettes: avoided,
+      savedMoneyCents: moneyCents + bonusMoneyCents,
       sinceStart: sinceStart,
     );
   }

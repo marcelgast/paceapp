@@ -1337,7 +1337,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsProSection.
   ///
   /// In de, this message translates to:
-  /// **'PACE PRO'**
+  /// **'EXTRAS'**
   String get settingsProSection;
 
   /// No description provided for @settingsProRaceEngineer.

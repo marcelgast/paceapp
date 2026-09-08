@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers.dart';
-
-/// Premium features behind the one-time "Pace Pro" purchase. Race Cards and
-/// everything that helps you quit stay free forever — only added value is paid.
+/// Feature groups that used to sit behind the "Pace Pro" purchase. As of the
+/// final free release everything is unlocked for everyone — the enum stays so
+/// the gate call sites keep compiling, but [Entitlements.can] is always true.
 enum PaceProFeature {
   /// Alternative neon palettes & skins for the cockpit.
   themes,
@@ -15,11 +14,6 @@ enum PaceProFeature {
   liveActivity,
 }
 
-/// Single source of truth for paid entitlements.
-///
-/// Backed by the locally persisted `proPurchased` flag (set by [PaceProStore]
-/// on a verified StoreKit purchase or restore). Every
-/// `ref.watch(entitlementsProvider).can(feature)` in the UI gates against it.
 class Entitlements {
   const Entitlements({required this.isPro});
 
@@ -28,7 +22,6 @@ class Entitlements {
   bool can(PaceProFeature feature) => isPro;
 }
 
-final entitlementsProvider = Provider<Entitlements>((ref) {
-  final purchased = ref.watch(settingsProvider).value?.proPurchased ?? false;
-  return Entitlements(isPro: purchased);
-});
+/// Everything is free now — always unlocked.
+final entitlementsProvider =
+    Provider<Entitlements>((ref) => const Entitlements(isPro: true));

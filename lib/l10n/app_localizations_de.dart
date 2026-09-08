@@ -704,7 +704,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.';
 
   @override
-  String get settingsProSection => 'PACE PRO';
+  String get settingsProSection => 'EXTRAS';
 
   @override
   String get settingsProRaceEngineer => 'Race Engineer';

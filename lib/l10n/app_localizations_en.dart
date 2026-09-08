@@ -704,7 +704,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Log a few pit stops and the Race Engineer reads your pattern.';
 
   @override
-  String get settingsProSection => 'PACE PRO';
+  String get settingsProSection => 'EXTRAS';
 
   @override
   String get settingsProRaceEngineer => 'Race Engineer';
