@@ -704,71 +704,24 @@ class AppLocalizationsDe extends AppLocalizations {
       'Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.';
 
   @override
-  String get settingsProSection => 'EXTRAS';
+  String get settingsExtrasSection => 'EXTRAS';
 
   @override
-  String get settingsProRaceEngineer => 'Race Engineer';
+  String get settingsExtrasRaceEngineer => 'Race Engineer';
 
   @override
-  String get settingsProRaceEngineerSub =>
+  String get settingsExtrasRaceEngineerSub =>
       'Deep Analytics — Muster, Auslöser, Trend.';
 
   @override
-  String get settingsProSkin => 'SKIN';
+  String get settingsExtrasSkin => 'SKIN';
 
   @override
-  String get settingsProLiveActivity => 'Live Activity';
+  String get settingsExtrasLiveActivity => 'Live Activity';
 
   @override
-  String get settingsProLiveActivitySub =>
+  String get settingsExtrasLiveActivitySub =>
       'Stint-Timer in der Dynamic Island & am Lockscreen.';
-
-  @override
-  String get proBadge => 'PRO';
-
-  @override
-  String get settingsProActive => 'Pace Pro aktiv';
-
-  @override
-  String get settingsProActiveSub =>
-      'Danke! Alle Pro-Features sind freigeschaltet.';
-
-  @override
-  String get settingsProRestore => 'Käufe wiederherstellen';
-
-  @override
-  String get paywallSubtitle => 'Mehr aus deinem Rennen rausholen.';
-
-  @override
-  String get paywallThemesTitle => 'Neon-Skins';
-
-  @override
-  String get paywallThemesSub => '10 Skins, die die ganze App umfärben.';
-
-  @override
-  String paywallUnlock(Object price) {
-    return 'Freischalten · $price';
-  }
-
-  @override
-  String get paywallUnlockNoPrice => 'Pace Pro freischalten';
-
-  @override
-  String get paywallRestore => 'Käufe wiederherstellen';
-
-  @override
-  String get paywallOneTime =>
-      'Einmalkauf · kein Abo · keine versteckten Kosten';
-
-  @override
-  String get paywallError =>
-      'Das hat nicht geklappt. Bitte versuch es nochmal.';
-
-  @override
-  String get paywallUnavailable => 'Der App Store ist gerade nicht erreichbar.';
-
-  @override
-  String get raceEngineerUnlock => 'Mit Pace Pro freischalten';
 
   @override
   String get quitTitle => 'Rauchstopp-Datum';

@@ -10,6 +10,7 @@ import 'theme/skin.dart';
 import 'domain/milestones.dart';
 import 'domain/pace_stats.dart';
 import 'domain/quit_plan.dart';
+import 'domain/savings_calculator.dart';
 import 'domain/stint_calculator.dart';
 import 'domain/streak_calculator.dart';
 import 'domain/weekly_proposal.dart';
@@ -302,87 +303,41 @@ final nextCarProvider = Provider<CarTier?>((ref) {
   return MilestoneEvaluator.nextCar(stats?.savedMoneyCents ?? 0);
 });
 
+/// Aggregate savings — the money/cigarette figures behind the cockpit, trophies
+/// and goals. The pure computation lives in [SavingsCalculator]; this provider
+/// only gathers the current inputs and delegates.
 final statsProvider = Provider<PaceStats?>((ref) {
   final settings = ref.watch(settingsProvider).value;
-  final pitStops = ref.watch(pitStopsProvider).value;
   final now = ref.watch(clockProvider).value;
   if (settings == null || now == null) return null;
 
-  final all = pitStops ?? const <PitStop>[];
-  final start = settings.startedAt;
-  final sinceStart = now.difference(start);
-  final sleep = ref.watch(sleepWindowProvider);
-
-  // Cents per cigarette in effect at a given time (price changes apply forward).
+  final pitStops = ref.watch(pitStopsProvider).value ?? const <PitStop>[];
   final periods = ref.watch(costPeriodsProvider).value ?? const <CostPeriod>[];
-  final sortedPeriods = [...periods]
-    ..sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
-  int perCigAt(DateTime t) {
-    var pc = PaceStats.centsPerCigarette(
-      packPriceCents: settings.packPriceCents,
-      cigarettesPerPack: settings.cigarettesPerPack,
-    );
-    for (final p in sortedPeriods) {
-      if (!p.effectiveFrom.isAfter(t)) {
-        pc = PaceStats.centsPerCigarette(
+
+  return SavingsCalculator.compute(
+    startedAt: settings.startedAt,
+    now: now,
+    packPriceCents: settings.packPriceCents,
+    cigarettesPerPack: settings.cigarettesPerPack,
+    currentTargetSeconds: settings.currentTargetSeconds,
+    baselineCigsPerDay: settings.baselineCigsPerDay.toDouble(),
+    quitDate: settings.quitDate,
+    sleep: ref.watch(sleepWindowProvider),
+    pits: [
+      for (final p in pitStops)
+        SavingsPit(
+          occurredAt: p.occurredAt,
+          targetIntervalSeconds: p.targetIntervalSeconds,
+        ),
+    ],
+    costEpochs: [
+      for (final p in periods)
+        CostEpoch(
+          effectiveFrom: p.effectiveFrom,
           packPriceCents: p.packPriceCents,
           cigarettesPerPack: p.cigarettesPerPack,
-        );
-      } else {
-        break;
-      }
-    }
-    return pc;
-  }
-
-  // After the quit moment the stint/lap mechanic stops — the ongoing stint is
-  // frozen at the quit moment (that's the last banked value) and savings then
-  // accrue at the full baseline rate below.
-  final quitDate = settings.quitDate;
-  final smokeFree = quitDate != null && now.isAfter(quitDate);
-  final stintEnd = smokeFree ? quitDate : now;
-
-  // One stint per gap between cigarettes, plus the ongoing one. Each carries the
-  // target that was active (stored on the pit) and the price then; sleep is
-  // excluded from the awake length.
-  final asc = [...all]..sort((a, b) => a.occurredAt.compareTo(b.occurredAt));
-  final stints = <({int awakeSeconds, int targetSeconds, int perCig})>[];
-  var prev = start;
-  for (final p in asc) {
-    if (p.occurredAt.isAfter(stintEnd)) break; // post-quit slips: baseline handles it
-    stints.add((
-      awakeSeconds: sleep.awakeBetween(prev, p.occurredAt).inSeconds,
-      targetSeconds: p.targetIntervalSeconds ?? 0,
-      perCig: perCigAt(p.occurredAt),
-    ));
-    prev = p.occurredAt;
-  }
-  stints.add((
-    awakeSeconds: sleep.awakeBetween(prev, stintEnd).inSeconds,
-    targetSeconds: settings.currentTargetSeconds ?? 0,
-    perCig: perCigAt(stintEnd),
-  ));
-
-  // Post-quit: you avoid your whole baseline consumption (minus any slip-ups),
-  // so the counters keep climbing continuously from the value banked at the stop.
-  var bonusCigs = 0.0;
-  var bonusCents = 0;
-  if (smokeFree) {
-    final daysSinceQuit = now.difference(quitDate).inSeconds / 86400.0;
-    final slipsAfterQuit =
-        all.where((p) => p.occurredAt.isAfter(quitDate)).length;
-    final avoided = settings.baselineCigsPerDay * daysSinceQuit - slipsAfterQuit;
-    bonusCigs = avoided < 0 ? 0 : avoided;
-    bonusCents = (bonusCigs * perCigAt(now)).round();
-  }
-
-  return PaceStats.compute(
-    sinceStart: sinceStart,
-    actualCigarettes: all.length,
-    currentPerCig: perCigAt(now),
-    stints: stints,
-    bonusCigarettes: bonusCigs,
-    bonusMoneyCents: bonusCents,
+        ),
+    ],
   );
 });
 

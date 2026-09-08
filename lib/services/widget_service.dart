@@ -8,7 +8,6 @@ import '../domain/sleep_window.dart';
 import '../domain/stint_calculator.dart';
 import '../providers.dart';
 import '../util/format.dart';
-import 'entitlements.dart';
 import 'live_activity_service.dart';
 
 /// Bridges app state to the iOS home-screen widget via the shared App Group.
@@ -114,12 +113,10 @@ Future<void> pushPaceWidget(WidgetRef ref, {bool? liveActivityOverride}) async {
     // never let widget updates break the app.
   }
 
-  // Live Activity (Pro): mirror the stint to the Dynamic Island / lock screen.
+  // Live Activity: mirror the stint to the Dynamic Island / lock screen.
   // [liveActivityOverride] lets the settings toggle pass its new value directly,
   // since the settings stream hasn't propagated the DB write yet at that point.
-  final liveEnabled = liveActivityOverride ?? settings.liveActivityEnabled;
-  final liveOn = liveEnabled &&
-      ref.read(entitlementsProvider).can(PaceProFeature.liveActivity);
+  final liveOn = liveActivityOverride ?? settings.liveActivityEnabled;
   if (liveOn) {
     await LiveActivityService.push({
       'mode': mode,

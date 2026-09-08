@@ -20,8 +20,6 @@ Future<void> seedDemoData(AppDatabase db) async {
     growthPermille: 100,
     at: now,
   );
-  // Show the Pro features unlocked in screenshots.
-  await db.setProPurchased(true);
 
   final situations = await db.watchActiveSituations().first;
   String situationAt(int i) => situations[i % situations.length].id;

@@ -344,23 +344,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _HistoryRow(period: p, currency: currency),
                     ],
                     const SizedBox(height: 32),
-                    Text(l10n.settingsProSection,
+                    Text(l10n.settingsExtrasSection,
                         style: TextStyle(
                             color: PaceColors.textMuted,
                             fontSize: 12,
                             letterSpacing: 2,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 10),
-                    _ProRow(
+                    _ExtraRow(
                       icon: Icons.insights,
-                      title: l10n.settingsProRaceEngineer,
-                      subtitle: l10n.settingsProRaceEngineerSub,
+                      title: l10n.settingsExtrasRaceEngineer,
+                      subtitle: l10n.settingsExtrasRaceEngineerSub,
                       onTap: () => RaceEngineerScreen.open(context),
                     ),
-                    _ProToggleRow(
+                    _ExtraToggleRow(
                       icon: Icons.bolt,
-                      title: l10n.settingsProLiveActivity,
-                      subtitle: l10n.settingsProLiveActivitySub,
+                      title: l10n.settingsExtrasLiveActivity,
+                      subtitle: l10n.settingsExtrasLiveActivitySub,
                       value: settings?.liveActivityEnabled ?? false,
                       onChanged: (v) async {
                         await ref
@@ -370,7 +370,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    Text(l10n.settingsProSkin,
+                    Text(l10n.settingsExtrasSkin,
                         style: TextStyle(
                             color: PaceColors.textMuted,
                             fontSize: 12,
@@ -585,8 +585,8 @@ class _SkinSwatch extends StatelessWidget {
   }
 }
 
-class _ProToggleRow extends StatelessWidget {
-  const _ProToggleRow({
+class _ExtraToggleRow extends StatelessWidget {
+  const _ExtraToggleRow({
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -648,8 +648,8 @@ class _ProToggleRow extends StatelessWidget {
   }
 }
 
-class _ProRow extends StatelessWidget {
-  const _ProRow({
+class _ExtraRow extends StatelessWidget {
+  const _ExtraRow({
     required this.icon,
     required this.title,
     required this.subtitle,

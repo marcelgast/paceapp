@@ -704,69 +704,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Log a few pit stops and the Race Engineer reads your pattern.';
 
   @override
-  String get settingsProSection => 'EXTRAS';
+  String get settingsExtrasSection => 'EXTRAS';
 
   @override
-  String get settingsProRaceEngineer => 'Race Engineer';
+  String get settingsExtrasRaceEngineer => 'Race Engineer';
 
   @override
-  String get settingsProRaceEngineerSub =>
+  String get settingsExtrasRaceEngineerSub =>
       'Deep analytics — patterns, triggers, trend.';
 
   @override
-  String get settingsProSkin => 'SKIN';
+  String get settingsExtrasSkin => 'SKIN';
 
   @override
-  String get settingsProLiveActivity => 'Live Activity';
+  String get settingsExtrasLiveActivity => 'Live Activity';
 
   @override
-  String get settingsProLiveActivitySub =>
+  String get settingsExtrasLiveActivitySub =>
       'Stint timer in the Dynamic Island & on the lock screen.';
-
-  @override
-  String get proBadge => 'PRO';
-
-  @override
-  String get settingsProActive => 'Pace Pro active';
-
-  @override
-  String get settingsProActiveSub => 'Thanks! All Pro features are unlocked.';
-
-  @override
-  String get settingsProRestore => 'Restore purchases';
-
-  @override
-  String get paywallSubtitle => 'Get more out of your race.';
-
-  @override
-  String get paywallThemesTitle => 'Neon skins';
-
-  @override
-  String get paywallThemesSub => '10 skins that recolour the whole app.';
-
-  @override
-  String paywallUnlock(Object price) {
-    return 'Unlock · $price';
-  }
-
-  @override
-  String get paywallUnlockNoPrice => 'Unlock Pace Pro';
-
-  @override
-  String get paywallRestore => 'Restore purchases';
-
-  @override
-  String get paywallOneTime =>
-      'One-time purchase · no subscription · no hidden fees';
-
-  @override
-  String get paywallError => 'That didn\'t work. Please try again.';
-
-  @override
-  String get paywallUnavailable => 'The App Store isn\'t reachable right now.';
-
-  @override
-  String get raceEngineerUnlock => 'Unlock with Pace Pro';
 
   @override
   String get quitTitle => 'Quit date';

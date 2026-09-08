@@ -127,11 +127,6 @@ class AppDatabase extends _$AppDatabase {
         .write(AppSettingsRowsCompanion(liveActivityEnabled: Value(enabled)));
   }
 
-  Future<void> setProPurchased(bool purchased) {
-    return (update(appSettingsRows)..where((t) => t.id.equals(1)))
-        .write(AppSettingsRowsCompanion(proPurchased: Value(purchased)));
-  }
-
   /// Sets or clears the quit-smoking target date (`null` clears it).
   Future<void> setQuitDate(DateTime? date) {
     return (update(appSettingsRows)..where((t) => t.id.equals(1)))

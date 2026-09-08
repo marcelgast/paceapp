@@ -14,9 +14,6 @@ import '../journal/journal_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../trophies/trophies_screen.dart';
 
-/// Initial tab, overridden only by the screenshot tooling (SHOTS build flag).
-int kDemoInitialTab = 0;
-
 class HomeShell extends ConsumerStatefulWidget {
   const HomeShell({super.key});
 
@@ -26,7 +23,7 @@ class HomeShell extends ConsumerStatefulWidget {
 
 class _HomeShellState extends ConsumerState<HomeShell>
     with WidgetsBindingObserver {
-  int _index = kDemoInitialTab;
+  int _index = 0;
 
   static const _tabs = [
     CockpitScreen(),

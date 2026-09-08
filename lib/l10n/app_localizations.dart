@@ -1334,125 +1334,41 @@ abstract class AppLocalizations {
   /// **'Trag ein paar Boxenstopps ein, dann liest der Race Engineer dein Muster aus.'**
   String get raceEngineerEmptyBody;
 
-  /// No description provided for @settingsProSection.
+  /// No description provided for @settingsExtrasSection.
   ///
   /// In de, this message translates to:
   /// **'EXTRAS'**
-  String get settingsProSection;
+  String get settingsExtrasSection;
 
-  /// No description provided for @settingsProRaceEngineer.
+  /// No description provided for @settingsExtrasRaceEngineer.
   ///
   /// In de, this message translates to:
   /// **'Race Engineer'**
-  String get settingsProRaceEngineer;
+  String get settingsExtrasRaceEngineer;
 
-  /// No description provided for @settingsProRaceEngineerSub.
+  /// No description provided for @settingsExtrasRaceEngineerSub.
   ///
   /// In de, this message translates to:
   /// **'Deep Analytics — Muster, Auslöser, Trend.'**
-  String get settingsProRaceEngineerSub;
+  String get settingsExtrasRaceEngineerSub;
 
-  /// No description provided for @settingsProSkin.
+  /// No description provided for @settingsExtrasSkin.
   ///
   /// In de, this message translates to:
   /// **'SKIN'**
-  String get settingsProSkin;
+  String get settingsExtrasSkin;
 
-  /// No description provided for @settingsProLiveActivity.
+  /// No description provided for @settingsExtrasLiveActivity.
   ///
   /// In de, this message translates to:
   /// **'Live Activity'**
-  String get settingsProLiveActivity;
+  String get settingsExtrasLiveActivity;
 
-  /// No description provided for @settingsProLiveActivitySub.
+  /// No description provided for @settingsExtrasLiveActivitySub.
   ///
   /// In de, this message translates to:
   /// **'Stint-Timer in der Dynamic Island & am Lockscreen.'**
-  String get settingsProLiveActivitySub;
-
-  /// No description provided for @proBadge.
-  ///
-  /// In de, this message translates to:
-  /// **'PRO'**
-  String get proBadge;
-
-  /// No description provided for @settingsProActive.
-  ///
-  /// In de, this message translates to:
-  /// **'Pace Pro aktiv'**
-  String get settingsProActive;
-
-  /// No description provided for @settingsProActiveSub.
-  ///
-  /// In de, this message translates to:
-  /// **'Danke! Alle Pro-Features sind freigeschaltet.'**
-  String get settingsProActiveSub;
-
-  /// No description provided for @settingsProRestore.
-  ///
-  /// In de, this message translates to:
-  /// **'Käufe wiederherstellen'**
-  String get settingsProRestore;
-
-  /// No description provided for @paywallSubtitle.
-  ///
-  /// In de, this message translates to:
-  /// **'Mehr aus deinem Rennen rausholen.'**
-  String get paywallSubtitle;
-
-  /// No description provided for @paywallThemesTitle.
-  ///
-  /// In de, this message translates to:
-  /// **'Neon-Skins'**
-  String get paywallThemesTitle;
-
-  /// No description provided for @paywallThemesSub.
-  ///
-  /// In de, this message translates to:
-  /// **'10 Skins, die die ganze App umfärben.'**
-  String get paywallThemesSub;
-
-  /// No description provided for @paywallUnlock.
-  ///
-  /// In de, this message translates to:
-  /// **'Freischalten · {price}'**
-  String paywallUnlock(Object price);
-
-  /// No description provided for @paywallUnlockNoPrice.
-  ///
-  /// In de, this message translates to:
-  /// **'Pace Pro freischalten'**
-  String get paywallUnlockNoPrice;
-
-  /// No description provided for @paywallRestore.
-  ///
-  /// In de, this message translates to:
-  /// **'Käufe wiederherstellen'**
-  String get paywallRestore;
-
-  /// No description provided for @paywallOneTime.
-  ///
-  /// In de, this message translates to:
-  /// **'Einmalkauf · kein Abo · keine versteckten Kosten'**
-  String get paywallOneTime;
-
-  /// No description provided for @paywallError.
-  ///
-  /// In de, this message translates to:
-  /// **'Das hat nicht geklappt. Bitte versuch es nochmal.'**
-  String get paywallError;
-
-  /// No description provided for @paywallUnavailable.
-  ///
-  /// In de, this message translates to:
-  /// **'Der App Store ist gerade nicht erreichbar.'**
-  String get paywallUnavailable;
-
-  /// No description provided for @raceEngineerUnlock.
-  ///
-  /// In de, this message translates to:
-  /// **'Mit Pace Pro freischalten'**
-  String get raceEngineerUnlock;
+  String get settingsExtrasLiveActivitySub;
 
   /// No description provided for @quitTitle.
   ///

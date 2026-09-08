@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// The PACE graffiti wordmark. Currently a raster placeholder — will be swapped
-/// for a vector later. [size] is the cap-height target; the asset has padding,
-/// so we render a little taller to compensate.
+/// The PACE graffiti wordmark, rendered from the branding raster asset. [size]
+/// is the cap-height target; the asset carries its own padding, so we render a
+/// little taller to compensate.
 class PaceWordmark extends StatelessWidget {
   const PaceWordmark({super.key, this.size = 72, this.slash = true});
 

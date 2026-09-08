@@ -39,8 +39,9 @@ class AppSettingsRows extends Table {
   BoolColumn get liveActivityEnabled =>
       boolean().withDefault(const Constant(false))();
 
-  /// Whether the one-time "Pace Pro" in-app purchase has been completed.
-  /// Local source of truth for entitlements; restored via StoreKit if reset.
+  /// Legacy flag from the former "Pace Pro" in-app purchase. Unused since the
+  /// app became fully free; kept as a nullable-default column to avoid a
+  /// destructive schema migration on existing installs.
   BoolColumn get proPurchased =>
       boolean().withDefault(const Constant(false))();
 
