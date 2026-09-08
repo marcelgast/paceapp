@@ -1,5 +1,5 @@
 name: pace
-description: "Pace — rauchfrei werden im Renntempo. Stints dehnen, Boxenstopps tracken, Siege feiern."
+description: "Pace — a Y2K street-racing take on quitting smoking. Stretch your stints, log your box stops, celebrate the wins."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
